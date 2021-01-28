@@ -1,9 +1,10 @@
 library(tidyverse)
 
 adult_seeds <- matrix(0, nrow = 31, ncol = 30)
-adult_seeds[ , 1] <- c(22012L, 72L, 12626L, 12L, 12L, 885L, 8555L, 1251L, 1649L, 569L,
-                       12L, 1332L, 51L, 12L, 12L, 0L, 0L, 12L, 52408L, 7184L, 0L, 0L,
-                       24959L, 0L, 12L, 499L, 4514L, 2145L, 5405L, 984L, 0L)
+# seeds are derived from "Simulation Seeds" file.
+adult_seeds[ , 1] <- c(0, 4, 439.4, 0, 0, 8896.4, 179.2, 0, 0, 574.2, 0, 478.6, 0, 
+                       0, 0, 0, 0, 0, 4811.2, 641.8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+)
 
 rownames(adult_seeds) <- DSMhabitat::watershed_metadata$watershed[-32]
 
@@ -37,14 +38,12 @@ mass_by_size_class <- c(0.5, 1.8, 9.1, 31.4)
 names(mass_by_size_class) <- c("s", "m", "l", "vl")
 usethis::use_data(mass_by_size_class, overwrite = TRUE)
 
-
-
 # TODO come up with better names
-cross_channel_stray_rate <- c(rep(1, 15), 0, 0, 2, 2, 2, 0, 0, 3, 0, rep(0, 7)) / 24
+cross_channel_stray_rate <- c(1,2,2,0,1,2,2,1,0,2,0,2,0,0,1,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0)/20
 names(cross_channel_stray_rate) <- DSMhabitat::watershed_metadata$watershed[-32]
 usethis::use_data(cross_channel_stray_rate, overwrite = TRUE)
 
-stray_rate <- c(rep(1, 15), 0, 0, 1, 1, 1, 0, 0, 1, 0, rep(1, 6), 0) / 25
+stray_rate <- c(1,2,2,0,1,2,2,1,0,2,0,2,0,0,1,0,0,0,2,2,0,0,0,0,1,1,1,1,1,1,0)/26
 names(stray_rate) <- DSMhabitat::watershed_metadata$watershed[-32]
 usethis::use_data(stray_rate, overwrite = TRUE)
 
