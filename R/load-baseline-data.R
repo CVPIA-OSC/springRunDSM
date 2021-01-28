@@ -86,10 +86,10 @@ load_baseline_data <- function() {
   migratory_temperature_proportion_over_20 <- DSMtemperature::migratory_temperature_proportion_over_20
 
   # DSMhabitat variables -----
-  spawning_habitat <- DSMhabitat::fr_spawn
-  inchannel_habitat_fry <- DSMhabitat::fr_fry
-  inchannel_habitat_juvenile <- DSMhabitat::fr_juv
-  floodplain_habitat <- DSMhabitat::fr_fp
+  spawning_habitat <- DSMhabitat::sr_spawn
+  inchannel_habitat_fry <- DSMhabitat::sr_fry
+  inchannel_habitat_juvenile <- DSMhabitat::sr_juv
+  floodplain_habitat <- DSMhabitat::sr_fp
   weeks_flooded <- DSMhabitat::weeks_flooded
   delta_habitat <- DSMhabitat::delta_habitat
   sutter_habitat <- DSMhabitat::sutter_habitat
@@ -104,6 +104,7 @@ load_baseline_data <- function() {
   prob_strand_early <- DSMhabitat::prob_strand_early
   prob_strand_late <- DSMhabitat::prob_strand_late
   prob_nest_scoured <- DSMhabitat::prob_nest_scoured
+  spring_run_pools <- DSMhabitat::pools$SR_pools_sq_meters
 
   list(
     freeport_flows = freeport_flows,
@@ -146,6 +147,7 @@ load_baseline_data <- function() {
     delta_prop_high_predation = delta_prop_high_predation,
     prob_strand_early = prob_strand_early,
     prob_strand_late = prob_strand_late,
-    prob_nest_scoured = prob_nest_scoured
+    prob_nest_scoured = prob_nest_scoured,
+    spring_run_pools = spring_run_pools
   )
 }
