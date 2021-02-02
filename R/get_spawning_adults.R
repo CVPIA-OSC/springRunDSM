@@ -51,12 +51,3 @@ get_spawning_adults <- function(year, adults, hatch_adults) {
 
 
 
-
-
-
-
-
-
-
-
-

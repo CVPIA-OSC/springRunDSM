@@ -1,5 +1,5 @@
-#' @title Fall Run Chinook Model
-#' @description Fall Run Chinook life cycle model used for CVPIA's Structured
+#' @title Spring Run Chinook Model
+#' @description Spring Run Chinook life cycle model used for CVPIA's Structured
 #' Decision Making Process
 #' @param scenario Model inputs, can be modified to test management actions
 #' @param seeds The default value is NULL runs the model in seeding mode,
