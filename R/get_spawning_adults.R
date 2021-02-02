@@ -12,24 +12,28 @@ get_spawning_adults <- function(year, adults, hatch_adults) {
   }))
   
   if (year < 5) {
-    surviving_natural_adults <- sapply(1:4, function(month) {
+    natural_adults_by_month <- sapply(1:4, function(month) {
       rbinom(n = 31, 
              size = round(adults_by_month[, month]), 
              prob = 1 - natural_adult_removal_rate)
     })
     
-    init_adults <- rowSums(surviving_natural_adults)
+    init_adults <- rowSums(natural_adults_by_month)
     surviving_natural_adults <- rowSums(adults_by_month)
     proportion_natural <- 1 - proportion_hatchery
     
   } else  {
-    # well they all return the same surival
-    stray_prop <- adult_stray(wild = 1,
-                              natal_flow = prop_flow_natal[ , year],
-                              south_delta_watershed = south_delta_routed_watersheds,
-                              cross_channel_gates_closed = cc_gates_days_closed[10])
+    stray_props <- sapply(3:6, function(month) {
+      adult_stray(wild = 1,
+                  natal_flow = prop_flow_natal[ , year],
+                  south_delta_watershed = south_delta_routed_watersheds,
+                  cross_channel_gates_closed = cc_gates_days_closed[month])
+    })
     
-    straying_adults <- rbinom(n = 31, adults, stray_prop[1])
+    straying_adults <- sapply(1:4, function(month) {
+      rbinom(n = 31, adults_by_month[, month], stray_props[, month])
+    })
+    
     
     #TODO random variable
     south_delta_routed_adults <- round(sum(straying_adults * south_delta_routed_watersheds))
@@ -59,7 +63,8 @@ get_spawning_adults <- function(year, adults, hatch_adults) {
   
   list(init_adults = init_adults,
        proportion_natural = replace(proportion_natural, is.nan(proportion_natural), NA_real_),
-       natural_adults = surviving_natural_adults)
+       natural_adults = surviving_natural_adults, 
+       init_adults_by_month = natural_adults_by_month)
   
 }
 
