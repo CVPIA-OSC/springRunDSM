@@ -1,3 +1,5 @@
+RETURN_MONTHS <- 3:6
+
 #' @title Spring Run Chinook Model
 #' @description Spring Run Chinook life cycle model used for CVPIA's Structured
 #' Decision Making Process
@@ -67,12 +69,13 @@ fall_run_model <- function(scenario = NULL, seeds = NULL){
       temperature_effect = mean_egg_temp_effect
     )
 
-    min_spawn_habitat <- apply(spawning_habitat[ , 10:12, year], 1, min)
-
-    accumulated_degree_days <- cbind(oct = rowSums(degree_days[ , 10:12, year]),
-                                     nov = rowSums(degree_days[ , 11:12, year]),
-                                     dec = degree_days[ , 12, year])
-
+    min_spawn_habitat <- apply(spawning_habitat[ , RETURN_MONTHS, year], 1, min)
+  
+    accumulated_degree_days <- cbind(mar = rowSums(degree_days[ , 3:6, year] * (spawners$init_adults_by_month > 0)),
+                                     apr = rowSums(degree_days[ , 4:6, year] * (spawners$init_adults_by_month[, 2:4] > 0)),
+                                     may = rowSums(degree_days[ , 5:6, year] * (spawners$init_adults_by_month[, 3:4] > 0)), 
+                                     jun = degree_days[ , 6, year] * (spawners$init_adults_by_month[, 4] > 0))
+    
     average_degree_days <- apply(accumulated_degree_days, 1, weighted.mean, month_return_proportions)
     prespawn_survival <- surv_adult_prespawn(average_degree_days)
 
