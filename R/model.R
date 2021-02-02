@@ -53,7 +53,7 @@ fall_run_model <- function(scenario = NULL, seeds = NULL){
     annual_migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
     avg_ocean_transition_month <- ocean_transition_month() # 2
 
-    hatch_adults <- rmultinom(1, size = round(runif(1, 83097.01,532203.1)), prob = hatchery_allocation)[ , 1]
+    hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults)
     init_adults <- spawners$init_adults
 
