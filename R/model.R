@@ -111,8 +111,16 @@ fall_run_model <- function(scenario = NULL, seeds = NULL){
                                sex_ratio = 0.5, 
                                redd_size = 9.29, 
                                fecundity = 5522)
+    
+    if (year == 1) {
+      yearlings <- matrix(0, ncol = 4, nrow = 31, 
+                          dimnames = list(watershed_labels, size_class_labels))
+    }
+    
+    # TODO flood activation based on scenarios
 
-    for (month in 1:8) {
+
+    for (month in c(11, 12, 1:5)) {
       habitat <- get_habitat(year, month) # habitat$yolo
       rearing_survival <- get_rearing_survival_rates(year, month, scenario) # rearing_survival$inchannel
       migratory_survival <- get_migratory_survival_rates(year, month) #migratory_survival$uppermid_sac
