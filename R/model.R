@@ -1,3 +1,5 @@
+RETURN_MONTHS <- 3:6
+
 #' @title Spring Run Chinook Model
 #' @description Spring Run Chinook life cycle model used for CVPIA's Structured
 #' Decision Making Process
@@ -41,6 +43,7 @@ fall_run_model <- function(scenario = NULL, seeds = NULL){
   juveniles_at_chipps <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
   proportion_natural <- matrix(NA_real_, nrow = 31, ncol = 20)
 
+  
   # calculate growth rates
   growth_rates <- growth()
   growth_rates_floodplain <- growth_floodplain()
@@ -53,7 +56,7 @@ fall_run_model <- function(scenario = NULL, seeds = NULL){
     annual_migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
     avg_ocean_transition_month <- ocean_transition_month() # 2
 
-    hatch_adults <- rmultinom(1, size = round(runif(1, 83097.01,532203.1)), prob = hatchery_allocation)[ , 1]
+    hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults)
     init_adults <- spawners$init_adults
 
@@ -67,20 +70,47 @@ fall_run_model <- function(scenario = NULL, seeds = NULL){
       temperature_effect = mean_egg_temp_effect
     )
 
-    min_spawn_habitat <- apply(spawning_habitat[ , 10:12, year], 1, min)
-
-    accumulated_degree_days <- cbind(oct = rowSums(degree_days[ , 10:12, year]),
-                                     nov = rowSums(degree_days[ , 11:12, year]),
-                                     dec = degree_days[ , 12, year])
-
+    min_spawn_habitat <- apply(spawning_habitat[ , RETURN_MONTHS, year], 1, min)
+  
+    accumulated_degree_days <- cbind(mar = rowSums(degree_days[ , 3:6, year] * (spawners$init_adults_by_month > 0)),
+                                     apr = rowSums(degree_days[ , 4:6, year] * (spawners$init_adults_by_month[, 2:4] > 0)),
+                                     may = rowSums(degree_days[ , 5:6, year] * (spawners$init_adults_by_month[, 3:4] > 0)), 
+                                     jun = degree_days[ , 6, year] * (spawners$init_adults_by_month[, 4] > 0))
+    
     average_degree_days <- apply(accumulated_degree_days, 1, weighted.mean, month_return_proportions)
     prespawn_survival <- surv_adult_prespawn(average_degree_days)
+    init_adults <- rbinom(31, round(init_adults), prespawn_survival)
 
+    # HOLDING PERIOD FOR SPRING RUN
+    init_spawn_adult_rand <- matrix(0, ncol = 2, nrow = 31)
+    init_spawn_adult <- matrix(0, ncol = 2, nrow = 31)
+    
+    # Add calculations for SR pool
+    init_adults <- ifelse(init_adults >= spring_run_pools, spring_run_pools, init_adults)
+    
+    # Add split popoulation in half using binom and 
+    init_spawn_adult_rand[, 1] <- rbinom(31, init_adults, 0.5)
+    init_spawn_adult_rand[, 2] <- pmax(init_adults - init_spawn_adult_rand[, 1], 0)
+    
+    init_spawn_adult[, 1] <- init_adults * .5
+    init_spawn_adult[, 2] <- init_spawn_adult[, 1]
+    
+    # TODO figure out a cleaner way to do this 
+    average_degree_days <- ((init_spawn_adult_rand[, 1] * rowSums(degree_days[, 7:10, year])) +
+                            (init_spawn_adult_rand[, 2] * rowSums(degree_days[, 7:9, year])))/init_adults
+    
+    average_degree_days <- ifelse(is.nan(average_degree_days), 0, average_degree_days)
+    
+    prespawn_survival <- surv_adult_prespawn(average_degree_days)
+    
     juveniles <- spawn_success(escapement = init_adults,
                                adult_prespawn_survival = prespawn_survival,
                                egg_to_fry_survival = egg_to_fry_surv,
                                prob_scour = prob_nest_scoured,
-                               spawn_habitat = min_spawn_habitat)
+                               spawn_habitat = min_spawn_habitat, 
+                               sex_ratio = 0.5, 
+                               redd_size = 9.29, 
+                               fecundity = 5522)
 
     for (month in 1:8) {
       habitat <- get_habitat(year, month) # habitat$yolo
