@@ -104,7 +104,7 @@ load_baseline_data <- function() {
   prob_strand_early <- DSMhabitat::prob_strand_early
   prob_strand_late <- DSMhabitat::prob_strand_late
   prob_nest_scoured <- DSMhabitat::prob_nest_scoured
-  spring_run_pools <- DSMhabitat::pools$SR_pools_sq_meters
+  spring_run_pools <- ifelse(is.na(DSMhabitat::pools$SR_pools_sq_meters), 0, DSMhabitat::pools$SR_pools_sq_meters)
 
   list(
     freeport_flows = freeport_flows,
