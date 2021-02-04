@@ -15,12 +15,12 @@ rear <- function(juveniles, survival_rate, growth, floodplain_juveniles = NULL,
                  weeks_flooded = NULL){
 
   next_juveniles <- (juveniles * survival_rate) %*% growth
-
+  
   if(!is.null(floodplain_juveniles)) {
     floodplain_juveniles_survived <- floodplain_juveniles * floodplain_survival_rate
-
+    
     next_floodplain_juveniles <- c()
-
+    
     for(i in 1:nrow(floodplain_juveniles)) {
       if (weeks_flooded[i] > 0) {
         watershed_floodplain_juveniles <- floodplain_juveniles_survived[i, ] %*% floodplain_growth[ , , weeks_flooded[i]]
