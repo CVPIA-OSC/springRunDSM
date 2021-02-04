@@ -197,7 +197,7 @@ get_rearing_survival_rates <- function(year, month, scenario) {
   maxT25D <- rbinom(2, 1, boot::inv.logit(-157.537 + 6.998 * avg_temp_delta[month, year, ]))
 
   # set proportion fish stranding
-  prob_ws_strand <- if(month < 4) prob_strand_early else prob_strand_late
+  prob_ws_strand <- if(month %in% c(11, 12, 1)) prob_strand_early else prob_strand_late
 
 
   ws_strand <-rbinom(31, 1, prob_ws_strand)
