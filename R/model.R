@@ -55,6 +55,10 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     adults_in_ocean <- numeric(31)
     annual_migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
     avg_ocean_transition_month <- ocean_transition_month() # 2
+    # TODO confirm this works as expected
+    yearlings <- matrix(0, ncol = 4, nrow = 31, 
+                        dimnames = list(watershed_labels, size_class_labels))
+    
     
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults)
@@ -112,10 +116,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                redd_size = 9.29, 
                                fecundity = 5522)
     
-    if (year == 1) {
-      yearlings <- matrix(0, ncol = 4, nrow = 31, 
-                          dimnames = list(watershed_labels, size_class_labels))
-    }
+
     # TODO flood activation based on scenarios
     
     for (month in c(11, 12, 1:5)) {
@@ -131,6 +132,10 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
       
       if (month == 5) {
         # yearling logic here
+        # 1 - 15, 18-20, 23, 25:30
+        yearlings[c(1:15, 18:20, 23, 25:30), 1:2] <- 
+          juveniles[c(1:15, 18:20, 23, 25:30), 1:2]
+        juveniles[c(1:15, 18:20, 23, 25:30), 1:2] <- 0 # set all to zero since they are yearlings now
         
         # all remaining fish outmigrate
         sutter_fish <- migrate(sutter_fish, migratory_survival$sutter)
@@ -164,7 +169,14 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
         migrants_at_golden_gate <- delta_fish$migrants_at_golden_gate
         
         annual_migrants <- annual_migrants + migrants_at_golden_gate
+        
       } else {
+        
+        if (month == 11) {
+          yearlings <- yearling_growth(year, yearlings)
+          yearling_migration(yearlings)
+        }
+        
         # if month < 8
         # route northern natal fish stay and rear or migrate downstream ------
         upper_sac_trib_fish <-  route(year = juv_dynamics_year,
