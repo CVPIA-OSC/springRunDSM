@@ -12,16 +12,17 @@ ocean_entry_success(
   month,
   avg_ocean_transition_month,
   length = c(-0.0897309864, -0.0709704348, -0.0208590732, 0.0732620916),
-  betas = c(`intercept 1` = -0.5108849, `intercept 2` = 1.2, `intercept 3` = 1.2,
-    `intercept 4` = 1.2, `intercept 5` = 1.2, `intercept 6` = -3.3233638, `intercept 7` =
-    1.2, `intercept 8` = 1.2, `intercept 9` = 1.2, `intercept 10` = -3.2304288,
-    `intercept 11` = 1.2, `intercept 12` = -3.4148335, `intercept 13` = 1.2, `intercept
-    14` = 1.2, `intercept 15` = 1.2, `intercept 16` = 1.2, `intercept 17` = 1.2,
-    `intercept 18` = -3.5, `intercept 19` = -3.5, `intercept 20` = -3.5, `intercept 21` =
-    1.2, `intercept 22` = 1.2,      `intercept 23` = -1.308341, `intercept 24` = 1.2,
-    `intercept 25` = -1.9841364, `intercept 26` = -1.9841364, `intercept 27` = 2.5000007,
-    `intercept 28` = -3.5, `intercept 29` = -3, `intercept 30` = -0.9, `intercept 31` =
-    1.2, months = 0.35)
+  betas = c(`intercept 1` = -3.499546, `intercept 2` = -3.499546, `intercept 3` =
+    -2.594527, `intercept 4` = -3.499546, `intercept 5` = -3.499546, `intercept 6` =
+    -1.538052, `intercept 7` = -2.594527, `intercept 8` = -3.499546, `intercept 9` =
+    -3.499546, `intercept 10` = -1.498558, `intercept 11` = -3.499546, `intercept 12` =
+    -3.229904, `intercept 13` = -3.499546, `intercept 14` = -3.499546, `intercept 15` =
+    -3.499546, `intercept 16` = -3.499546, `intercept 17` = -3.499546, `intercept 18` =
+    2.499741, `intercept 19` = 2.499741,      `intercept 20` = -2.962011, `intercept 21`
+    = -3.499546, `intercept 22` = -3.499546, `intercept 23` = -3.499546, `intercept 24` =
+    -3.499546, `intercept 25` = -3.499546, `intercept 26` = -3.499546, `intercept 27` =
+    -3.499546, `intercept 28` = -3.499546, `intercept 29` = -3.499546, `intercept 30` =
+    -3.499546, `intercept 31` = -3.499546, months = 0.35)
 )
 }
 \arguments{

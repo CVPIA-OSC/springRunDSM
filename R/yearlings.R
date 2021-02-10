@@ -53,25 +53,6 @@ yearling_growth <- function(year, yearlings) {
 
 
 
-
-yearling_growth(yearlings = yearlings, 
-                year = 2)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' @title Yearling Migration
 yearling_migration <- function(year, yearlings, migrants, north_delta_fish, south_delta_fish, 
                                juveniles_at_chipps, growth_rates, annual_migrants, avg_ocean_transition_month, month = 11) {
