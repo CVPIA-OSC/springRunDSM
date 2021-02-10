@@ -105,6 +105,7 @@ survival_betas <- cvpiaData::watershed_ordering %>%
              `survival adjustments` = surv.adj)
 
 usethis::use_data(survival_betas, overwrite = TRUE)
+# write_csv(survival_betas, "data-raw/sr-survival-betas.csv")
 
 # TODO make the model use these tibbles!
 

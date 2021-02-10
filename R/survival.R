@@ -293,13 +293,15 @@ get_rearing_survival_rates <- function(year, month, scenario) {
 #' @source IP-117068
 #' @export
 surv_juv_outmigration_sac <- function(flow_cms, avg_temp, total_diversions, prop_diversions,
-                                  betas = c(`intercept 1` = 2.5, flow = 0.0092,
-                                            `proportion diversion` = -3.51 * 0.05,
-                                            `total diversion` = -0.0021 * 0.215,
-                                            `intercept 2` = 0.3,
+                                  betas = c(`intercept 1` = 2.044381, 
+                                            flow = 0.0092,
+                                            `proportion diversion` = 0.01000010 * -3.51,
+                                            `total diversion` = 0.19126503 * -0.0021,
+                                            `intercept 2` = 0.999856,
                                             `average temperature` = 0.554,
                                             `model weight` = .5,
-                                            medium = 1.48, large = 2.223)){
+                                            medium = 1.48, 
+                                            large = 2.223)){
 
 
   base_score1 <- betas[1] + betas[2] * flow_cms + betas[3] * prop_diversions + betas[4] * total_diversions
