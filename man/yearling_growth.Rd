@@ -4,7 +4,11 @@
 \alias{yearling_growth}
 \title{Spring-Run Yearlings}
 \usage{
-yearling_growth(year, yearlings)
+yearling_growth(
+  year,
+  yearlings,
+  territory_size = c(0.05423379, 0.14539419, 0.48471474, 0.48471474)
+)
 }
 \description{
 Spring-Run Yearlings
