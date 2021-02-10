@@ -24,26 +24,52 @@ yearling_growth <- function(year, yearlings) {
                                month = month, 
                                scenario = NULL)
     
-    # TODO confirm the method above, the OG model has scaling in this part of the run
-    yearlings_filled <- fill_natal(juveniles = yearlings, 
-               inchannel_habitat = yearling_habitat$inchannel, 
-               floodplain_habitat = yearling_habitat$floodplain, 
-               territory_size = c(0.05423379,0.14539419,0.48471474,0.00000000))
     
-    yearlings_reared <- rear(juveniles = yearlings_filled$inchannel, 
-                             survival_rate = yearling_survival_rates$inchannel, 
-                             growth = growth_rates, 
-                             floodplain_juveniles = yearlings_filled$floodplain, 
-                             floodplain_survival_rate = yearling_survival_rates$floodplain, 
-                             floodplain_growth = growth_rates_floodplain, 
-                             weeks_flooded = weeks_flooded[, month, year])
     
-    yearlings <- yearlings_reared$inchannel + yearlings_reared$floodplain
+    
+    
+    
+    # # TODO confirm the method above, the OG model has scaling in this part of the run
+    # yearlings_filled <- fill_natal(juveniles = yearlings, 
+    #            inchannel_habitat = yearling_habitat$inchannel, 
+    #            floodplain_habitat = yearling_habitat$floodplain, 
+    #            territory_size = c(0.05423379,0.14539419,0.48471474,0.00000000))
+    # 
+    # yearlings_reared <- rear(juveniles = yearlings_filled$inchannel, 
+    #                          survival_rate = yearling_survival_rates$inchannel, 
+    #                          growth = growth_rates, 
+    #                          floodplain_juveniles = yearlings_filled$floodplain, 
+    #                          floodplain_survival_rate = yearling_survival_rates$floodplain, 
+    #                          floodplain_growth = growth_rates_floodplain, 
+    #                          weeks_flooded = weeks_flooded[, month, year])
+    # 
+    # yearlings <- yearlings_reared$inchannel + yearlings_reared$floodplain
     
   }
   
   return(yearlings)
 }
+
+
+
+
+
+yearling_growth(yearlings = yearlings, 
+                year = 2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #' @title Yearling Migration
