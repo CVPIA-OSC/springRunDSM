@@ -148,11 +148,14 @@ surv_juv_bypass <- function(max_temp_thresh, avg_temp_thresh, high_predation,
 #' @export
 surv_juv_delta <- function(max_temp_thresh, avg_temp_thresh, high_predation, contact_points,
                            prop_diverted, total_diverted,
-                           betas = c(intercept = 1.4, `avg temp thresh` = -0.717,
-                                     predation = -0.122, contact = 0.0358 * -0.189,
+                           betas = c(intercept = 1.42642277, 
+                                     `avg temp thresh` = -0.717,
+                                     predation = -0.122, 
+                                     contact = 0.09999992 * -0.189,
                                      `prop diversions` = -3.51,
-                                     `total diversions` = 0.5 * -0.0021,
-                                     medium = 1.48, large = 2.223)){
+                                     `total diversions` = 0.61104442 * -0.0021,
+                                     medium = 1.48, 
+                                     large = 2.223)){
 
   base_score <- betas[1] +
     betas[2] * avg_temp_thresh +
