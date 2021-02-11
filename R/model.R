@@ -176,8 +176,138 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
         
         if (month == 11 & year > 1) {
           yearlings <- yearling_growth(year, round(yearlings))
-          yearling_migration(year, yearlings, migrants, north_delta_fish, south_delta_fish, 
-                             juveniles_at_chipps, growth_rates, annual_migrants, avg_ocean_transition_month)
+          
+          # detoured.fish<-rbinMatObject(yearlings[1:15,],prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),1],stochastic)
+          sutter_detoured <- t(sapply(1:nrow(yearlings[1:15, ]), function(i) {
+            rbinom(n = 4,
+                   size = round(yearlings[i, ]),
+                   prob = proportion_flow_bypass[month, year, 1])
+          }))
+          
+          # yearlingsUM<-(rbind(rbin2MatSpec(yearlings[1:15,]-detoured.fish,UM.Sac.S,stochastic),matrix(0,ncol=4,nrow=2))*stochastic)+(rbind((yearlings[1:15,]*(1-prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),1]))%z%UM.Sac.S,matrix(0,ncol=4,nrow=2)))*(1-stochastic)
+          yearlings_at_uppermid <- migrate(yearlings[1:15, ] - sutter_detoured, migratory_survival$uppermid_sac)
+          
+          # yearlingsSut<-(rbind(rbin2MatSpec(detoured.fish,Sut.S,stochastic),matrix(0,ncol=4,nrow=2))*stochastic)+(rbind(detoured.fish%z%Sut.S,matrix(0,ncol=4,nrow=2)))*(1-stochastic)
+          yearlings_at_sutter <- migrate(sutter_detoured, migratory_survival$sutter)
+          
+          # yearlingsUM<-yearlingsSut+yearlingsUM
+          yearlings_at_uppermid <- yearlings_at_sutter + yearlings_at_uppermid
+          
+          # yearlingsLM<-rbind(yearlingsUM,yearlings[18:20,])
+          yearlings_at_lowermid <- rbind(yearlings_at_uppermid, yearlings[18:20]) 
+          
+          # detoured.fish<-rbinMatObject(yearlingsLM,prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),5],stochastic)
+          # yearlingsyolo<-detoured.fish
+          yolo_detoured <- t(sapply(1:nrow(yearlings_at_lowermid), function(i) {
+            rbinom(n = 4,
+                   size = round(yearlings_at_lowermid[i, ]),
+                   prob = proportion_flow_bypass[month, year, 2])
+          }))
+          
+          # yearlingsLM<-(stochastic*(yearlingsLM-detoured.fish))+((1-stochastic)*(yearlingsLM*(1-prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),5])))
+          # detoured.fish<-NULL
+          # yearlingsLSac<-(rbind(rbin2MatSpec(yearlingsLM,LM.Sac.S,stochastic),matrix(0,ncol=4,nrow=3))*stochastic)+(rbind(yearlingsLM%z%LM.Sac.S,matrix(0,ncol=4,nrow=3)))*(1-stochastic)
+          yearlings_at_lowersac <- migrate(yearlings_at_lowermid - yolo_detoured, migratory_survival$lowermid_sac)
+          
+          # yearlingsLSac[23,]<-yearlings[23,]
+          yearlings_at_lowersac[23, ] <- yearlings[23, ]
+          
+          # yearlingsLSac<-(rbin2MatSpec(yearlingsLSac,LL.Sac.S,stochastic)*stochastic)+((yearlingsLSac%z%LL.Sac.S)*(1-stochastic))
+          yearlings_at_lowersac <- migrate(yearlings_at_lowersac, migratory_survival$lower_sac)
+          
+          # sac.not.entrained<-rbinMatObject(yearlingsLSac,(1-prop.dlt.entrain),stochastic)
+          prop_delta_fish_entrained <- route_south_delta(freeport_flow = freeport_flows[[month, year]] * 35.3147,
+                                                         dcc_closed = cc_gates_days_closed[month],
+                                                         month = month)
+          
+          sac_not_entrained <- t(sapply(1:nrow(yearlings_at_lowersac), function(i) {
+            
+            rbinom(n = 4, yearlings_at_lowersac[i, ], prob = 1 - prop_delta_fish_entrained)
+          }))
+          
+          # yearlingsNDl<-sac.not.entrained + 
+          #   (rbind(rbin2MatSpec(yearlingsyolo,Yolo.S,stochastic),matrix(0,ncol=4,nrow=3))*stochastic)+(rbind(yearlingsyolo%z%Yolo.S,matrix(0,ncol=4,nrow=3)))*(1-stochastic)
+          yearlings_at_north_delta <- sac_not_entrained + 
+            rbind(migrate(yolo_detoured, migratory_survival$yolo), matrix(0, ncol = 4, nrow = 3))
+          
+          # yearlingsNDl<-rbind(yearlingsNDl,matrix(0,ncol=4,nrow=8))
+          yearlings_at_north_delta <- rbind(yearlings_at_north_delta, 
+                                            matrix(0, ncol = 4, nrow = 8))
+          
+          
+          # yearlingsSDl<-rbind(
+          #   matrix(0,ncol=4,nrow=24),
+          #   yearlings[25:27,],
+          #   ((rbin2MatSpec(yearlings[28:30,],SJ.S,stochastic)*stochastic)+(yearlings[28:30,]%z%SJ.S)*(1-stochastic)),
+          #   matrix(0,ncol=4,nrow=1)
+          # ) +
+          #   rbind((((yearlingsLSac-sac.not.entrained)*stochastic)+((yearlingsLSac*prop.dlt.entrain)*(1-stochastic))),matrix(0,ncol=4,nrow=8))
+          # 
+          yearlings_at_south_delta <- rbind(
+            matrix(0, ncol = 4, nrow = 24), # 24 rows for north delta/sac origin fish
+            yearlings[25:27, ], # delta tribs
+            migrate(yearlings[28:30,], migratory_survival$san_joaquin), 
+            matrix(0, ncol = 4, nrow = 1) # SJR
+          ) + 
+            rbind(
+              yearlings_at_lowersac - sac_not_entrained, 
+              matrix(0, ncol = 4, nrow = 8)
+            )
+          
+          
+          # estimate fish at Golden Gate Bridge and Chipps Island
+          # holdSdelta<-array(0,dim=dim(S.delt.fsh$out2ocean))
+          yearling_holding_south_delta <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
+          
+          # holdSdelta[1:24,]<-rbinMatVector(S.delt.fsh$out2ocean[1:24,],newDsurv[1,],stochastic)
+          yearling_holding_south_delta[1:24, ] <- t(sapply(1:24, function(i) {
+            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[1, ])
+          }))
+          
+          # holdSdelta[26:27,]<-rbinMatVector(S.delt.fsh$out2ocean[26:27,],newDsurv[2,],stochastic)
+          yearling_holding_south_delta[26:27, ] <- t(sapply(26:27, function(i) {
+            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[2, ])
+          }))
+          
+          # holdSdelta[25,]<-rbin2Vectors(S.delt.fsh$out2ocean[25,],newDsurv[3,],stochastic)
+          yearling_holding_south_delta[25, ] <- rbinom(n = 4, 
+                                              yearlings_at_south_delta[25, , drop = F], 
+                                              prob = migratory_survival$delta[3, ])
+          
+          # holdSdelta[28:31,]<-rbinMatVector(S.delt.fsh$out2ocean[28:31,],newDsurv[4,],stochastic)
+          yearling_holding_south_delta[28:31, ] <- t(sapply(28:31, function(i) {
+            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[4, ])
+          }))
+          
+          # migrants.out<-rbinMatVector(N.delt.fsh$out2ocean,Sac.Delt.S[1,],stochastic)
+          yearlings_out <- t(sapply(1:nrow(yearlings_at_north_delta), function(i) {
+            rbinom(n = 4, 
+                   size = round(yearlings_at_north_delta[i, ]), 
+                   prob = migratory_survival$sac_delta[1, ])
+          }))
+          
+          
+          # migrants.at.GG<-rbinMatObject(migrants.out,Bay.S,stochastic)+rbinMatObject(holdSdelta,Bay.S,stochastic)
+          survived_yearlings_out <- t(sapply(1:nrow(yearlings_out), function(i) {
+            rbinom(n = 4,
+                   size = round(yearlings_out[i, ]),
+                   prob = migratory_survival$bay_delta)
+          }))
+          
+          survived_yearling_holding_south_delta <- t(sapply(1:nrow(yearling_holding_south_delta), function(i) {
+            rbinom(n = 4,
+                   size = round(yearling_holding_south_delta[i, ]),
+                   prob = migratory_survival$bay_delta)
+          }))
+          
+          yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
+          
+          
+          juveniles_at_chipps <- juveniles_at_chipps + yearlings_out + yearling_holding_south_delta
+          
+          adults_in_ocean <- adults_in_ocean + ocean_entry_success(migrants = yearlings_at_golden_gate,
+                                                                   month = 11,
+                                                                   avg_ocean_transition_month = avg_ocean_transition_month)
         }
         
         # if month < 8
