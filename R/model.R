@@ -56,8 +56,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     annual_migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
     avg_ocean_transition_month <- ocean_transition_month() # 2
     # TODO confirm this works as expected
-    yearlings <- matrix(0, ncol = 4, nrow = 31, 
-                        dimnames = list(watershed_labels, size_class_labels))
+    
     
     
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
@@ -133,6 +132,9 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
       if (month == 5) {
         # yearling logic here
         # 1 - 15, 18-20, 23, 25:30
+        yearlings <- matrix(0, ncol = 4, nrow = 31, 
+                            dimnames = list(watershed_labels, size_class_labels))
+        
         yearlings[c(1:15, 18:20, 23, 25:30), 1:2] <- 
           juveniles[c(1:15, 18:20, 23, 25:30), 1:2]
         juveniles[c(1:15, 18:20, 23, 25:30), 1:2] <- 0 # set all to zero since they are yearlings now
