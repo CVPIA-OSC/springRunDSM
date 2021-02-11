@@ -4,7 +4,7 @@ yearling_growth <- function(year, yearlings,
   
   growth_rates <- diag(1, nrow = 4, ncol = 4)
   growth_rates_floodplain <- replicate(4, diag(1, 4, 4))
-
+  
   for (month in 5:10) {
     # only months 9, 10 experience growth
     if (month %in% 9:10) {
@@ -37,7 +37,7 @@ yearling_growth <- function(year, yearlings,
       }  
     }
     
-    fp_rearing <- pmax(fp_rearing, 0) # everything must be greater than 0
+    fp_rearing <- round(pmax(fp_rearing, 0)) # everything must be greater than 0
     yearlings <- pmax(yearlings - fp_rearing, 0) # remove from yearlings and set min 0
     
     inchannel_remaining <- habitat$inchannel 
@@ -46,13 +46,13 @@ yearling_growth <- function(year, yearlings,
       for (s in 4:1) {
         # either the max the number of fish that fit or the total number of fish
         ic_rearing[w, s] <- min(inchannel_remaining[w]/territory_size[s], yearlings[w, s])
-        # update floodplain remaining 
+        # update inchannel remaining 
         inchannel_remaining[w] <- 
           max(inchannel_remaining[w] - ic_rearing[w, s]*territory_size[s], 0)
       } 
     }
     
-    ic_rearing <- pmax(ic_rearing, 0)
+    ic_rearing <- round(pmax(ic_rearing, 0))
     yearlings <- pmax(yearlings - ic_rearing, 0)
     
     # apply habitat specific mortality
@@ -65,7 +65,7 @@ yearling_growth <- function(year, yearlings,
     }))
     
     # apply growth 
-    ic_rearing <- ic_rearing %*% growth_rates
+    ic_rearing <- round(ic_rearing %*% growth_rates)
     
     
     fp_rearing <- t(sapply(1:length(this_weeks_flooded), function(i) {
@@ -74,10 +74,12 @@ yearling_growth <- function(year, yearlings,
       else 
         fp_rearing[i, ] %*% growth_rates_floodplain[,,this_weeks_flooded[i]]
     }))
+    
+    yearlings <- round(fp_rearing + ic_rearing)
   
   }
   
-  return(list(inchannel=ic_rearing, floodplain=fp_rearing))
+  return(yearlings)
 }
 
 
