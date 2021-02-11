@@ -174,8 +174,8 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
         
       } else {
         
-        if (month == 11) {
-          yearlings <- yearling_growth(year, yearlings)
+        if (month == 11 & year > 1) {
+          yearlings <- yearling_growth(year, round(yearlings))
           yearling_migration(year, yearlings, migrants, north_delta_fish, south_delta_fish, 
                              juveniles_at_chipps, growth_rates, annual_migrants, avg_ocean_transition_month)
         }
