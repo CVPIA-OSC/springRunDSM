@@ -115,7 +115,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                redd_size = 9.29, 
                                fecundity = 5522)
     
-
+    
     # TODO flood activation based on scenarios
     
     for (month in c(11, 12, 1:5)) {
