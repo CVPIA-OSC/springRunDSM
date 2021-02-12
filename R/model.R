@@ -1,5 +1,3 @@
-RETURN_MONTHS <- 3:6
-
 #' @title Spring Run Chinook Model
 #' @description Spring Run Chinook life cycle model used for CVPIA's Structured
 #' Decision Making Process
@@ -60,7 +58,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     
     
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
-    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults)
+    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds=seeds)
     init_adults <- spawners$init_adults
     
     output$spawners[ , year] <- init_adults
@@ -73,7 +71,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
       temperature_effect = mean_egg_temp_effect
     )
     
-    min_spawn_habitat <- apply(spawning_habitat[ , RETURN_MONTHS, year], 1, min)
+    min_spawn_habitat <- apply(spawning_habitat[ , 3:6, year], 1, min)
     
     accumulated_degree_days <- cbind(mar = rowSums(degree_days[ , 3:6, year] * (spawners$init_adults_by_month > 0)),
                                      apr = rowSums(degree_days[ , 4:6, year] * (spawners$init_adults_by_month[, 2:4] > 0)),
@@ -86,7 +84,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     
     # HOLDING PERIOD FOR SPRING RUN
     init_spawn_adult_rand <- matrix(0, ncol = 2, nrow = 31)
-    init_spawn_adult <- matrix(0, ncol = 2, nrow = 31)
     
     # Add calculations for SR pool
     init_adults <- ifelse(init_adults >= spring_run_pools, spring_run_pools, init_adults)
@@ -94,9 +91,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     # Add split popoulation in half using binom and 
     init_spawn_adult_rand[, 1] <- rbinom(31, init_adults, 0.5)
     init_spawn_adult_rand[, 2] <- pmax(init_adults - init_spawn_adult_rand[, 1], 0)
-    
-    init_spawn_adult[, 1] <- init_adults * .5
-    init_spawn_adult[, 2] <- init_spawn_adult[, 1]
     
     # TODO figure out a cleaner way to do this 
     average_degree_days <- ((init_spawn_adult_rand[, 1] * rowSums(degree_days[, 7:10, year])) +
@@ -106,14 +100,14 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     
     prespawn_survival <- surv_adult_prespawn(average_degree_days)
     
-    juveniles <- spawn_success(escapement = init_adults,
+    juveniles <- round(spawn_success(escapement = init_adults,
                                adult_prespawn_survival = prespawn_survival,
                                egg_to_fry_survival = egg_to_fry_surv,
                                prob_scour = prob_nest_scoured,
                                spawn_habitat = min_spawn_habitat, 
                                sex_ratio = 0.5, 
                                redd_size = 9.29, 
-                               fecundity = 5522)
+                               fecundity = 5522))
     
     
     # TODO flood activation based on scenarios
@@ -188,7 +182,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
           yearlings_at_uppermid <- migrate(yearlings[1:15, ] - sutter_detoured, migratory_survival$uppermid_sac)
           
           # yearlingsSut<-(rbind(rbin2MatSpec(detoured.fish,Sut.S,stochastic),matrix(0,ncol=4,nrow=2))*stochastic)+(rbind(detoured.fish%z%Sut.S,matrix(0,ncol=4,nrow=2)))*(1-stochastic)
-          yearlings_at_sutter <- migrate(sutter_detoured, migratory_survival$sutter)
+          yearlings_at_sutter <- migrate(sutter_detoured, migratory_survival$sutter) 
           
           # yearlingsUM<-yearlingsSut+yearlingsUM
           yearlings_at_uppermid <- yearlings_at_sutter + yearlings_at_uppermid
