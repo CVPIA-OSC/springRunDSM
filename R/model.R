@@ -185,16 +185,22 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
           }))
           
           # yearlingsUM<-(rbind(rbin2MatSpec(yearlings[1:15,]-detoured.fish,UM.Sac.S,stochastic),matrix(0,ncol=4,nrow=2))*stochastic)+(rbind((yearlings[1:15,]*(1-prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),1]))%z%UM.Sac.S,matrix(0,ncol=4,nrow=2)))*(1-stochastic)
-          yearlings_at_uppermid <- migrate(yearlings[1:15, ] - sutter_detoured, migratory_survival$uppermid_sac)
+          yearlings_at_uppermid <- rbind(
+            migrate(yearlings[1:15, ] - sutter_detoured, migratory_survival$uppermid_sac), 
+            matrix(0, ncol = 4, nrow = 2)
+          )
           
           # yearlingsSut<-(rbind(rbin2MatSpec(detoured.fish,Sut.S,stochastic),matrix(0,ncol=4,nrow=2))*stochastic)+(rbind(detoured.fish%z%Sut.S,matrix(0,ncol=4,nrow=2)))*(1-stochastic)
-          yearlings_at_sutter <- migrate(sutter_detoured, migratory_survival$sutter)
+          yearlings_at_sutter <- rbind(
+            migrate(sutter_detoured, migratory_survival$sutter), 
+            matrix(0, ncol = 4, nrow = 2)
+          )
           
           # yearlingsUM<-yearlingsSut+yearlingsUM
           yearlings_at_uppermid <- yearlings_at_sutter + yearlings_at_uppermid
           
           # yearlingsLM<-rbind(yearlingsUM,yearlings[18:20,])
-          yearlings_at_lowermid <- rbind(yearlings_at_uppermid, yearlings[18:20]) 
+          yearlings_at_lowermid <- rbind(yearlings_at_uppermid, yearlings[18:20, ]) 
           
           # detoured.fish<-rbinMatObject(yearlingsLM,prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),5],stochastic)
           # yearlingsyolo<-detoured.fish
@@ -207,7 +213,10 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
           # yearlingsLM<-(stochastic*(yearlingsLM-detoured.fish))+((1-stochastic)*(yearlingsLM*(1-prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),5])))
           # detoured.fish<-NULL
           # yearlingsLSac<-(rbind(rbin2MatSpec(yearlingsLM,LM.Sac.S,stochastic),matrix(0,ncol=4,nrow=3))*stochastic)+(rbind(yearlingsLM%z%LM.Sac.S,matrix(0,ncol=4,nrow=3)))*(1-stochastic)
-          yearlings_at_lowersac <- migrate(yearlings_at_lowermid - yolo_detoured, migratory_survival$lowermid_sac)
+          yearlings_at_lowersac <- rbind(
+            migrate(yearlings_at_lowermid - yolo_detoured, migratory_survival$lowermid_sac), 
+            matrix(0, ncol = 4, nrow = 3)
+          )
           
           # yearlingsLSac[23,]<-yearlings[23,]
           yearlings_at_lowersac[23, ] <- yearlings[23, ]
