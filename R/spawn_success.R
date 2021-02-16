@@ -10,7 +10,6 @@
 #' @param fecundity The number of eggs per female, default value 5522
 #' @source IP-117068
 #' @export
-
 spawn_success <- function(escapement, adult_prespawn_survival, egg_to_fry_survival,
                           prob_scour, spawn_habitat,
                           sex_ratio = 0.5, redd_size = 9.29, fecundity = 5522){
@@ -24,4 +23,25 @@ spawn_success <- function(escapement, adult_prespawn_survival, egg_to_fry_surviv
   zeros <- matrix(0, nrow = length(escapement), ncol = 3)
   cbind(fry, zeros)
 
+}
+
+#' @export
+rspawn_success <- function(escapement, adult_prespawn_survival, egg_to_fry_survival,
+                           prob_scour, spawn_habitat,
+                           sex_ratio = 0.5, redd_size = 9.29, fecundity = 5522){
+  
+  capacity <- spawn_habitat / redd_size
+  
+  spawner_potential <- rbinom(31, round(escapement), (adult_prespawn_survival * sex_ratio))
+    
+  spawners <- ifelse(spawner_potential > capacity, capacity, spawner_potential)
+  
+  fry <- spawners * (1 - prob_scour) * fecundity * egg_to_fry_survival
+  
+  rand_fry <- pmax(round(rnorm(31,fry,(sqrt(fry)/2))),0)
+  
+  
+  zeros <- matrix(0, nrow = length(escapement), ncol = 3)
+  cbind(rand_fry, zeros)
+  
 }
