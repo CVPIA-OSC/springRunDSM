@@ -73,34 +73,37 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     
     min_spawn_habitat <- apply(spawning_habitat[ , 3:6, year], 1, min)
     
-    accumulated_degree_days <- cbind(mar = rowSums(degree_days[ , 3:6, year] * (spawners$init_adults_by_month > 0)),
-                                     apr = rowSums(degree_days[ , 4:6, year] * (spawners$init_adults_by_month[, 2:4] > 0)),
-                                     may = rowSums(degree_days[ , 5:6, year] * (spawners$init_adults_by_month[, 3:4] > 0)), 
-                                     jun = degree_days[ , 6, year] * (spawners$init_adults_by_month[, 4] > 0))
+    average_degree_days <- (
+      spawners$init_adults_by_month[,1]*rowSums(degree_days[,3:6,year]) +
+        spawners$init_adults_by_month[,2]*rowSums(degree_days[,4:6,year]) +           
+        spawners$init_adults_by_month[,3]*rowSums(degree_days[,5:6,year]) + 
+        spawners$init_adults_by_month[,4]*(degree_days[,6,year])
+    )/(init_adults)    
+    average_degree_days <- ifelse(is.nan(average_degree_days), 0, average_degree_days)
     
-    average_degree_days <- apply(accumulated_degree_days, 1, weighted.mean, month_return_proportions)
+    # calculate and apply pre-spawn survival to adults
     prespawn_survival <- surv_adult_prespawn(average_degree_days)
     init_adults <- rbinom(31, round(init_adults), prespawn_survival)
     
-    # HOLDING PERIOD FOR SPRING RUN
-    init_spawn_adult_rand <- matrix(0, ncol = 2, nrow = 31)
-    
-    # Add calculations for SR pool
+    # spring run above capacity die, capacity based on spring run pools
     init_adults <- ifelse(init_adults >= spring_run_pools, spring_run_pools, init_adults)
     
-    # Add split popoulation in half using binom and 
-    init_spawn_adult_rand[, 1] <- rbinom(31, init_adults, 0.5)
-    init_spawn_adult_rand[, 2] <- pmax(init_adults - init_spawn_adult_rand[, 1], 0)
+    # Holding period for spring run
+    # apply degree days and prespawn survival 
+    init_spawn_holding <- matrix(0, ncol = 2, nrow = 31)
     
-    # TODO figure out a cleaner way to do this 
-    average_degree_days <- ((init_spawn_adult_rand[, 1] * rowSums(degree_days[, 7:10, year])) +
-                              (init_spawn_adult_rand[, 2] * rowSums(degree_days[, 7:9, year])))/init_adults
+    # Add split popoulation in half using binom and 
+    init_spawn_holding[, 1] <- rbinom(31, init_adults, 0.5)
+    init_spawn_holding[, 2] <- pmax(init_adults - init_spawn_holding[, 1], 0)
+    
+    average_degree_days <- ((init_spawn_holding[, 1] * rowSums(degree_days[, 7:10, year])) +
+                              (init_spawn_holding[, 2] * rowSums(degree_days[, 7:9, year])))/init_adults
     
     average_degree_days <- ifelse(is.nan(average_degree_days), 0, average_degree_days)
     
     prespawn_survival <- surv_adult_prespawn(average_degree_days)
     
-    juveniles <- round(spawn_success(escapement = init_adults,
+    juveniles <- round(rspawn_success(escapement = init_adults,
                                adult_prespawn_survival = prespawn_survival,
                                egg_to_fry_survival = egg_to_fry_surv,
                                prob_scour = prob_nest_scoured,
@@ -169,6 +172,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
       } else {
         
         if (month == 11 & year > 1) {
+          # applying summer year to the yearlings and send them out to the ocean
           yearlings <- yearling_growth(year, round(yearlings))
           
           # detoured.fish<-rbinMatObject(yearlings[1:15,],prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),1],stochastic)
