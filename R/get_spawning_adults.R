@@ -23,6 +23,11 @@ get_spawning_adults <- function(year, adults, hatch_adults, seeds) {
     proportion_natural <- 1 - proportion_hatchery
     
   } else  {
+    
+    hatchery_by_month <- t(sapply(1:31, function(watershed) {
+      rmultinom(1, returning_hatchery_adults[watershed], month_return_proportions)
+    }))
+    
     stray_props <- sapply(3:6, function(month) {
       adult_stray(wild = 1,
                   natal_flow = prop_flow_natal[ , year],

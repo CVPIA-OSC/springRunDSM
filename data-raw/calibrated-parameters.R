@@ -71,10 +71,6 @@ vect=c(-2.25097915, # 1 default calibration int
 
 
 surv.adj <- rep(1, 31)
-surv.adj[c(2, 4, 5, 8, 9, 11, 14, 13, 15, 18)] <- 0.025
-surv.adj[c(8)] <- 0.50
-surv.adj[c(9)] <- 0.25
-
 
 # Create a dataframe that contains the watersheds and corresponding betas for each
 index_ws_to_update <- c(3, 6, 7, 10, 12, 16, 19, 20, 21, 24, 31)
