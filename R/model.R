@@ -333,7 +333,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                     floodplain_juveniles = upper_sac_trib_fish$floodplain,
                                     floodplain_survival_rate = rearing_survival$floodplain[1:15, ],
                                     floodplain_growth = growth_rates_floodplain,
-                                    weeks_flooded = weeks_flooded[1:15, month, year])
+                                    weeks_flooded = weeks_flooded[1:15, month, juv_dynamics_year])
         
         juveniles[1:15, ] <- upper_sac_trib_rear$inchannel + upper_sac_trib_rear$floodplain
         
@@ -365,7 +365,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                    floodplain_juveniles = upper_mid_sac_fish$floodplain,
                                    floodplain_survival_rate = rearing_survival$floodplain[16, ],
                                    floodplain_growth = growth_rates_floodplain,
-                                   weeks_flooded = rep(weeks_flooded[16, month, year], nrow(upper_mid_sac_fish$inchannel)))
+                                   weeks_flooded = rep(weeks_flooded[16, month, juv_dynamics_year], nrow(upper_mid_sac_fish$inchannel)))
         
         upper_mid_sac_fish <- upper_mid_sac_fish$inchannel + upper_mid_sac_fish$floodplain
         
@@ -386,7 +386,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                         floodplain_juveniles = lower_mid_sac_trib_fish$floodplain,
                                         floodplain_survival_rate = rearing_survival$floodplain[18:20, ],
                                         floodplain_growth = growth_rates_floodplain,
-                                        weeks_flooded = weeks_flooded[18:20, month, year])
+                                        weeks_flooded = weeks_flooded[18:20, month, juv_dynamics_year])
         
         juveniles[18:20, ] <- lower_mid_sac_trib_rear$inchannel + lower_mid_sac_trib_rear$floodplain
         
@@ -416,7 +416,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                    floodplain_juveniles = lower_mid_sac_fish$floodplain,
                                    floodplain_survival_rate = rearing_survival$floodplain[21, ],
                                    floodplain_growth = growth_rates_floodplain,
-                                   weeks_flooded = rep(weeks_flooded[21, month, year], nrow(lower_mid_sac_fish$inchannel)))
+                                   weeks_flooded = rep(weeks_flooded[21, month, juv_dynamics_year], nrow(lower_mid_sac_fish$inchannel)))
         
         lower_mid_sac_fish <- lower_mid_sac_fish$inchannel + lower_mid_sac_fish$floodplain
         
@@ -436,7 +436,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                     floodplain_juveniles = lower_sac_trib_fish$floodplain,
                                     floodplain_survival_rate = rearing_survival$floodplain[23, , drop = FALSE],
                                     floodplain_growth = growth_rates_floodplain,
-                                    weeks_flooded = weeks_flooded[23, month, year])
+                                    weeks_flooded = weeks_flooded[23, month, juv_dynamics_year])
         
         juveniles[23, ] <- lower_sac_trib_rear$inchannel + lower_sac_trib_rear$floodplain
         
@@ -457,7 +457,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                floodplain_juveniles = lower_sac_fish$floodplain,
                                floodplain_survival_rate = rearing_survival$floodplain[24, ],
                                floodplain_growth = growth_rates_floodplain,
-                               weeks_flooded = rep(weeks_flooded[24, month, year], nrow(lower_sac_fish$inchannel)))
+                               weeks_flooded = rep(weeks_flooded[24, month, juv_dynamics_year], nrow(lower_sac_fish$inchannel)))
         
         lower_sac_fish <- lower_sac_fish$inchannel + lower_sac_fish$floodplain
         
@@ -479,7 +479,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                       floodplain_juveniles = south_delta_trib_fish$floodplain,
                                       floodplain_survival_rate = rearing_survival$floodplain[25:27, ],
                                       floodplain_growth = growth_rates_floodplain,
-                                      weeks_flooded = weeks_flooded[25:27, month, year])
+                                      weeks_flooded = weeks_flooded[25:27, month, juv_dynamics_year])
         
         juveniles[25:27, ] <- south_delta_trib_rear$inchannel + south_delta_trib_rear$floodplain
         
@@ -502,7 +502,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                       floodplain_juveniles = san_joaquin_trib_fish$floodplain,
                                       floodplain_survival_rate = rearing_survival$floodplain[28:30, ],
                                       floodplain_growth = growth_rates_floodplain,
-                                      weeks_flooded = weeks_flooded[28:30, month, year])
+                                      weeks_flooded = weeks_flooded[28:30, month, juv_dynamics_year])
         
         juveniles[28:30, ] <- san_joaquin_trib_rear$inchannel + san_joaquin_trib_rear$floodplain
         
@@ -521,7 +521,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                  floodplain_juveniles = san_joaquin_fish$floodplain,
                                  floodplain_survival_rate = rearing_survival$floodplain[31, ],
                                  floodplain_growth = growth_rates_floodplain,
-                                 weeks_flooded = rep(weeks_flooded[31, month, year], nrow(san_joaquin_fish$inchannel)))
+                                 weeks_flooded = rep(weeks_flooded[31, month, juv_dynamics_year], nrow(san_joaquin_fish$inchannel)))
         
         san_joaquin_fish <- san_joaquin_fish$inchannel + san_joaquin_fish$floodplain
         
