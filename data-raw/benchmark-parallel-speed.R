@@ -1,11 +1,12 @@
 library(tictoc)
 library(springRunDSM)
 library(parallel)
-list2env(load_baseline_data(), envir = .GlobalEnv)
+list2env(load_calibrated_data(), envir = .GlobalEnv)
 
 number_of_cores <- detectCores()
 
-seeded_adults <- fall_run_model()
+seeded_adults <- spring_run_model(seeds = NULL)
+# spring_run_model(scenario = NULL, seeds = seeded_adults)
 # output <- fall_run_model(seeds = seeded_adults)
 
 # 

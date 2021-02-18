@@ -7,7 +7,7 @@
 IP-117068
 }
 \usage{
-growth(daily_growth_rate = 0.5, size_class_breaks = c(35, 42, 72, 110))
+growth(daily_growth_rate = 0.5, size_class_breaks = c(35, 43, 73, 109))
 }
 \arguments{
 \item{size_class_breaks}{The fork size class breaks}

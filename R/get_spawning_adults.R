@@ -3,7 +3,7 @@
 #' @param adults potential spawning adults for each watershed (length = 31) values must be integer
 #' @source IP-117068
 #' @export
-get_spawning_adults <- function(year, adults, hatch_adults) {
+get_spawning_adults <- function(year, adults, hatch_adults, seeds) {
   
   returning_hatchery_adults <- hatch_adults
   
@@ -11,7 +11,7 @@ get_spawning_adults <- function(year, adults, hatch_adults) {
     rmultinom(1, adult_seeds[watershed], month_return_proportions)
   }))
   
-  if (year < 5) {
+  if (is.null(seeds)) {
     natural_adults_by_month <- sapply(1:4, function(month) {
       rbinom(n = 31, 
              size = round(adults_by_month[, month]), 

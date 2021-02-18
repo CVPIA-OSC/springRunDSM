@@ -7,7 +7,7 @@
 IP-117068
 }
 \usage{
-get_spawning_adults(year, adults, hatch_adults)
+get_spawning_adults(year, adults, hatch_adults, seeds)
 }
 \arguments{
 \item{year}{the year of simulation}

@@ -34,14 +34,14 @@
 surv_juv_rear <- function(max_temp_thresh, avg_temp_thresh, high_predation,
                           contact_points, prop_diversions, total_diversions,
                           stranded, weeks_flooded,
-                          betas = c(`2nd calibration adjustment` = 3.5,
+                          betas = c(`2nd calibration adjustment` = -2.250979,
                                     `average temperature` = -0.717,
                                     predation = -0.122,
-                                    `contact points` = 0.0358,
+                                    `contact points` = 0.09999992,
                                     `contact points scaler` = -0.189,
-                                    `proportion diverted` = 0.05,
+                                    `proportion diverted` = 0.0100001,
                                     `proportion diverted scaler` = -3.51,
-                                    `total diverted` = 0.215,
+                                    `total diverted` = 0.191265,
                                     `total diverted scaler` = -0.0021,
                                     stranded = -1.939,
                                     medium = 1.48,
@@ -148,11 +148,14 @@ surv_juv_bypass <- function(max_temp_thresh, avg_temp_thresh, high_predation,
 #' @export
 surv_juv_delta <- function(max_temp_thresh, avg_temp_thresh, high_predation, contact_points,
                            prop_diverted, total_diverted,
-                           betas = c(intercept = 1.4, `avg temp thresh` = -0.717,
-                                     predation = -0.122, contact = 0.0358 * -0.189,
+                           betas = c(intercept = 1.42642277, 
+                                     `avg temp thresh` = -0.717,
+                                     predation = -0.122, 
+                                     contact = 0.09999992 * -0.189,
                                      `prop diversions` = -3.51,
-                                     `total diversions` = 0.5 * -0.0021,
-                                     medium = 1.48, large = 2.223)){
+                                     `total diversions` = 0.61104442 * -0.0021,
+                                     medium = 1.48, 
+                                     large = 2.223)){
 
   base_score <- betas[1] +
     betas[2] * avg_temp_thresh +
@@ -197,7 +200,7 @@ get_rearing_survival_rates <- function(year, month, scenario) {
   maxT25D <- rbinom(2, 1, boot::inv.logit(-157.537 + 6.998 * avg_temp_delta[month, year, ]))
 
   # set proportion fish stranding
-  prob_ws_strand <- if(month < 4) prob_strand_early else prob_strand_late
+  prob_ws_strand <- if(month %in% c(11, 12, 1)) prob_strand_early else prob_strand_late
 
 
   ws_strand <-rbinom(31, 1, prob_ws_strand)
@@ -290,13 +293,15 @@ get_rearing_survival_rates <- function(year, month, scenario) {
 #' @source IP-117068
 #' @export
 surv_juv_outmigration_sac <- function(flow_cms, avg_temp, total_diversions, prop_diversions,
-                                  betas = c(`intercept 1` = 2.5, flow = 0.0092,
-                                            `proportion diversion` = -3.51 * 0.05,
-                                            `total diversion` = -0.0021 * 0.215,
-                                            `intercept 2` = 0.3,
+                                  betas = c(`intercept 1` = 2.044381, 
+                                            flow = 0.0092,
+                                            `proportion diversion` = 0.01000010 * -3.51,
+                                            `total diversion` = 0.19126503 * -0.0021,
+                                            `intercept 2` = 0.999856,
                                             `average temperature` = 0.554,
                                             `model weight` = .5,
-                                            medium = 1.48, large = 2.223)){
+                                            medium = 1.48, 
+                                            large = 2.223)){
 
 
   base_score1 <- betas[1] + betas[2] * flow_cms + betas[3] * prop_diversions + betas[4] * total_diversions

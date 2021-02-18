@@ -15,7 +15,7 @@ gamma_MOM <- function(mu, sigma){
 #' @param size_class_breaks The fork size class breaks
 #' @source IP-117068
 #' @export
-growth <- function(daily_growth_rate = .5, size_class_breaks = c(35, 42, 72, 110)){
+growth <- function(daily_growth_rate = .5, size_class_breaks = c(35, 43, 73, 109)){
 
   transition_matrix <- matrix(0, nrow = 4, ncol = 4, dimnames = list(c('s', 'm', 'l', 'vl'), c('s', 'm', 'l', 'vl')))
   transition_matrix[4, 4] <- 1
