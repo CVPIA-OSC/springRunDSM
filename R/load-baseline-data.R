@@ -160,7 +160,7 @@ load_baseline_data <- function() {
 
 #' @export
 load_calibrated_data <- function() {
-  
+  base_data <- load_baseline_data()
   vect2<-c(1.4416309,1.9379344,1.3706987,1.6449355,1.4556516,0.5481166,0.7098337,0.7279391,0.8681320,
            1.3761102,1.0039699,1.9759963,1.7591008,1.4374917,0.8327904,0.6907140,1.0503587,1.3019928,
            1.1983915)
@@ -292,6 +292,66 @@ load_calibrated_data <- function() {
     spring_run_pools = spring_run_pools
   )
 }
+
+
+# create a load data for the inputs that were used in the OG model
+#' @export
+load_2019_baseline_data <- function() {
+  vect2<-c(1.4416309,1.9379344,1.3706987,1.6449355,1.4556516,0.5481166,0.7098337,0.7279391,0.8681320,
+           1.3761102,1.0039699,1.9759963,1.7591008,1.4374917,0.8327904,0.6907140,1.0503587,1.3019928,
+           1.1983915)
+  
+  current_data <- load_baseline_data()
+  
+  current_data$spawning_habitat <- baseline_2019$IChab.spawn
+  current_data$inchannel_habitat_fry <- baseline_2019$IChab.fry
+  current_data$inchannel_habitat_juvenile <- baseline_2019$IChab.juv
+  
+  current_data$spawning_habitat[6,,] <- current_data$spawning_habitat[6,,]*vect2[1] #Butte
+  current_data$spawning_habitat[10,,]<- current_data$spawning_habitat[10,,]*vect2[2] # Deer
+  current_data$spawning_habitat[12,,]<- current_data$spawning_habitat[12,,]*vect2[3] # Mill
+  current_data$spawning_habitat[19,,]<- current_data$spawning_habitat[19,,]*vect2[4] # Feather
+  current_data$spawning_habitat[20,,]<- current_data$spawning_habitat[20,,]*vect2[5]# Yuba
+
+  current_data$inchannel_habitat_fry[6,,] <- current_data$inchannel_habitat_fry[6,,]*vect2[6] # Butte
+  current_data$inchannel_habitat_fry[10,,] <- current_data$inchannel_habitat_fry[10,,]*vect2[7] # Deer
+  current_data$inchannel_habitat_fry[12,,] <- current_data$inchannel_habitat_fry[12,,]*vect2[8] # Mill
+  current_data$inchannel_habitat_fry[16,,] <- current_data$inchannel_habitat_fry[16,,]*vect2[9] # Upper-mid Sac (corridor for above)
+  current_data$inchannel_habitat_fry[19,,] <- current_data$inchannel_habitat_fry[19,,]*vect2[10] # Feather 
+  current_data$inchannel_habitat_fry[20,,] <- current_data$inchannel_habitat_fry[20,,]*vect2[11] # Yuba
+  current_data$inchannel_habitat_fry[21,,] <- current_data$inchannel_habitat_fry[21,,]*vect2[12] # Lower-mid Sac (corridor for above)
+  current_data$inchannel_habitat_fry[24,,] <- current_data$inchannel_habitat_fry[24,,]*vect2[13] # Lower Sac (corridor for above)
+  current_data$inchannel_habitat_fry[2,,]<- current_data$inchannel_habitat_fry[2,,]*vect2[14] # Antelope
+  current_data$inchannel_habitat_fry[7,,]<- current_data$inchannel_habitat_fry[7,,]*vect2[15] # Clear
+  
+  current_data$inchannel_habitat_juvenile[6,,] <- current_data$inchannel_habitat_juvenile[6,,]*vect2[6] # Butte
+  current_data$inchannel_habitat_juvenile[10,,] <- current_data$inchannel_habitat_juvenile[10,,]*vect2[7] # Deer
+  current_data$inchannel_habitat_juvenile[12,,] <- current_data$inchannel_habitat_juvenile[12,,]*vect2[8] # Mill
+  current_data$inchannel_habitat_juvenile[16,,] <- current_data$inchannel_habitat_juvenile[16,,]*vect2[9] # Upper-mid Sac (corridor for above)
+  current_data$inchannel_habitat_juvenile[19,,] <- current_data$inchannel_habitat_juvenile[19,,]*vect2[10] # Feather 
+  current_data$inchannel_habitat_juvenile[20,,] <- current_data$inchannel_habitat_juvenile[20,,]*vect2[11] # Yuba
+  current_data$inchannel_habitat_juvenile[21,,] <- current_data$inchannel_habitat_juvenile[21,,]*vect2[12] # Lower-mid Sac (corridor for above)
+  current_data$inchannel_habitat_juvenile[24,,] <- current_data$inchannel_habitat_juvenile[24,,]*vect2[13] # Lower Sac (corridor for above)
+  current_data$inchannel_habitat_juvenile[2,,] <- current_data$inchannel_habitat_juvenile[2,,]*vect2[14] # Antelope
+  current_data$inchannel_habitat_juvenile[7,,] <- current_data$inchannel_habitat_juvenile[7,,]*vect2[15] # Clear
+  
+  return(current_data)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
