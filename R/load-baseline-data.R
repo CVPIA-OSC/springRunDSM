@@ -75,6 +75,7 @@ load_baseline_data <- function() {
   cc_gates_days_closed <- DSMflow::delta_cross_channel_closed["count", ]
   cc_gates_prop_days_closed <- DSMflow::delta_cross_channel_closed["proportion", ]
   proportion_flow_bypass <- DSMflow::proportion_flow_bypasses
+  gates_overtopped <- DSMflow::gates_overtopped
 
   # DSMtemperature variables -----
   vernalis_temps <- DSMtemperature::vernalis_temperature
