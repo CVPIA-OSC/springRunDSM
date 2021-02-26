@@ -1,6 +1,9 @@
 library(tictoc)
 library(springRunDSM)
 library(parallel)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 list2env(load_2019_baseline_data(), envir = .GlobalEnv)
 
 number_of_cores <- detectCores()
@@ -15,6 +18,16 @@ results_df <- dplyr::tibble(
   watersheds = rep(watershed_attributes$watershed, 20),
   year = rep(1:20, 20)
 )
+
+spawners_df <- results$spawners %>% 
+  as_tibble() %>% 
+  mutate(watershed = watershed_attributes$watershed) %>% 
+  gather("year", "spawners", -watershed) %>% 
+  mutate(year = as.numeric(year)) %>% 
+  filter(year < 20)
+
+spawners_df %>% 
+  ggplot(aes(year, spawners, color = watershed)) + geom_line()
 # output <- fall_run_model(seeds = seeded_adults)
 
 # 
