@@ -124,6 +124,7 @@ load_baseline_data <- function() {
     cc_gates_days_closed = cc_gates_days_closed,
     cc_gates_prop_days_closed = cc_gates_prop_days_closed,
     proportion_flow_bypass = proportion_flow_bypass,
+    gates_overtopped = gates_overtopped,
     vernalis_temps = vernalis_temps,
     prisoners_point_temps = prisoners_point_temps,
     degree_days = degree_days,
