@@ -26,7 +26,12 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
     natural_spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
+    juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)), 
+    
+    # debug outputs
+    init_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
+    adults_pre_survival = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
+    hatch_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
   )
   
   # initialise 31 x 4 matrices for natal fish, migrants, and ocean fish
@@ -47,7 +52,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
   growth_rates_floodplain <- growth_floodplain()
   
   adults <- if(is.null(seeds)) adult_seeds else seeds
-  simulation_length <- ifelse(is.null(seeds), 5, 20)
+  simulation_length <- ifelse(is.null(seeds), 5, 19)
   
   for (year in 1:simulation_length) {
     adults_in_ocean <- numeric(31)
@@ -55,11 +60,17 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     avg_ocean_transition_month <- ocean_transition_month() # 2
     # TODO confirm this works as expected
     
-    
-    
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
+    
+    # debug
+    output$adults_pre_survival[, year] <- round(adults[ , year])
+    output$hatch_adults[, year] <- hatch_adults
+    
     spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds=seeds)
     init_adults <- spawners$init_adults
+    
+    # debug 
+    output$init_adults[, year] <- init_adults
     
     output$spawners[ , year] <- init_adults
     proportion_natural[ , year] <- spawners$proportion_natural
