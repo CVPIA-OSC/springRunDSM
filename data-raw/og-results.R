@@ -86,7 +86,7 @@ full_run <- function() {s <- spring_run_model();spring_run_model(seeds=s)}
 # as we can see the values for butte creek in the new refactored model are way too high
 all_spawn <- tibble(
   year = 1:20,
-  butte = sr_results$spawners[6, ], 
+  butte = sr_results$spawners[6, ],
   og_butte = og_all_spawn[6, , 1]
 ) %>% 
   gather("type", "spawners", -year)
@@ -106,6 +106,12 @@ results_adult_post <- map_df(1:5, ~results["init_adults", ][[.]][6, ]) %>%
   gather("year", "init_adults", -run) %>% 
   mutate(year = as.numeric(year))
 
+results_hatch_adults <- map_df(1:5, ~results["hatch_adults", ][[.]][6, ]) %>% 
+  mutate(run = 1:5) %>% 
+  gather("year", "hatch_adults", -run) %>% 
+  mutate(year = as.numeric(year))
+
+
 results_spawners %>% 
   ggplot(aes(year, adults_pre_survival, group = run)) + geom_line(alpha=.4) + 
   scale_y_continuous(breaks = seq(0, 60000, by=5000)) + 
@@ -120,14 +126,17 @@ adults %>%
   geom_line(aes(year, adults_pre_survival, group = run)) 
 
 # look at a few seeding stages
-seedings <- replicate(100, spring_run_model())
-butte_seedings <- seedings[6, 1:4, ] %>% 
-  as_tibble() %>% 
-  mutate(month = 1:4) %>% 
-  gather("run", "seed", -month)
+iters <- 50
+seedings <- replicate(iters, spring_run_model())
 
-butte_seedings %>% 
-  ggplot(aes(month, seed, group = run)) + geom_line(alpha=.4)
+
+seedings_results <- map_df(1:iters, ~seedings["spawners", ][[.]][6, ]) %>% 
+  mutate(run = 1:iters) %>% 
+  gather("year", "spawners", -run) %>% 
+  mutate(year = as.numeric(year))
+
+seedings_results %>% 
+  ggplot(aes(year, spawners, group = run)) + geom_line(alpha=.4)
 
 
 rm(list = ls())

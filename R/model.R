@@ -31,7 +31,9 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     # debug outputs
     init_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
     adults_pre_survival = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    hatch_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
+    hatch_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
+    juveniles = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
+    
   )
   
   # initialise 31 x 4 matrices for natal fish, migrants, and ocean fish
@@ -52,7 +54,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
   growth_rates_floodplain <- growth_floodplain()
   
   adults <- if(is.null(seeds)) adult_seeds else seeds
-  simulation_length <- ifelse(is.null(seeds), 5, 19)
+  simulation_length <- ifelse(is.null(seeds), 5, 20)
   
   for (year in 1:simulation_length) {
     adults_in_ocean <- numeric(31)
@@ -122,6 +124,8 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                sex_ratio = 0.5, 
                                redd_size = 9.29, 
                                fecundity = 5522))
+    
+    output$juveniles[, year] <- rowSums(juveniles)
     
     
     # TODO flood activation based on scenarios
@@ -327,6 +331,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                                                    month = 11,
                                                                    avg_ocean_transition_month = avg_ocean_transition_month)
         }
+        
         
         # if month < 8
         # route northern natal fish stay and rear or migrate downstream ------
@@ -576,6 +581,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
   } # end year for loop
   
   if (is.null(seeds)) {
+    # return(output)
     return(adults[ , 6:30])
   }
   
