@@ -16,12 +16,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
     natural_spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
     juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)), 
     
-    # debug outputs
-    init_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    adults_pre_survival = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    hatch_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    juveniles = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
-    
   )
   
   # initialise 31 x 4 matrices for natal fish, migrants, and ocean fish
@@ -50,17 +44,13 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
     avg_ocean_transition_month <- ocean_transition_month() # 2
     # TODO confirm this works as expected
     
+    # total hatchery returns is calculated a random value between [4588.097,8689.747]
+    # these are then distributed across watersheds 
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     
-    # debug
-    output$adults_pre_survival[, year] <- round(adults[ , year])
-    output$hatch_adults[, year] <- hatch_adults
-    
-    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds=seeds)
+    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds = seeds)
     init_adults <- spawners$init_adults
     
-    # debug 
-    output$init_adults[, year] <- init_adults
     
     output$spawners[ , year] <- init_adults
     proportion_natural[ , year] <- spawners$proportion_natural
@@ -113,7 +103,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
                                redd_size = 9.29, 
                                fecundity = 5522))
     
-    output$juveniles[, year] <- rowSums(juveniles)
     
     
     # TODO flood activation based on scenarios
@@ -569,8 +558,8 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
   } # end year for loop
   
   if (is.null(seeds)) {
-    # return(output)
-    return(adults[ , 6:30])
+    return(output)
+    # return(adults[ , 6:30])
   }
   
   spawn_change <- sapply(1:19, function(year) {
