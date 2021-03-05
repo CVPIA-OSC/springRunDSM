@@ -7,19 +7,7 @@
 #' returned value can be fed into the model again as the value for the seeds argument
 #' @source IP-117068
 #' @export
-spring_run_model <- function(scenario = NULL, seeds = NULL){
-  
-  watershed_labels <- c("Upper Sacramento River", "Antelope Creek", "Battle Creek",
-                        "Bear Creek", "Big Chico Creek", "Butte Creek", "Clear Creek",
-                        "Cottonwood Creek", "Cow Creek", "Deer Creek", "Elder Creek",
-                        "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek",
-                        "Upper-mid Sacramento River", "Sutter Bypass", "Bear River",
-                        "Feather River", "Yuba River", "Lower-mid Sacramento River",
-                        "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River",
-                        "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River",
-                        "Tuolumne River", "San Joaquin River")
-  
-  size_class_labels <- c('s', 'm', 'l', 'vl')
+spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
   
   output <- list(
     
