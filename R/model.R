@@ -7,26 +7,14 @@
 #' returned value can be fed into the model again as the value for the seeds argument
 #' @source IP-117068
 #' @export
-spring_run_model <- function(scenario = NULL, seeds = NULL){
-  
-  watershed_labels <- c("Upper Sacramento River", "Antelope Creek", "Battle Creek",
-                        "Bear Creek", "Big Chico Creek", "Butte Creek", "Clear Creek",
-                        "Cottonwood Creek", "Cow Creek", "Deer Creek", "Elder Creek",
-                        "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek",
-                        "Upper-mid Sacramento River", "Sutter Bypass", "Bear River",
-                        "Feather River", "Yuba River", "Lower-mid Sacramento River",
-                        "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River",
-                        "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River",
-                        "Tuolumne River", "San Joaquin River")
-  
-  size_class_labels <- c('s', 'm', 'l', 'vl')
+spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
   
   output <- list(
     
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
     natural_spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
+    juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)), 
     
   )
   
@@ -56,10 +44,13 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     avg_ocean_transition_month <- ocean_transition_month() # 2
     # TODO confirm this works as expected
     
+    # total hatchery returns is calculated a random value between [4588.097,8689.747]
+    # these are then distributed across watersheds 
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     
-    spawners <- get_spawning_adults(year, round(adults), hatch_adults, seeds=seeds)
+    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds = seeds)
     init_adults <- spawners$init_adults
+    
     
     output$spawners[ , year] <- init_adults
     proportion_natural[ , year] <- spawners$proportion_natural
@@ -111,6 +102,8 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                sex_ratio = 0.5, 
                                redd_size = 9.29, 
                                fecundity = 5522))
+    
+    
     
     # TODO flood activation based on scenarios
     
@@ -368,7 +361,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                    weeks_flooded = rep(weeks_flooded[16, month, juv_dynamics_year], nrow(upper_mid_sac_fish$inchannel)))
         
         upper_mid_sac_fish <- upper_mid_sac_fish$inchannel + upper_mid_sac_fish$floodplain
-
         
         # route migrant fish into Lower-mid Sac Region (fish from watersheds 18:20, and migrants from Upper-mid Sac Region)
         # regional fish stay and rear
@@ -566,7 +558,8 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
   } # end year for loop
   
   if (is.null(seeds)) {
-    return(adults[ , 6:30])
+    return(output)
+    # return(adults[ , 6:30])
   }
   
   spawn_change <- sapply(1:19, function(year) {
