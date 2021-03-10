@@ -338,6 +338,13 @@ load_2019_baseline_data <- function() {
   current_data$inchannel_habitat_juvenile[2,,] <- current_data$inchannel_habitat_juvenile[2,,]*vect2[14] # Antelope
   current_data$inchannel_habitat_juvenile[7,,] <- current_data$inchannel_habitat_juvenile[7,,]*vect2[15] # Clear
   
+  
+  current_data$sutter_habitat <- current_data$sutter_habitat * vect2[16]
+  current_data$yolo_habitat <- current_data$yolo_habitat * vect2[17]
+    
+  current_data$delta_habitat[,, "North Delta"] <- current_data$delta_habitat[,, "North Delta"] * vect2[18]
+  current_data$delta_habitat[,, "South Delta"] <- current_data$delta_habitat[,, "South Delta"] * vect2[19]
+  
   return(current_data)
 }
 

@@ -1,43 +1,5 @@
 library(tidyverse)
 
-vect <- c(3.5000000 , #inchannel default intercept
-          1.5000000, # upper sacramento intercept
-          -2.5000000, # butte creek intercept
-          -2.9000000, # deer creek intercept
-          -1.1092908, # mill creek intercept
-          -3.5000000, # sacramento sections 1,2,3 intercepts
-          3.5000000, # middle sac tribs
-          -3.5000000, # ?
-          2.5000000, # american river intercept
-          -1.2000000, # delta tribs, calaveras and cosumnes
-          1.9999999, # moke int
-          -0.2000000, # merced int
-          -0.1081707, # stan intercept
-          -3.4999959, # tuol intercept
-          -0.4000000, # sj main intercept
-          -3.5000000, # bypass intercept
-          1.4000000, # delta intercapt
-          -3.5000000,
-          2.5000000,
-          0.3000000,
-          -3.5000000,
-          0.3000000,
-          -3.5000000,
-          1.2000000,
-          -0.5108849,
-          -3.3233638,
-          -3.2304288,
-          -3.4148335,
-          -3.5000000,
-          -3.5000000,
-          -1.3083410,
-          -1.9841364,
-          2.5000007,
-          -3.5000000,
-          -3.0000000,
-          -0.9000000
-)
-
 vect=c(-2.25097915, # 1 default calibration int
        -2.31387713, # 2 int: watershed 10
        1.86641130, # 3 int: watershed 12
@@ -68,6 +30,11 @@ vect=c(-2.25097915, # 1 default calibration int
        2.79189516, # 28 int watersheds 3, 7
        -1.53805220 # 29 ocean entry survival 7
       )
+
+vect2<-c(1.4416309,1.9379344,1.3706987,1.6449355,1.4556516,0.5481166,0.7098337,0.7279391,0.8681320,
+         1.3761102,1.0039699,1.9759963,1.7591008,1.4374917,0.8327904,0.6907140,1.0503587,1.3019928,
+         1.1983915)
+
 
 
 surv.adj <- rep(1, 31)

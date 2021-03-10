@@ -7,7 +7,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, seeds) {
   
   if (is.null(seeds)) {
     adults_by_month <- t(sapply(1:31, function(watershed) {
-      rmultinom(1, adult_seeds[watershed], month_return_proportions)
+      rmultinom(1, adults[watershed, 1], month_return_proportions)
     }))
     
     natural_adults_by_month <- sapply(1:4, function(month) {
@@ -25,7 +25,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, seeds) {
   } else  {
     
     adults_by_month <- t(sapply(1:31, function(watershed) {
-      rmultinom(1, adults[watershed], month_return_proportions)
+      rmultinom(1, adults[watershed, year], month_return_proportions)
     }))
     
     hatchery_by_month <- t(sapply(1:31, function(watershed) {

@@ -109,7 +109,7 @@ surv_juv_rear <- function(max_temp_thresh, avg_temp_thresh, high_predation,
 #' @source IP-117068
 #' @export
 surv_juv_bypass <- function(max_temp_thresh, avg_temp_thresh, high_predation,
-                            betas = c(intercept = -3.5, `average temperature` = -0.717,
+                            betas = c(intercept = -2.524038, `average temperature` = -0.717,
                                       predation = -0.122, medium = 1.48, large = 2.223,
                                       `floodplain habitat` = 0.47)){
 
@@ -223,7 +223,6 @@ get_rearing_survival_rates <- function(year, month, scenario) {
 
   # survival betas
   betas <- as.matrix(survival_betas[, 3:16]) # extra col needed for floodplain betas
-  bp_survival_betas <- as.matrix(survival_betas[c(17, 22), c(3, 4, 5, 13, 14, 15)])
 
   rear_surv <- t(sapply(1:31, function(x) {
     surv_juv_rear(max_temp_thresh = maxT25[x],
@@ -246,8 +245,7 @@ get_rearing_survival_rates <- function(year, month, scenario) {
 
   bp_surv <- surv_juv_bypass(max_temp_thresh = maxT25[22],
                              avg_temp_thresh = aveT20[22],
-                             high_predation = 0,
-                             betas = bp_survival_betas[1, ])
+                             high_predation = 0)
 
   sutter_surv <- sqrt(bp_surv)
   yolo_surv <- sqrt(bp_surv)

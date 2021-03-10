@@ -26,13 +26,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
     natural_spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)), 
-    
-    # debug outputs
-    init_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    adults_pre_survival = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    hatch_adults = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20)),
-    juveniles = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
+    juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(watershed_labels, 1:20))
     
   )
   
@@ -64,15 +58,8 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
     
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     
-    # debug
-    output$adults_pre_survival[, year] <- round(adults[ , year])
-    output$hatch_adults[, year] <- hatch_adults
-    
-    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds=seeds)
+    spawners <- get_spawning_adults(year, round(adults), hatch_adults, seeds=seeds)
     init_adults <- spawners$init_adults
-    
-    # debug 
-    output$init_adults[, year] <- init_adults
     
     output$spawners[ , year] <- init_adults
     proportion_natural[ , year] <- spawners$proportion_natural
@@ -124,9 +111,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                sex_ratio = 0.5, 
                                redd_size = 9.29, 
                                fecundity = 5522))
-    
-    output$juveniles[, year] <- rowSums(juveniles)
-    
     
     # TODO flood activation based on scenarios
     
@@ -384,6 +368,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
                                    weeks_flooded = rep(weeks_flooded[16, month, juv_dynamics_year], nrow(upper_mid_sac_fish$inchannel)))
         
         upper_mid_sac_fish <- upper_mid_sac_fish$inchannel + upper_mid_sac_fish$floodplain
+
         
         # route migrant fish into Lower-mid Sac Region (fish from watersheds 18:20, and migrants from Upper-mid Sac Region)
         # regional fish stay and rear
@@ -581,7 +566,6 @@ spring_run_model <- function(scenario = NULL, seeds = NULL){
   } # end year for loop
   
   if (is.null(seeds)) {
-    # return(output)
     return(adults[ , 6:30])
   }
   
