@@ -1,6 +1,12 @@
 #'@title Spring-Run Yearlings
+#'@export
 yearling_growth <- function(year, yearlings, 
                             territory_size = c(0.05423379,0.14539419,0.48471474,0.48471474)) {
+  
+  if (is.null(rownames(yearlings))) {
+    stop("yearlings/juvs data needs to be named by watershed, please confirm `rownames(yearlings)` returns the names of watersheds",
+         call. = FALSE)
+  }
   
   growth_rates <- diag(1, nrow = 4, ncol = 4)
   growth_rates_floodplain <- replicate(4, diag(1, 4, 4))
@@ -12,7 +18,8 @@ yearling_growth <- function(year, yearlings,
       growth_rates_floodplain <- growth_floodplain()  
     } 
     
-    this_weeks_flooded <- weeks_flooded[, month, year]
+    watershed_indx <- which(watershed_attributes$watershed %in% rownames(yearlings))
+    this_weeks_flooded <- weeks_flooded[1:nrow(yearlings), month, year]
     
     # we only care for floodplain and inchannel
     habitat <- get_habitat(year, month) 
