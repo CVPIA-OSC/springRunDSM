@@ -11,7 +11,7 @@ surv_juv_bypass(
   max_temp_thresh,
   avg_temp_thresh,
   high_predation,
-  betas = c(intercept = -3.5, `average temperature` = -0.717, predation = -0.122,
+  betas = c(intercept = -2.524038, `average temperature` = -0.717, predation = -0.122,
     medium = 1.48, large = 2.223, `floodplain habitat` = 0.47)
 )
 }

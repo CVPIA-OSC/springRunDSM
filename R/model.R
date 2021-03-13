@@ -48,7 +48,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
     # these are then distributed across watersheds 
     hatch_adults <- rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = hatchery_allocation)[ , 1]
     
-    spawners <- get_spawning_adults(year, round(adults[ , year]), hatch_adults, seeds = seeds)
+    spawners <- get_spawning_adults(year, round(adults), hatch_adults, seeds = seeds)
     init_adults <- spawners$init_adults
     
     
@@ -165,7 +165,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
         
         if (month == 11 & year > 1) {
           # applying summer year to the yearlings and send them out to the ocean
-          yearlings <- yearling_growth(year, round(yearlings))
+          yearlings <- yearling_growth(year+1, round(yearlings))
           
           # detoured.fish<-rbinMatObject(yearlings[1:15,],prop.Q.bypasses[mnth,ifelse(mnth>8,yr,yr+1),1],stochastic)
           sutter_detoured <- t(sapply(1:nrow(yearlings[1:15, ]), function(i) {
@@ -558,8 +558,7 @@ spring_run_model <- function(scenario = NULL, seeds = NULL, .log = FALSE){
   } # end year for loop
   
   if (is.null(seeds)) {
-    return(output)
-    # return(adults[ , 6:30])
+    return(adults[ , 6:30])
   }
   
   spawn_change <- sapply(1:19, function(year) {
