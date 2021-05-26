@@ -103,3 +103,38 @@ test_that('The migratory_juv_surv function for sac delta returns the expected va
                expected_sac_delta_mig_surv)
 })
 
+# Test egg to fry survival function 
+expected_egg_to_fry_surv <- c(`Upper Sacramento River` = 0.55126648754873, `Antelope Creek` = 0.557465511034345, 
+                              `Battle Creek` = 0.555249545010465, `Bear Creek` = 0.534371105617283, 
+                              `Big Chico Creek` = 0.537367315773288, `Butte Creek` = 0.569124433535414, 
+                              `Clear Creek` = 0.569292247931292, `Cottonwood Creek` = 0.506799804331753, 
+                              `Cow Creek` = 0.570696629269701, `Deer Creek` = 0.569325901735189, 
+                              `Elder Creek` = 0.539482360132187, `Mill Creek` = 0.514366344433048, 
+                              `Paynes Creek` = 0.534371105617283, `Stony Creek` = 0.528387818867039, 
+                              `Thomes Creek` = 0.535652339961507, `Upper-mid Sacramento River` = 0, 
+                              `Sutter Bypass` = 0, `Bear River` = 0.512991581615581, `Feather River` = 0.437030519553356, 
+                              `Yuba River` = 0.508044472640408, `Lower-mid Sacramento River` = 0, 
+                              `Yolo Bypass` = 0, `American River` = 0.539767947824993, `Lower Sacramento River` = 0, 
+                              `Calaveras River` = 0.511435418526615, `Cosumnes River` = 0.520695295226667, 
+                              `Mokelumne River` = 0.545634566287998, `Merced River` = 0.388654548325646, 
+                              `Stanislaus River` = 0.551201577688213, `Tuolumne River` = 0.564926181881676, 
+                              `San Joaquin River` = 0)
+
+
+proportion_natural <- c(`Upper Sacramento River` = 1, `Antelope Creek` = 1, `Battle Creek` = 1, 
+                       `Bear Creek` = 1, `Big Chico Creek` = 1, `Butte Creek` = 0.9975, 
+                       `Clear Creek` = 1, `Cottonwood Creek` = 1, `Cow Creek` = 1, `Deer Creek` = 1, 
+                       `Elder Creek` = 1, `Mill Creek` = 1, `Paynes Creek` = 1, `Stony Creek` = 1, 
+                       `Thomes Creek` = 1, `Upper-mid Sacramento River` = 1, `Sutter Bypass` = 1, 
+                       `Bear River` = 1, `Feather River` = 0.145, `Yuba River` = 0.50875, 
+                       `Lower-mid Sacramento River` = 1, `Yolo Bypass` = 1, `American River` = 1, 
+                       `Lower Sacramento River` = 1, `Calaveras River` = 1, `Cosumnes River` = 1, 
+                       `Mokelumne River` = 1, `Merced River` = 1, `Stanislaus River` = 1, 
+                       `Tuolumne River` = 1, `San Joaquin River` = 1) 
+  
+test_that('The egg_to_fry survival function returns the expected values for year 1 month 9', {
+  expect_equal(surv_egg_to_fry(proportion_natural = proportion_natural,
+                               scour = test_data$prob_nest_scoured,
+                               temperature_effect = test_data$mean_egg_temp_effect),
+               expected_egg_to_fry_surv)
+})
