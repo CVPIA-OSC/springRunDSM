@@ -3,6 +3,9 @@
 \name{surv_juv_bypass}
 \alias{surv_juv_bypass}
 \title{Juvenile Bypass Survival}
+\source{
+IP-117068
+}
 \usage{
 surv_juv_bypass(
   max_temp_thresh,
