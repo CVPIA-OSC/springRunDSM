@@ -131,6 +131,7 @@ route_regional <- function(month, migrants, inchannel_habitat, floodplain_habita
 #' @param .gs_freeport_discharge Coefficient for \code{freeport_flow} for Georgiana Slough, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .gs_dcc_effect_on_routing Parameter representing the dcc effect on routing, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .gs_lower_asymptote Parameter representing the lower asymptote for Georgiana Slough, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
+#' @source IP-117068
 #' @export
 route_south_delta <- function(freeport_flow, dcc_closed, month,
                               mean_freeport_flow = 21546.19,

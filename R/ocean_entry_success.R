@@ -6,6 +6,7 @@
 #' @param length Variable representing the fork lengths for each size classes. \href{https://dsm-docs.s3-us-west-2.amazonaws.com/Satterthwaite_et_al_2014.pdf}{Satterthwaite et al. (2014)}
 #' @param ..ocean_entry_success_int Intercept, source: Calibration (Varies by tributary )
 #' @param .month Coefficient for \code{month} variable, source: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/Satterthwaite_et_al_2014.pdf}{Satterthwaite et al. (2014)}
+#' @source IP-117068
 #' @export
 ocean_entry_success <- function(migrants, month, avg_ocean_transition_month,
                                 length = c(-0.0897309864, -0.0709704348, -0.0208590732, 0.0732620916),

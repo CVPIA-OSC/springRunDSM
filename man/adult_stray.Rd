@@ -3,6 +3,9 @@
 \name{adult_stray}
 \alias{adult_stray}
 \title{Adult Straying}
+\source{
+IP-117068
+}
 \usage{
 adult_stray(
   wild,

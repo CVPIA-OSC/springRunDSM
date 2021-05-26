@@ -3,6 +3,9 @@
 \name{surv_adult_prespawn}
 \alias{surv_adult_prespawn}
 \title{Adult Prespawn Survival}
+\source{
+IP-117068
+}
 \usage{
 surv_adult_prespawn(
   deg_day,

@@ -12,7 +12,7 @@
 #' @param .cross_channel_gates_closed Coefficient for \code{cross_channel_gates_closed} variable, Source: Empirical model fit using  2008–2011 tagging data provided by East Bay Municipal Utility District.
 #' @param .prop_bay_trans Coefficient for \code{prop_bay_trans} variable, source: Estimated with coded wire tag data 2010–2013 \href{https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=162355&usg= AOvVaw0VgMOwD7knFfSxRZy6k8RG}{(Kormos et al. 2012, Palmer-Zwahlen & Kormos 2013-2015, Palmer-Zwahlen et al. 2018)}
 #' @param .prop_delta_trans Coefficient for \code{prop_delta_trans} variable, source: Estimated with coded wire tag data 2010–2013 \href{https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=162355&usg= AOvVaw0VgMOwD7knFfSxRZy6k8RG}{(Kormos et al. 2012, Palmer-Zwahlen & Kormos 2013-2015, Palmer-Zwahlen et al. 2018)}
-#' 
+#' @source IP-117068
 #' @export
 adult_stray <- function(wild, natal_flow, south_delta_watershed, cross_channel_gates_closed,
                         prop_delta_trans = 0, prop_bay_trans = 0,
@@ -40,6 +40,7 @@ adult_stray <- function(wild, natal_flow, south_delta_watershed, cross_channel_g
 #' @param ..surv_adult_enroute_int intercept, source: calibration
 #' @param .migratory_temp coefficient for \code{migratory_temp} variable, source: \href{https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=162355&usg= AOvVaw0VgMOwD7knFfSxRZy6k8RG}{Schreck et al. (1994)}
 #' @param .bypass_overtopped coefficient for \code{bypass_overtopped} variable, source: Expert opinion Ted Sommer, California Department of Water Resources (tributaries above bypasses only)
+#' @source IP-117068
 #' @export
 surv_adult_enroute <- function(migratory_temp, bypass_overtopped, adult_harvest,
                                ..surv_adult_enroute_int = 3,
@@ -57,6 +58,7 @@ surv_adult_enroute <- function(migratory_temp, bypass_overtopped, adult_harvest,
 #' @param deg_day Variable describing average degree days
 #' @param ..surv_adult_prespawn_int Intercept, Source: Calibration Estimate
 #' @param .deg_day Coefficient for \code{deg_day} variable, source Colvin et al. (2018)
+#' @source IP-117068
 #' @export
 surv_adult_prespawn <- function(deg_day,
                                 ..surv_adult_prespawn_int = 3, .deg_day = -0.000669526){
