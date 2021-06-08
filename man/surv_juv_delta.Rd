@@ -39,7 +39,7 @@ surv_juv_delta(
 
 \item{..surv_juv_delta_int}{intercept, source: calibration}
 
-\item{.avg_temp_thresh}{Coefficient for \core{avg_temp_thresh} variable, source: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/marine_cech_water_temp_effects.pdf}{Marine and Chech (2004)}}
+\item{.avg_temp_thresh}{Coefficient for \code{avg_temp_thresh} variable, source: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/marine_cech_water_temp_effects.pdf}{Marine and Chech (2004)}}
 
 \item{.high_predation}{Coefficient for \code{high_predation} variable, source: \href{https://pubag.nal.usda.gov/catalog/512123}{Cavallo et al. (2012)}}
 
