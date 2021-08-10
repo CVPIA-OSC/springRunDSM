@@ -1,46 +1,41 @@
 #' @title Ocean Entry Success
 #' @description Calculates the number of juveniles that survive entering the ocean
-#' @param migrants The number of juveniles at golden gate bridge
-#' @param month The current simulation month
-#' @param avg_ocean_transition_month The average month juveniles transition to the ocean
-#' @param length Fork lengths for each size classes. \href{https://dsm-docs.s3-us-west-2.amazonaws.com/Satterthwaite_et_al_2014.pdf}{Satterthwaite et al. (2014)}
-#' @param betas Parameters estimated through calibration
-#' @section Parameters:
-#' Parameters from the model are obtained from either literature, calibration, export elicitation,
-#' and meta-analysis. The source for each parameter in this function are detailed below.
-#' \itemize{
-#' \item intercept 1-31: calibration estimate; varies by tributary
-#' \item months: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/Satterthwaite_et_al_2014.pdf}{Satterthwaite et al. (2014)}
-#' }
+#' @details See \code{\link{params}} for details on parameter sources
+#' @param migrants Variable representing the number of juveniles at golden gate bridge
+#' @param month Variable representing the current simulation month
+#' @param avg_ocean_transition_month Variable representing the average month juveniles transition to the ocean
+#' @param .ocean_entry_success_length Size related intercept representing the fork lengths for each size classes
+#' @param ..ocean_entry_success_int Intercept
+#' @param .ocean_entry_success_months Coefficient for month variable
 #' @source IP-117068
 #' @export
 ocean_entry_success <- function(migrants, month, avg_ocean_transition_month,
-                                length = c(-0.0897309864, -0.0709704348, -0.0208590732, 0.0732620916),
-                                betas = c(`Upper Sacramento River` = -3.49954625, `Antelope Creek` = -3.49954625, 
-                                          `Battle Creek` = -2.59452699, `Bear Creek` = -3.49954625, `Big Chico Creek` = -3.49954625, 
-                                          `Butte Creek` = -1.5380522, `Clear Creek` = -2.59452699, `Cottonwood Creek` = -3.49954625, 
-                                          `Cow Creek` = -3.49954625, `Deer Creek` = -1.49855839, `Elder Creek` = -3.49954625, 
-                                          `Mill Creek` = -3.22990407, `Paynes Creek` = -3.49954625, `Stony Creek` = -3.49954625, 
-                                          `Thomes Creek` = -3.49954625, `Upper-mid Sacramento River` = -3.49954625, 
-                                          `Sutter Bypass` = -3.49954625, `Bear River` = 2.49974122, `Feather River` = 2.49974122, 
-                                          `Yuba River` = -2.96201071, `Lower-mid Sacramento River` = -3.49954625, 
-                                          `Yolo Bypass` = -3.49954625, `American River` = -3.49954625, 
-                                          `Lower Sacramento River` = -3.49954625, `Calaveras River` = -3.49954625, 
-                                          `Cosumnes River` = -3.49954625, `Mokelumne River` = -3.49954625, 
-                                          `Merced River` = -3.49954625, `Stanislaus River` = -3.49954625, 
-                                          `Tuolumne River` = -3.49954625, `San Joaquin River` = -3.49954625, 
-                                          months = 0.35
-                                )){
-  
+                                .ocean_entry_success_length = springRunDSM::params$.ocean_entry_success_length,
+                                ..ocean_entry_success_int = springRunDSM::params$..ocean_entry_success_int,
+                                .ocean_entry_success_months = springRunDSM::params$.ocean_entry_success_months, 
+stochastic){
+
   month_since <- ifelse(month <= avg_ocean_transition_month, 0, max(1, month - avg_ocean_transition_month))
 
-  survival_rate <- NULL
+  survival_probs <- NULL
   for(i in 1:dim(migrants)[1]) {
-    survival_rate <- rbind(survival_rate,
-                           boot::inv.logit(betas[i] + betas[32] * month_since + length))
+    survival_probs <- rbind(survival_probs,
+                            boot::inv.logit(..ocean_entry_success_int[[i]] +
+                                              .ocean_entry_success_months * month_since +
+                                              .ocean_entry_success_length))
   }
 
-  if (month_since == 0) rep(0, 31) else rowSums(round(survival_rate * migrants))
+  survival_probs <- pmin(survival_probs, 1)
+
+  if (stochastic) {
+    survived <- t(sapply(1:31, function(watershed) {
+      rbinom(4, size = migrants[watershed, ], prob = survival_probs[watershed, ])
+    }))
+  } else {
+    survived <- round(survival_probs * migrants)
+  }
+
+  if (month_since == 0) rep(0, 31) else rowSums(survived)
 
 }
 
