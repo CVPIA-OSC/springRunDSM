@@ -1,4 +1,4 @@
-all_inputs <- read_rds('data-raw/spring_run_all_old_inputs.rds')
+all_inputs <- read_rds('data-raw/misc/spring_run_all_old_inputs.rds')
 params <- springRunDSM::params
 
 all_inputs$floodp.sutter -> params$sutter_floodplain_habitat
@@ -6,13 +6,13 @@ all_inputs$floodp.yolo -> params$yolo_floodplain_habitat
 
 all_inputs$territory_size -> params$territory_size
 spawn_dimnames <- dimnames(params$spawning_habitat)
-all_inputs$IChab.spawn -> params$spawning_habitat
+all_inputs$spawn_out -> params$spawning_habitat
 dimnames(params$spawning_habitat) <- spawn_dimnames
 
 rear_dimnames <- dimnames(params$inchannel_habitat_fry)
-all_inputs$IChab.fry -> params$inchannel_habitat_fry
+all_inputs$fry_out -> params$inchannel_habitat_fry
 dimnames(params$inchannel_habitat_fry) <- rear_dimnames
-all_inputs$IChab.juv -> params$inchannel_habitat_juvenile
+all_inputs$juv_out -> params$inchannel_habitat_juvenile
 dimnames(params$inchannel_habitat_juvenile) <- rear_dimnames
 
 flood_dimnames <- dimnames(params$floodplain_habitat)
@@ -20,14 +20,14 @@ all_inputs$floodP -> params$floodplain_habitat
 flood_dimnames -> dimnames(params$floodplain_habitat)
 
 bypass_dimnames <- dimnames(params$sutter_habitat)
-all_inputs$IChab.sutter -> params$sutter_habitat
+all_inputs$sutter_out -> params$sutter_habitat
 dimnames(params$sutter_habitat) <- bypass_dimnames
-all_inputs$IChab.yolo -> params$yolo_habitat
+all_inputs$yolo_out -> params$yolo_habitat
 dimnames(params$yolo_habitat) <- bypass_dimnames
 
 
 delta_dimnames <- dimnames(params$delta_habitat)
-all_inputs$DLThab -> params$delta_habitat
+all_inputs$delta_out -> params$delta_habitat
 dimnames(params$delta_habitat) <- delta_dimnames
 
 all_inputs$cc.aloc -> params$cross_channel_stray_rate

@@ -156,15 +156,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
 
     # Holding period for spring run
     # apply degree days and prespawn survival
-    init_spawn_holding <- matrix(0, ncol = 2, nrow = 31)
+    holding_split <- if (stochastic) {
+      rbinom(31, init_adults, 0.5) / init_adults
+    } else {
+      init_adults * 0.5 / init_adults
+    }
 
-    init_spawn_holding[, 1] <- rbinom(31, init_adults, 0.5)
-    init_spawn_holding[, 2] <- pmax(init_adults - init_spawn_holding[, 1], 0)
-
-    average_degree_days <- ((init_spawn_holding[, 1] * rowSums(..params$degree_days[, 7:10, year])) +
-                              (init_spawn_holding[, 2] * rowSums(..params$degree_days[, 7:9, year])))/init_adults
-
-    average_degree_days <- ifelse(is.nan(average_degree_days), 0, average_degree_days)
+    average_degree_days <- rowSums(params$degree_days[ , 7:10, year]) * (1 - holding_split) + 
+      rowSums(params$degree_days[ , 7:9, year]) * holding_split
 
     prespawn_survival <- surv_adult_prespawn(average_degree_days,
                                              ..surv_adult_prespawn_int = ..params$..surv_adult_prespawn_int,

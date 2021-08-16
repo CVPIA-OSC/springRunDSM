@@ -25,7 +25,7 @@ params <- list(
   .adult_stray_prop_bay_trans = 2.09,
   .adult_stray_prop_delta_trans = 2.89,
   # Enroute survival
-  ..surv_adult_enroute_int = 3,
+  ..surv_adult_enroute_int = 2.915186,
   .adult_en_route_migratory_temp = -0.26,
   .adult_en_route_bypass_overtopped = -0.019,
   .adult_en_route_adult_harvest_rate = springRunDSM::adult_harvest_rate, # varies by run
