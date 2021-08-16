@@ -8,23 +8,21 @@ IP-117068
 }
 \usage{
 surv_juv_outmigration_san_joaquin(
-  betas = c(intercept = -3.5, medium = 1.48, large = 2.223)
+  ..surv_juv_outmigration_sj_int = springRunDSM::params$..surv_juv_outmigration_sj_int,
+  .medium = springRunDSM::params$.surv_juv_outmigration_san_joaquin_medium,
+  .large = springRunDSM::params$.surv_juv_outmigration_san_joaquin_large
 )
 }
 \arguments{
-\item{betas}{The parameters estimated through calibration}
+\item{..surv_juv_outmigration_sj_int}{Intercept}
+
+\item{.medium}{Size related intercept for medium sized fish}
+
+\item{.large}{Size related intercept for large sized fish}
 }
 \description{
 Calculates the San Joaquin River juvenile out migration survival
 }
-\section{Parameters}{
-
-Parameters from the model are obtained from either literature, calibration, export elicitation,
-and meta-analysis. The source for each parameter in this function are detailed below.
-\itemize{
-\item intercept: calibration estimate
-\item medium: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/perry_2010.pdf}{Perry (2010)}
-\item large" \href{https://dsm-docs.s3-us-west-2.amazonaws.com/perry_2010.pdf}{Perry (2010)}
+\details{
+See \code{\link{params}} for details on parameter sources
 }
-}
-

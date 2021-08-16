@@ -7,7 +7,7 @@
 IP-117068
 }
 \usage{
-growth_floodplain(daily_rates = c(0.5, 1.06), weeks_flooded = 1:4)
+growth_floodplain(daily_rates = c(0.5, 1.06), weeks_flooded = 0:4)
 }
 \arguments{
 \item{daily_rates}{The daily growth rate for inchannel (0.5 mm/day) and floodplain (1.06 mm/day)}

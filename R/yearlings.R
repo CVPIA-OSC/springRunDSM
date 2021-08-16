@@ -65,6 +65,8 @@ yearling_growth <- function(year,
                             floodplain_habitat,
                             sutter_habitat,
                             yolo_habitat,
+                            sutter_floodplain_habitat,
+                            yolo_floodplain_habitat,
                             delta_habitat,
                             survival_adjustment,
                             mode,
@@ -81,6 +83,8 @@ yearling_growth <- function(year,
                             contact_points,
                             delta_contact_points,
                             delta_prop_high_predation,
+                            growth_rates, 
+                            growth_rates_floodplain,
                             ..surv_juv_rear_int,
                             .surv_juv_rear_contact_points,
                             ..surv_juv_rear_contact_points,
@@ -110,27 +114,34 @@ yearling_growth <- function(year,
                             .surv_juv_delta_prop_diverted,
                             .surv_juv_delta_medium,
                             .surv_juv_delta_large,
-                            min_survival_rate) {
+                            min_survival_rate, 
+                            stochastic) {
 
-  growth_rates <- diag(1, nrow = 4, ncol = 4)
-  growth_rates_floodplain <- replicate(4, diag(1, 4, 4))
+  growth_rates_identity <- diag(1, nrow = 4, ncol = 4)
+  growth_rates_floodplain_identity <- replicate(4, diag(1, 4, 4))
 
   for (month in 5:10) {
     # only months 9, 10 experience growth
     if (month %in% 9:10) {
-      growth_rates <- springRunDSM::params$growth_rates
-      growth_rates_floodplain <- springRunDSM::params$growth_rates_floodplain
+      growth_rates_used <- growth_rates
+      growth_rates_floodplain_used <- growth_rates_floodplain
+    } else {
+      growth_rates_used <- growth_rates_identity
+      growth_rates_floodplain_used <- growth_rates_floodplain_identity
     }
+    
     this_weeks_flooded <- weeks_flooded[, month, year]
 
     # we only care for floodplain and inchannel
     habitat <- get_habitat(year, month,
-                           inchannel_habitat_fry,
-                           inchannel_habitat_juvenile,
-                           floodplain_habitat,
-                           sutter_habitat,
-                           yolo_habitat,
-                           delta_habitat)
+                           inchannel_habitat_fry = inchannel_habitat_fry,
+                           inchannel_habitat_juvenile = inchannel_habitat_juvenile,
+                           floodplain_habitat = floodplain_habitat,
+                           sutter_habitat = sutter_habitat,
+                           yolo_habitat = yolo_habitat,
+                           sutter_floodplain_habitat = sutter_floodplain_habitat,
+                           yolo_floodplain_habitat = yolo_floodplain_habitat,
+                           delta_habitat = delta_habitat)
 
     # we only care for floodplain and inchannel
     survival_rates <- get_rearing_survival(year,
@@ -179,7 +190,8 @@ yearling_growth <- function(year,
                                            .surv_juv_delta_prop_diverted,
                                            .surv_juv_delta_medium,
                                            .surv_juv_delta_large,
-                                           min_survival_rate)
+                                           min_survival_rate, 
+                                           stochastic = stochastic)
 
     ic_rearing <- matrix(0, nrow = nrow(yearlings), ncol = 4)
     fp_rearing <- matrix(0, nrow = nrow(yearlings), ncol = 4)
@@ -223,14 +235,14 @@ yearling_growth <- function(year,
     }))
 
     # apply growth
-    ic_rearing <- round(ic_rearing %*% growth_rates)
+    ic_rearing <- round(ic_rearing %*% growth_rates_used)
 
 
     fp_rearing <- t(sapply(1:length(this_weeks_flooded), function(i) {
       if (this_weeks_flooded[i] == 0)
         fp_rearing[i, ]
       else
-        fp_rearing[i, ] %*% growth_rates_floodplain[,,this_weeks_flooded[i]]
+        fp_rearing[i, ] %*% growth_rates_floodplain_used[,,this_weeks_flooded[i]]
     }))
 
     yearlings <- round(fp_rearing + ic_rearing)

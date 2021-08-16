@@ -13,6 +13,7 @@
 
 spawn_success <- function(escapement, adult_prespawn_survival, egg_to_fry_survival,
                           prob_scour, spawn_habitat,
+                          stochastic,
                           sex_ratio = springRunDSM::params$spawn_success_sex_ratio,
                           redd_size = springRunDSM::params$spawn_success_redd_size,
                           fecundity = springRunDSM::params$spawn_success_fecundity){

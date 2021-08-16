@@ -49,7 +49,7 @@ growth <- function(daily_growth_rate = .5, size_class_breaks = c(35, 42, 72, 110
 #' @param weeks_flooded The number of weeks inundated, 1-4 weeks
 #' @source IP-117068
 #' @export
-growth_floodplain <- function(daily_rates = c(0.5, 1.06), weeks_flooded = 1:4){
+growth_floodplain <- function(daily_rates = c(0.5, 1.06), weeks_flooded = 0:4){
 
   inchannel <- ifelse(weeks_flooded > 0, (4 - weeks_flooded) / 4, 1)
   floodplain <- 1 - inchannel
@@ -57,13 +57,13 @@ growth_floodplain <- function(daily_rates = c(0.5, 1.06), weeks_flooded = 1:4){
   growth_inchannel <- growth(daily_rates[1])
   growth_floodplain <- growth(daily_rates[2])
 
-  transition_matrices <- array(0, dim = c(4, 4, 4),
+  transition_matrices <- array(0, dim = c(4, 4, 5),
                                dimnames = list(c('s', 'm', 'l', 'vl'),
                                                c('s', 'm', 'l', 'vl'),
-                                               c('1 week flooded', paste(2:4, 'weeks flooded'))))
+                                               c('0 week flooded', '1 week flooded', paste(2:4, 'weeks flooded'))))
   transition_matrices[4, 4, ] <- 1
 
-  for(i in 1:4){
+  for(i in 1:5){
     transition_matrices[ , , i] <- growth_inchannel * inchannel[i] + growth_floodplain * floodplain[i]
 
     # Eliminate nosense transitions and normalize floodplain values
