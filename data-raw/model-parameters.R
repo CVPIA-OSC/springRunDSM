@@ -115,7 +115,7 @@ params <- list(
   .surv_juv_outmigration_sac_delta_perc_diversions = -0.033,
   .surv_juv_outmigration_sac_delta_medium = 1.48,
   .surv_juv_outmigration_sac_delta_large = 2.223,
-  surv_juv_outmigration_sac_delta_model_weights = rep(1/3, 3),
+  surv_juv_outmigration_sac_delta_model_weights = rep(.333, 3),
 
   # Ocean entry success coefficient and variable
   ..ocean_entry_success_int = c(

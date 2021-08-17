@@ -31,7 +31,7 @@ route <- function(year, month, juveniles, inchannel_habitat, floodplain_habitat,
                   .pulse_movement_very_large_pulse,
                   territory_size,
                   stochastic) {
-
+  
   natal_watersheds <- fill_natal(juveniles = juveniles,
                                  inchannel_habitat = inchannel_habitat,
                                  floodplain_habitat = floodplain_habitat,

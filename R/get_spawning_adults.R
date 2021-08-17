@@ -52,7 +52,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rmultinom(1, adults[watershed, adult_index], month_return_proportions)
       } else {
-        round(adults[watershed, adult_index] * month_return_proportions)
+        adults[watershed, adult_index] * month_return_proportions
       }
     }))
 
@@ -62,7 +62,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
                size = round(adults_by_month[, month]),
                prob = 1 - springRunDSM::params$natural_adult_removal_rate)
       } else {
-        round(adults_by_month[, month] * (1 - springRunDSM::params$natural_adult_removal_rate))
+        adults_by_month[, month] * (1 - springRunDSM::params$natural_adult_removal_rate)
       }
     })
 
@@ -76,7 +76,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rmultinom(1, adults[watershed, year], month_return_proportions)
       } else {
-        round(adults[watershed, year] * month_return_proportions)
+        adults[watershed, year] * month_return_proportions
       }
     }))
 
@@ -84,7 +84,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rmultinom(1, hatch_adults[watershed], month_return_proportions)
       } else {
-        round(hatch_adults[watershed] * month_return_proportions)
+        hatch_adults[watershed] * month_return_proportions
       }
     }))
 
@@ -105,7 +105,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rbinom(n = 31, adults_by_month[, month], stray_props[, month])
       } else {
-        round(adults_by_month[, month] * stray_props[, month])
+        adults_by_month[, month] * stray_props[, month]
       }
     })
 
@@ -114,7 +114,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         as.vector(rmultinom(1, south_delta_routed_adults[month], springRunDSM::params$cross_channel_stray_rate))
       } else {
-        round(south_delta_routed_adults[month] * springRunDSM::params$cross_channel_stray_rate)
+        south_delta_routed_adults[month] * springRunDSM::params$cross_channel_stray_rate
       }
     })
 
@@ -123,7 +123,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         as.vector(rmultinom(1, remaining_stray_adults[month], springRunDSM::params$stray_rate))
       } else {
-        round(remaining_stray_adults[month] * springRunDSM::params$stray_rate)
+        remaining_stray_adults[month] * springRunDSM::params$stray_rate
       }
     })
 
@@ -155,7 +155,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rbinom(31, round(adults_after_stray[, month]), adult_en_route_surv[, month])
       } else {
-        round(adults_after_stray[, month] * adult_en_route_surv[, month])
+        adults_after_stray[, month] * adult_en_route_surv[, month]
       }
     })
 
@@ -163,7 +163,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rbinom(31, round(adults_survived_to_spawning[, month]), (1 - springRunDSM::params$natural_adult_removal_rate))
       } else {
-        round(adults_survived_to_spawning[, month] * (1 - springRunDSM::params$natural_adult_removal_rate))
+        adults_survived_to_spawning[, month] * (1 - springRunDSM::params$natural_adult_removal_rate)
       }
     })
 
@@ -171,7 +171,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rbinom(31, round(hatchery_by_month[, month]), adult_en_route_surv[, month])
       } else {
-        round(hatchery_by_month[, month] * adult_en_route_surv[, month])
+        hatchery_by_month[, month] * adult_en_route_surv[, month]
       }
     })
 
