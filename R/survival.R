@@ -156,10 +156,10 @@ stochastic){
 #' @export
 surv_juv_delta <- function(max_temp_thresh, avg_temp_thresh, high_predation, contact_points,
                            prop_diverted, total_diverted,
-                           betas = c(intercept = 1.4, `avg temp thresh` = -0.717,
-                                     predation = -0.122, contact = 0.0358 * -0.189,
+                           betas = c(intercept = 1.426423, `avg temp thresh` = -0.717,
+                                     predation = -0.122, contact = 0.09999992 * -0.189,
                                      `prop diversions` = -3.51,
-                                     `total diversions` = 0.5 * -0.0021,
+                                     `total diversions` = 0.6110444 * -0.0021,
                                      medium = 1.48, large = 2.223),
                            stochastic){
   base_score <- betas[1] +
@@ -294,7 +294,7 @@ get_rearing_survival <- function(year, month,
     maxT25D <- rbinom(2, 1, maxT25D)
   }
   # set proportion fish stranding
-  prob_ws_strand <- if(month < 4) prob_strand_early else prob_strand_late
+  prob_ws_strand <- if(month %in% c(11, 12, 1)) prob_strand_early else prob_strand_late
 
   ws_strand <- if (stochastic) {
     rbinom(31, 1, prob_ws_strand)
@@ -418,10 +418,10 @@ get_rearing_survival <- function(year, month,
 #' @source IP-117068
 #' @export
 surv_juv_outmigration_sac <- function(flow_cms, avg_temp, total_diversions, prop_diversions,
-                                      betas = c(`intercept 1` = 2.5, flow = 0.0092,
-                                                `proportion diversion` = -3.51 * 0.05,
-                                                `total diversion` = -0.0021 * 0.215,
-                                                `intercept 2` = 0.3,
+                                      betas = c(`intercept 1` = 2.044381, flow = 0.0092,
+                                                `proportion diversion` = -3.51 * 0.0100001,
+                                                `total diversion` = -0.0021 * 0.191265,
+                                                `intercept 2` = 0.999856,
                                                 `average temperature` = 0.554,
                                                 `model weight` = .5,
                                                 medium = 1.48, large = 2.223)){
