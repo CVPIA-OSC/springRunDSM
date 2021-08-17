@@ -122,6 +122,10 @@ names(params$delta_prop_high_predation) <- c("North Delta", "South Delta")
 
 all_inputs$egg.tmp.eff$mean_temp_effect -> params$mean_egg_temp_effect
 
+# spring run pools
+all_inputs$SR.pools -> params$spring_run_pools
+names(params$spring_run_pools) <- springRunDSM::watershed_labels
+
 # synthetic shuffle these
 all_inputs$Q_free -> params$freeport_flows
 all_inputs$Q_vern -> params$vernalis_flows
