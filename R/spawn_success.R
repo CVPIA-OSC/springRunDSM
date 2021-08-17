@@ -35,7 +35,7 @@ spawn_success <- function(escapement, adult_prespawn_survival, egg_to_fry_surviv
   } else {
     round(fry)
   }
-
+  fry[is.nan(fry)] <- 0
   zeros <- matrix(0, nrow = length(escapement), ncol = 3)
   cbind(fry, zeros)
 
