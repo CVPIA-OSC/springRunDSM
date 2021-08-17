@@ -179,7 +179,7 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
     surviving_hatchery_adults <- rowSums(surviving_hatchery_adults_by_month)
     init_adults <- surviving_natural_adults + surviving_hatchery_adults
     init_adults_by_month <- surviving_natural_adults_by_month + surviving_hatchery_adults_by_month
-    proportion_natural <- surviving_natural_adults / init_adults
+    proportion_natural <- surviving_natural_adults / (init_adults + 0.0001)
 
   }
 

@@ -55,7 +55,7 @@ params <- list(
   .surv_egg_to_fry_scour = -0.655,
 
   # Juvenile rearing survival coefficients and variables
-  ..surv_juv_rear_int = c(`Upper Sacramento River` = 1.5, `Antelope Creek` = -2.25097915, `Battle Creek` = 2.79189516,
+  ..surv_juv_rear_int = c(`Upper Sacramento River` = -2.25097915, `Antelope Creek` = -2.25097915, `Battle Creek` = 2.79189516,
                           `Bear Creek` = -2.25097915, `Big Chico Creek` = -2.25097915, `Butte Creek` = -0.70866158,
                           `Clear Creek` = 	2.79189516, `Cottonwood Creek` = -2.25097915, `Cow Creek` = -2.25097915,
                           `Deer Creek` = -2.31387713, `Elder Creek` = -2.25097915, `Mill Creek` = 1.8664113,
@@ -81,7 +81,7 @@ params <- list(
   min_survival_rate = 0.0001,
 
   # Juvenile bypass survival calibrated parameters and coefficients
-  ..surv_juv_bypass_int = -3.5,
+  ..surv_juv_bypass_int = -2.524038,
   .surv_juv_bypass_avg_temp_thresh = -0.717,
   .surv_juv_bypass_high_predation = -0.122,
   .surv_juv_bypass_medium = 1.48,
@@ -101,14 +101,15 @@ params <- list(
   .surv_juv_delta_large = 2.223,
 
   # San joaquin outmigration calibrated intercept and coefficents
-  ..surv_juv_outmigration_sj_int = -3.5,
+  ..surv_juv_outmigration_sj_int = -2.794096,
   .surv_juv_outmigration_san_joaquin_medium = 1.48,
   .surv_juv_outmigration_san_joaquin_large = 2.223,
 
+  # TODO 
   # Sac delta outmigration coefficients and variables
-  .surv_juv_outmigration_sac_delta_intercept_one = -3.5,
-  .surv_juv_outmigration_sac_delta_intercept_two =  0.3,
-  .surv_juv_outmigration_sac_delta_intercept_three = -3.5,
+  .surv_juv_outmigration_sac_delta_intercept_one = -2.891417,
+  .surv_juv_outmigration_sac_delta_intercept_two =  0.7507795,
+  .surv_juv_outmigration_sac_delta_intercept_three = -3.104956,
   .surv_juv_outmigration_sac_delta_delta_flow = 0.0013,
   .surv_juv_outmigration_sac_delta_avg_temp = 0.386,
   .surv_juv_outmigration_sac_delta_perc_diversions = -0.033,
