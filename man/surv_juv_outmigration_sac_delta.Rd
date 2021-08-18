@@ -11,20 +11,47 @@ surv_juv_outmigration_sac_delta(
   delta_flow,
   avg_temp,
   perc_diversions,
-  betas = c(`intercept 1` = -3.5, `intercept 2` = 0.3, `intercept 3` = -3.5, flow =
-    0.0013, `average temperature` = 0.386, `percent diversions` = -0.033, medium = 1.48,
-    large = 2.223)
+  .intercept_one = springRunDSM::params$.surv_juv_outmigration_sac_delta_intercept_one,
+  .intercept_two = springRunDSM::params$.surv_juv_outmigration_sac_delta_intercept_two,
+ 
+    .intercept_three = springRunDSM::params$.surv_juv_outmigration_sac_delta_intercept_three,
+  .delta_flow = springRunDSM::params$.surv_juv_outmigration_sac_delta_delta_flow,
+  .avg_temp = springRunDSM::params$.surv_juv_outmigration_sac_delta_avg_temp,
+ 
+    .perc_diversions = springRunDSM::params$.surv_juv_outmigration_sac_delta_perc_diversions,
+  .medium = springRunDSM::params$.surv_juv_outmigration_sac_delta_medium,
+  .large = springRunDSM::params$.surv_juv_outmigration_sac_delta_large,
+  model_weights = springRunDSM::params$surv_juv_outmigration_sac_delta_model_weights
 )
 }
 \arguments{
-\item{avg_temp}{Monthly mean temperature in celsius}
+\item{delta_flow}{Variable describing delta inflow in cubic meters per second}
 
-\item{perc_diversions}{Monthly mean percent diverted}
+\item{avg_temp}{Variable describing monthly mean temperature in celsius}
 
-\item{betas}{Parameter estimates from calibration}
+\item{perc_diversions}{Variable describing monthly mean percent diverted}
 
-\item{flow_cms}{Delta inflow in cubic meters per second}
+\item{.intercept_one}{Intercept for model one}
+
+\item{.intercept_two}{Intercept for model two}
+
+\item{.intercept_three}{Intercept for model three}
+
+\item{.delta_flow}{Coefficient for delta_flow variable}
+
+\item{.avg_temp}{Coefficient for avg_temp variable}
+
+\item{.perc_diversions}{Coefficient for perc_diversions variable}
+
+\item{.medium}{Size related intercept for medium sized fish}
+
+\item{.large}{Size related intercept for large sized fish}
+
+\item{model_weights}{weights for competing models}
 }
 \description{
 Calculates the Sacramento Delta juvenile out migration survival
+}
+\details{
+See \code{\link{params}} for details on parameter sources
 }

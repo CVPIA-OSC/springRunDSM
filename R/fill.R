@@ -17,7 +17,7 @@ NULL
 #' @export
 fill_natal <- function(juveniles, inchannel_habitat, floodplain_habitat,
                        territory_size = springRunDSM::params$territory_size,
-                       up_to_size_class = 2){
+                       up_to_size_class = 2, yearlings = FALSE){
 
   number_of_regions <- max(nrow(juveniles), 1)
 
@@ -35,13 +35,17 @@ fill_natal <- function(juveniles, inchannel_habitat, floodplain_habitat,
   flood_rear <- pmax(flood_rear, 0)
   juveniles <- pmax(juveniles - flood_rear, 0)
   for(r in 1:number_of_regions){
-    for(i in 2:1){
+    for(i in up_to_size_class:1){
       river_rear[r, i] <- min(round(inchannel_habitat[r] / territory_size[i]), juveniles[r ,i])
       inchannel_habitat[r] <- max(inchannel_habitat[r] - river_rear[r, i] * territory_size[i], 0)
     }}
 
   river_rear <- pmax(river_rear, 0)
 
+  if (yearlings) {
+    return(list(inchannel = river_rear, floodplain = flood_rear))
+  }
+  
   migrants <- pmax(juveniles - river_rear, 0)
   list(inchannel = river_rear, floodplain = flood_rear, migrants = migrants)
 }

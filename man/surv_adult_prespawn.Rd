@@ -9,25 +9,20 @@ IP-117068
 \usage{
 surv_adult_prespawn(
   deg_day,
-  betas = c(intercept = 3, `degree days` = -0.000669526)
+  ..surv_adult_prespawn_int = springRunDSM::params$..surv_adult_prespawn_int,
+  .deg_day = springRunDSM::params$.adult_prespawn_deg_day
 )
 }
 \arguments{
-\item{deg_day}{Average degree days}
+\item{deg_day}{Variable describing average degree days}
 
-\item{betas}{Parameters from calibration process}
+\item{..surv_adult_prespawn_int}{Intercept}
+
+\item{.deg_day}{Coefficient for \code{deg_day} variable}
 }
 \description{
 Calculate the adult prespawn survival
 }
-\section{Parameters}{
-
-Parameters from the model are obtained from either literature, calibration, export elicitation,
-or meta-analysis. The source for each parameter in this function are detailed below.
-
-
-\itemize{
-\item intercept: Calibration Estimate
+\details{
+See \code{\link{params}} for details on parameter sources
 }
-}
-

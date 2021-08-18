@@ -11,33 +11,40 @@ surv_juv_bypass(
   max_temp_thresh,
   avg_temp_thresh,
   high_predation,
-  betas = c(intercept = -3.5, `average temperature` = -0.717, predation = -0.122,
-    medium = 1.48, large = 2.223, `floodplain habitat` = 0.47)
+  ..surv_juv_bypass_int = springRunDSM::params$..surv_juv_bypass_int,
+  .avg_temp_thresh = springRunDSM::params$.surv_juv_bypass_avg_temp_thresh,
+  .high_predation = springRunDSM::params$.surv_juv_bypass_high_predation,
+  .medium = springRunDSM::params$.surv_juv_bypass_medium,
+  .large = springRunDSM::params$.surv_juv_bypass_large,
+  .floodplain = springRunDSM::params$.surv_juv_bypass_floodplain,
+  min_survival_rate = springRunDSM::params$min_survival_rate,
+  stochastic
 )
 }
 \arguments{
-\item{max_temp_thresh}{The probability of exceeding the max temp threshold}
+\item{max_temp_thresh}{Variable representing the probability of exceeding the max temp threshold}
 
-\item{avg_temp_thresh}{The probability of exceeding the average temperature}
+\item{avg_temp_thresh}{Variable representing the probability of exceeding the average temperature}
 
-\item{high_predation}{An indicator for high predation in watershed}
+\item{high_predation}{Variable representing an indicator for high predation in watershed}
 
-\item{betas}{The parameter estimates from calibration}
+\item{..surv_juv_bypass_int}{intercept, source: calibration}
+
+\item{.avg_temp_thresh}{coefficient for avg_temp_thresh variable}
+
+\item{.high_predation}{coefficient for high_predation variable}
+
+\item{.medium}{size related intercept for medium sized fish}
+
+\item{.large}{size related intercept for large sized fish}
+
+\item{.floodplain}{Additional intercept for floodplain rearing benefit}
+
+\item{min_survival_rate}{estimated survival rate if temperature threshold is exceeded}
 }
 \description{
 Calculates the juvenile rearing survival in the bypasses
 }
-\section{Parameters}{
-
-Parameters from the model are obtained from either literature, calibration, export elicitation,
-and meta-analysis. The source for each parameter in this function are detailed below.
-\itemize{
-\item intercept: calibration estimate; varies by tributary
-\item average temperature: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/marine_cech_water_temp_effects.pdf}{Marine and Chech (2004)}
-\item predation \href{https://pubag.nal.usda.gov/catalog/512123}{Cavallo et al. (2012)}
-\item medium: \href{https://afspubs.onlinelibrary.wiley.com/doi/abs/10.1577/M02-161.1}{Connor et al. (2004)}
-\item large" \href{https://afspubs.onlinelibrary.wiley.com/doi/abs/10.1577/M02-161.1}{Connor et al. (2004)}
-\item floodplain habitat: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/SOMMER_T-SDWA+180+Floodplain+rearing+of+juvenile+chinook+salmon+evidence+of+enhanced+growth+and+survival+.pdf}{Sommer et al. (2001)}
+\details{
+See \code{\link{params}} for details on parameter sources
 }
-}
-

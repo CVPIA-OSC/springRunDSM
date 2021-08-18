@@ -2,14 +2,104 @@
 % Please edit documentation in R/yearlings.R
 \name{yearling_growth}
 \alias{yearling_growth}
-\title{Spring-Run Yearlings}
+\title{Spring-Run Yearling Growth}
 \usage{
 yearling_growth(
   year,
   yearlings,
-  territory_size = c(0.05423379, 0.14539419, 0.48471474, 0.48471474)
+  mode,
+  survival_adjustment,
+  yearling_territory_size = springRunDSM::params$yearling_territory_size,
+  inchannel_habitat_fry = springRunDSM::params$inchannel_habitat_fry,
+  inchannel_habitat_juvenile = springRunDSM::params$inchannel_habitat_juvenile,
+  floodplain_habitat = springRunDSM::params$floodplain_habitat,
+  avg_temp = springRunDSM::params$avg_temp,
+  prob_strand_early = springRunDSM::params$prob_strand_early,
+  prob_strand_late = springRunDSM::params$prob_strand_late,
+  proportion_diverted = springRunDSM::params$proportion_diverted,
+  total_diverted = springRunDSM::params$total_diverted,
+  weeks_flooded = springRunDSM::params$weeks_flooded,
+  prop_high_predation = springRunDSM::params$prop_high_predation,
+  contact_points = springRunDSM::params$contact_points,
+  growth_rates = springRunDSM::params$growth_rates,
+  growth_rates_floodplain = springRunDSM::params$growth_rates_floodplain,
+  ..surv_juv_rear_int = springRunDSM::..surv_juv_rear_int,
+  .surv_juv_rear_contact_points = springRunDSM::.surv_juv_rear_contact_points,
+  ..surv_juv_rear_contact_points = springRunDSM::..surv_juv_rear_contact_points,
+  .surv_juv_rear_prop_diversions = springRunDSM::.surv_juv_rear_prop_diversions,
+  ..surv_juv_rear_prop_diversions = springRunDSM::..surv_juv_rear_prop_diversions,
+  .surv_juv_rear_total_diversions = springRunDSM::.surv_juv_rear_total_diversions,
+  ..surv_juv_rear_total_diversions = springRunDSM::..surv_juv_rear_total_diversions,
+  .surv_juv_rear_avg_temp_thresh = springRunDSM::.surv_juv_rear_avg_temp_thresh,
+  .surv_juv_rear_high_predation = springRunDSM::.surv_juv_rear_high_predation,
+  .surv_juv_rear_stranded = springRunDSM::.surv_juv_rear_stranded,
+  .surv_juv_rear_medium = springRunDSM::.surv_juv_rear_medium,
+  .surv_juv_rear_large = springRunDSM::.surv_juv_rear_large,
+  .surv_juv_rear_floodplain = springRunDSM::.surv_juv_rear_floodplain,
+  min_survival_rate = springRunDSM::min_survival_rate,
+  stochastic
 )
 }
+\arguments{
+\item{year}{Current simulation year}
+
+\item{yearlings}{Yearlings in tributaries}
+
+\item{yearling_territory_size}{Array of juvenile fish territory requirements}
+
+\item{inchannel_habitat_fry}{3 dimensional array [watersheds, months, years] representing fry inchannel habitat in square meters}
+
+\item{inchannel_habitat_juvenile}{3 dimensional array [watersheds, months, years] representing juvenile inchannel habitat in square meters}
+
+\item{floodplain_habitat}{3 dimensional array [watersheds, months, years] representing floodplain habitat in square meters}
+
+\item{avg_temp}{More details at \code{\link[DSMtemperature]{stream_tempetature}}}
+
+\item{prob_strand_early}{More details at \code{\link[DSMhabitat]{prop_strand_early}}}
+
+\item{prob_strand_late}{More details at \code{\link[DSMhabitat]{prop_strand_late}}}
+
+\item{proportion_diverted}{More details at \code{\link[DSMflow]{proportion_diverted}}}
+
+\item{total_diverted}{More details at \code{\link[DSMflow]{total_diverted}}}
+
+\item{weeks_flooded}{More details at \code{\link[DSMflow]{weeks_flooded}}}
+
+\item{prop_high_predation}{More details at \code{\link[DSMhabitat]{prop_high_predation}}}
+
+\item{contact_points}{More details at \code{\link[DSMhabitat]{contact_points}}}
+
+\item{..surv_juv_rear_int}{Intercept for \code{\link{surv_juv_rear}}}
+
+\item{.surv_juv_rear_contact_points}{Coefficient for \code{\link{surv_juv_rear}} \code{contact_points} variable}
+
+\item{..surv_juv_rear_contact_points}{Calibrated coefficient for \code{\link{surv_juv_rear}} \code{contact_points} variable}
+
+\item{.surv_juv_rear_prop_diversions}{Coefficient for \code{\link{surv_juv_rear}} \code{prop_diversions} variable}
+
+\item{..surv_juv_rear_prop_diversions}{Calibrated coefficient for \code{\link{surv_juv_rear}} \code{prop_diversions} variable}
+
+\item{.surv_juv_rear_total_diversions}{Coefficient for \code{\link{surv_juv_rear}} \code{total_diversions} variable}
+
+\item{..surv_juv_rear_total_diversions}{Calibrated coefficient for \code{\link{surv_juv_rear}} \code{total_diversions} variable}
+
+\item{.surv_juv_rear_avg_temp_thresh}{Coefficient for \code{\link{surv_juv_rear}} \code{avg_temp_thresh} variable}
+
+\item{.surv_juv_rear_high_predation}{Coefficient for \code{\link{surv_juv_rear}} \code{high_predation} variable}
+
+\item{.surv_juv_rear_stranded}{Coefficient for \code{\link{surv_juv_rear}} \code{stranded} variable}
+
+\item{.surv_juv_rear_medium}{Size related intercept for \code{\link{surv_juv_rear}} medium sized fish}
+
+\item{.surv_juv_rear_large}{Size related intercept for \code{\link{surv_juv_rear}} large sized fish}
+
+\item{.surv_juv_rear_floodplain}{Additional intercept for \code{\link{surv_juv_rear}} floodplain rearing benefit}
+
+\item{min_survival_rate}{estimated survival rate if temperature threshold is exceeded}
+}
 \description{
-Spring-Run Yearlings
+Generates transition probability matrices for yearling growth
+}
+\details{
+See \code{\link{params}} for details on parameter sources
 }
