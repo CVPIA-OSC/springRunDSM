@@ -411,9 +411,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           }
           
           sutter_detoured <- t(sapply(1:nrow(yearlings[1:15, ]), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings[i, ]),
-                   prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings[i, ]),
+                     prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])              
+            } else {
+              round(yearlings[i, ] * ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])
+            }
+
           }))
           
           yearlings_at_uppermid <- rbind(
@@ -433,9 +438,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearlings_at_lowermid <- rbind(yearlings_at_uppermid, yearlings[18:20, ])
           
           yolo_detoured <- t(sapply(1:nrow(yearlings_at_lowermid), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings_at_lowermid[i, ]),
-                   prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 2])
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings_at_lowermid[i, ]),
+                     prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 2])  
+            } else {
+              round(yearlings_at_lowermid[i, ] * ..params$proportion_flow_bypass[month, juv_dynamics_year, 2])
+            }
+            
           }))
           
           yearlings_at_lowersac <- rbind(
@@ -454,7 +464,11 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                          month = month)
           
           sac_not_entrained <- t(sapply(1:nrow(yearlings_at_lowersac), function(i) {
-            rbinom(n = 4, yearlings_at_lowersac[i, ], prob = 1 - prop_delta_fish_entrained)
+            if (stochastic) {
+              rbinom(n = 4, yearlings_at_lowersac[i, ], prob = 1 - prop_delta_fish_entrained)
+            } else {
+              yearlings_at_lowersac[i, ] * (1 - prop_delta_fish_entrained)
+            }
           }))
           
           yearlings_at_north_delta <- sac_not_entrained +
@@ -480,37 +494,69 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearling_holding_south_delta <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
           
           yearling_holding_south_delta[1:24, ] <- t(sapply(1:24, function(i) {
-            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[1, ])
+            if (stochastic) {
+              rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[1, ])              
+            } else {
+              round(yearlings_at_south_delta[i, ] * migratory_survival$delta[1, ])
+            }
+
           }))
           
           yearling_holding_south_delta[26:27, ] <- t(sapply(26:27, function(i) {
-            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[2, ])
+            if (stochastic) {
+              rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[2, ])
+            } else {
+              round(yearlings_at_south_delta[i, ] * migratory_survival$delta[2, ])
+            }
           }))
           
-          yearling_holding_south_delta[25, ] <- rbinom(n = 4,
-                                                       yearlings_at_south_delta[25, , drop = F],
-                                                       prob = migratory_survival$delta[3, ])
+          yearling_holding_south_delta[25, ] <- if (stochastic) {
+            rbinom(n = 4,
+                   yearlings_at_south_delta[25, , drop = F],
+                   prob = migratory_survival$delta[3, ]) 
+          } else {
+            round(yearlings_at_south_delta[25, , drop = F] * migratory_survival$delta[3, ])
+          }
           
           yearling_holding_south_delta[28:31, ] <- t(sapply(28:31, function(i) {
-            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[4, ])
+            if (stochastic) {
+              rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[4, ])
+            } else {
+              round(yearlings_at_south_delta[i, ] * migratory_survival$delta[4, ])
+            }
           }))
           
           yearlings_out <- t(sapply(1:nrow(yearlings_at_north_delta), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings_at_north_delta[i, ]),
-                   prob = migratory_survival$sac_delta[1, ])
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings_at_north_delta[i, ]),
+                     prob = migratory_survival$sac_delta[1, ])  
+            } else {
+              round(yearlings_at_north_delta[i, ] * migratory_survival$sac_delta[1, ])
+            }
+            
           }))
           
           survived_yearlings_out <- t(sapply(1:nrow(yearlings_out), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings_out[i, ]),
-                   prob = migratory_survival$bay_delta)
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings_out[i, ]),
+                     prob = migratory_survival$bay_delta)  
+            } else {
+              round(yearlings_out[i, ] * migratory_survival$bay_delta)
+            }
+            
           }))
           
           survived_yearling_holding_south_delta <- t(sapply(1:nrow(yearling_holding_south_delta), function(i) {
-            rbinom(n = 4,
-                   size = round(yearling_holding_south_delta[i, ]),
-                   prob = migratory_survival$bay_delta)
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearling_holding_south_delta[i, ]),
+                     prob = migratory_survival$bay_delta)              
+            } else {
+              round(yearling_holding_south_delta[i, ] * migratory_survival$bay_delta)
+            }
+
           }))
           
           yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
