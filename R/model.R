@@ -39,7 +39,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                 stochastic = stochastic)
     
     ..params$spawning_habitat <- scenario_data$spawning_habitat
-    ..params$inchannel_habitat_fry <- scenario_data$inchannel_habitat_fry
+    # ..params$inchannel_habitat_fry <- scenario_data$inchannel_habitat_fry
     ..params$inchannel_habitat_juvenile <- scenario_data$inchannel_habitat_juvenile
     ..params$floodplain_habitat <- scenario_data$floodplain_habitat
     ..params$weeks_flooded <- scenario_data$weeks_flooded
@@ -327,44 +327,101 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
         
         if (month == 11 & year > 1) {
           # applying summer year to the yearlings and send them out to the ocean
-          yearlings <- yearling_growth(year = juv_dynamics_year,
-                                       yearlings = yearlings,
-                                       mode = mode,
-                                       survival_adjustment = scenario_data$survival_adjustment,
-                                       yearling_territory_size = ..params$yearling_territory_size,
-                                       inchannel_habitat_fry = ..params$inchannel_habitat_fry,
-                                       inchannel_habitat_juvenile = ..params$inchannel_habitat_juvenile,
-                                       floodplain_habitat = ..params$floodplain_habitat,
-                                       avg_temp = ..params$avg_temp,
-                                       prob_strand_early = ..params$prob_strand_early,
-                                       prob_strand_late = ..params$prob_strand_late,
-                                       proportion_diverted = ..params$proportion_diverted,
-                                       total_diverted = ..params$total_diverted,
-                                       weeks_flooded = ..params$weeks_flooded,
-                                       prop_high_predation = ..params$prop_high_predation,
-                                       contact_points = ..params$contact_points,
-                                       growth_rates = ..params$growth_rates,
-                                       growth_rates_floodplain = ..params$growth_rates_floodplain,
-                                       ..surv_juv_rear_int = ..params$..surv_juv_rear_int,
-                                       .surv_juv_rear_contact_points = ..params$.surv_juv_rear_contact_points,
-                                       ..surv_juv_rear_contact_points = ..params$..surv_juv_rear_contact_points,
-                                       .surv_juv_rear_prop_diversions = ..params$.surv_juv_rear_prop_diversions,
-                                       ..surv_juv_rear_prop_diversions = ..params$..surv_juv_rear_prop_diversions,
-                                       .surv_juv_rear_total_diversions = ..params$.surv_juv_rear_total_diversions,
-                                       ..surv_juv_rear_total_diversions = ..params$..surv_juv_rear_total_diversions,
-                                       .surv_juv_rear_avg_temp_thresh = ..params$.surv_juv_rear_avg_temp_thresh,
-                                       .surv_juv_rear_high_predation = ..params$.surv_juv_rear_high_predation,
-                                       .surv_juv_rear_stranded = ..params$.surv_juv_rear_stranded,
-                                       .surv_juv_rear_medium = ..params$.surv_juv_rear_medium,
-                                       .surv_juv_rear_large = ..params$.surv_juv_rear_large,
-                                       .surv_juv_rear_floodplain = ..params$.surv_juv_rear_floodplain,
-                                       min_survival_rate = ..params$min_survival_rate,
-                                       stochastic = stochastic)
+          for (summer_months in 5:10) {
+            # we only care for floodplain and inchannel
+            yearling_habitat <- get_habitat(juv_dynamics_year, summer_months,
+                                            inchannel_habitat_fry = ..params$inchannel_habitat_fry,
+                                            inchannel_habitat_juvenile = ..params$inchannel_habitat_juvenile,
+                                            floodplain_habitat = ..params$floodplain_habitat,
+                                            sutter_habitat = ..params$sutter_habitat,
+                                            yolo_habitat = ..params$yolo_habitat,
+                                            sutter_floodplain_habitat = ..params$sutter_floodplain_habitat,
+                                            yolo_floodplain_habitat = ..params$yolo_floodplain_habitat,
+                                            delta_habitat = ..params$delta_habitat)
+            
+            # we only care for floodplain and inchannel
+            yearlings_survival_rates <- get_rearing_survival(juv_dynamics_year, summer_months,
+                                                             survival_adjustment = scenario_data$survival_adjustment,
+                                                             mode = mode,
+                                                             avg_temp = ..params$avg_temp,
+                                                             avg_temp_delta = ..params$avg_temp_delta,
+                                                             prob_strand_early = ..params$prob_strand_early,
+                                                             prob_strand_late = ..params$prob_strand_late,
+                                                             proportion_diverted = ..params$proportion_diverted,
+                                                             total_diverted = ..params$total_diverted,
+                                                             delta_proportion_diverted = ..params$delta_proportion_diverted,
+                                                             delta_total_diverted = ..params$delta_total_diverted,
+                                                             weeks_flooded = ..params$weeks_flooded,
+                                                             prop_high_predation = ..params$prop_high_predation,
+                                                             contact_points = ..params$contact_points,
+                                                             delta_contact_points = ..params$delta_contact_points,
+                                                             delta_prop_high_predation = ..params$delta_prop_high_predation,
+                                                             ..surv_juv_rear_int = ..params$..surv_juv_rear_int,
+                                                             .surv_juv_rear_contact_points = ..params$.surv_juv_rear_contact_points,
+                                                             ..surv_juv_rear_contact_points = ..params$..surv_juv_rear_contact_points,
+                                                             .surv_juv_rear_prop_diversions = ..params$.surv_juv_rear_prop_diversions,
+                                                             ..surv_juv_rear_prop_diversions = ..params$..surv_juv_rear_prop_diversions,
+                                                             .surv_juv_rear_total_diversions = ..params$.surv_juv_rear_total_diversions,
+                                                             ..surv_juv_rear_total_diversions = ..params$..surv_juv_rear_total_diversions,
+                                                             ..surv_juv_bypass_int = ..params$..surv_juv_bypass_int,
+                                                             ..surv_juv_delta_int = ..params$..surv_juv_delta_int,
+                                                             .surv_juv_delta_contact_points = ..params$.surv_juv_delta_contact_points,
+                                                             ..surv_juv_delta_contact_points = ..params$..surv_juv_delta_contact_points,
+                                                             .surv_juv_delta_total_diverted = ..params$.surv_juv_delta_total_diverted,
+                                                             ..surv_juv_delta_total_diverted = ..params$..surv_juv_delta_total_diverted,
+                                                             .surv_juv_rear_avg_temp_thresh = ..params$.surv_juv_rear_avg_temp_thresh,
+                                                             .surv_juv_rear_high_predation = ..params$.surv_juv_rear_high_predation,
+                                                             .surv_juv_rear_stranded = ..params$.surv_juv_rear_stranded,
+                                                             .surv_juv_rear_medium = ..params$.surv_juv_rear_medium,
+                                                             .surv_juv_rear_large = ..params$.surv_juv_rear_large,
+                                                             .surv_juv_rear_floodplain = ..params$.surv_juv_rear_floodplain,
+                                                             .surv_juv_bypass_avg_temp_thresh = ..params$.surv_juv_bypass_avg_temp_thresh,
+                                                             .surv_juv_bypass_high_predation = ..params$.surv_juv_bypass_high_predation,
+                                                             .surv_juv_bypass_medium = ..params$.surv_juv_bypass_medium,
+                                                             .surv_juv_bypass_large = ..params$.surv_juv_bypass_large,
+                                                             .surv_juv_bypass_floodplain = ..params$.surv_juv_bypass_floodplain,
+                                                             .surv_juv_delta_avg_temp_thresh = ..params$.surv_juv_delta_avg_temp_thresh,
+                                                             .surv_juv_delta_high_predation = ..params$.surv_juv_delta_high_predation,
+                                                             .surv_juv_delta_prop_diverted = ..params$.surv_juv_delta_prop_diverted,
+                                                             .surv_juv_delta_medium = ..params$.surv_juv_delta_medium,
+                                                             .surv_juv_delta_large = ..params$.surv_juv_delta_large,
+                                                             min_survival_rate = ..params$min_survival_rate,
+                                                             stochastic = stochastic)
+            
+            yearlings <- fill_natal(juveniles = yearlings, inchannel_habitat = yearling_habitat$inchannel, 
+                                    floodplain_habitat = yearling_habitat$floodplain,
+                                    territory_size = ..params$yearling_territory_size, 
+                                    up_to_size_class = 4, yearlings = TRUE)
+            
+            if (summer_months %in% 9:10) {
+              growth_ic <- ..params$growth_rates
+              growth_fp <- ..params$growth_rates_floodplain
+            } else {
+              growth_ic <- diag(1, 4, 4)
+              growth_fp <- replicate(5, diag(1, 4, 4))
+            }
+            
+            yearlings <- rear(juveniles = yearlings$inchannel, survival_rate = yearlings_survival_rates$inchannel, 
+                              growth = growth_ic,
+                              floodplain_juveniles = yearlings$floodplain,
+                              floodplain_survival_rate = yearlings_survival_rates$floodplain, 
+                              floodplain_growth = growth_fp,
+                              weeks_flooded = ..params$weeks_flooded, 
+                              stochastic)
+            
+            yearlings <- round(yearlings$inchannel + yearlings$floodplain)
+            
+          }
           
           sutter_detoured <- t(sapply(1:nrow(yearlings[1:15, ]), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings[i, ]),
-                   prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings[i, ]),
+                     prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])              
+            } else {
+              round(yearlings[i, ] * ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])
+            }
+            
           }))
           
           yearlings_at_uppermid <- rbind(
@@ -384,9 +441,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearlings_at_lowermid <- rbind(yearlings_at_uppermid, yearlings[18:20, ])
           
           yolo_detoured <- t(sapply(1:nrow(yearlings_at_lowermid), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings_at_lowermid[i, ]),
-                   prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 2])
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings_at_lowermid[i, ]),
+                     prob = ..params$proportion_flow_bypass[month, juv_dynamics_year, 2])  
+            } else {
+              round(yearlings_at_lowermid[i, ] * ..params$proportion_flow_bypass[month, juv_dynamics_year, 2])
+            }
+            
           }))
           
           yearlings_at_lowersac <- rbind(
@@ -405,7 +467,11 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                          month = month)
           
           sac_not_entrained <- t(sapply(1:nrow(yearlings_at_lowersac), function(i) {
-            rbinom(n = 4, yearlings_at_lowersac[i, ], prob = 1 - prop_delta_fish_entrained)
+            if (stochastic) {
+              rbinom(n = 4, yearlings_at_lowersac[i, ], prob = 1 - prop_delta_fish_entrained)
+            } else {
+              yearlings_at_lowersac[i, ] * (1 - prop_delta_fish_entrained)
+            }
           }))
           
           yearlings_at_north_delta <- sac_not_entrained +
@@ -431,37 +497,69 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearling_holding_south_delta <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
           
           yearling_holding_south_delta[1:24, ] <- t(sapply(1:24, function(i) {
-            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[1, ])
+            if (stochastic) {
+              rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[1, ])              
+            } else {
+              round(yearlings_at_south_delta[i, ] * migratory_survival$delta[1, ])
+            }
+            
           }))
           
           yearling_holding_south_delta[26:27, ] <- t(sapply(26:27, function(i) {
-            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[2, ])
+            if (stochastic) {
+              rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[2, ])
+            } else {
+              round(yearlings_at_south_delta[i, ] * migratory_survival$delta[2, ])
+            }
           }))
           
-          yearling_holding_south_delta[25, ] <- rbinom(n = 4,
-                                                       yearlings_at_south_delta[25, , drop = F],
-                                                       prob = migratory_survival$delta[3, ])
+          yearling_holding_south_delta[25, ] <- if (stochastic) {
+            rbinom(n = 4,
+                   yearlings_at_south_delta[25, , drop = F],
+                   prob = migratory_survival$delta[3, ]) 
+          } else {
+            round(yearlings_at_south_delta[25, , drop = F] * migratory_survival$delta[3, ])
+          }
           
           yearling_holding_south_delta[28:31, ] <- t(sapply(28:31, function(i) {
-            rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[4, ])
+            if (stochastic) {
+              rbinom(n = 4, size = round(yearlings_at_south_delta[i, ]), prob = migratory_survival$delta[4, ])
+            } else {
+              round(yearlings_at_south_delta[i, ] * migratory_survival$delta[4, ])
+            }
           }))
           
           yearlings_out <- t(sapply(1:nrow(yearlings_at_north_delta), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings_at_north_delta[i, ]),
-                   prob = migratory_survival$sac_delta[1, ])
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings_at_north_delta[i, ]),
+                     prob = migratory_survival$sac_delta[1, ])  
+            } else {
+              round(yearlings_at_north_delta[i, ] * migratory_survival$sac_delta[1, ])
+            }
+            
           }))
           
           survived_yearlings_out <- t(sapply(1:nrow(yearlings_out), function(i) {
-            rbinom(n = 4,
-                   size = round(yearlings_out[i, ]),
-                   prob = migratory_survival$bay_delta)
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearlings_out[i, ]),
+                     prob = migratory_survival$bay_delta)  
+            } else {
+              round(yearlings_out[i, ] * migratory_survival$bay_delta)
+            }
+            
           }))
           
           survived_yearling_holding_south_delta <- t(sapply(1:nrow(yearling_holding_south_delta), function(i) {
-            rbinom(n = 4,
-                   size = round(yearling_holding_south_delta[i, ]),
-                   prob = migratory_survival$bay_delta)
+            if (stochastic) {
+              rbinom(n = 4,
+                     size = round(yearling_holding_south_delta[i, ]),
+                     prob = migratory_survival$bay_delta)              
+            } else {
+              round(yearling_holding_south_delta[i, ] * migratory_survival$bay_delta)
+            }
+            
           }))
           
           yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
