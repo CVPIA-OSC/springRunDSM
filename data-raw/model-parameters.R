@@ -3,6 +3,10 @@ library(tidyverse)
 # 2019 Calibration Parameters ------------
 params <- list(
 
+  # Data from DSMscenarios
+  spawn_decay_rate = DSMscenario::spawn_decay_rate,
+  rear_decay_rate = DSMscenario::rear_decay_rate,
+  
   # Data from springRunDSM cache-data (values vary by run)
   hatchery_allocation = springRunDSM::hatchery_allocation,
   natural_adult_removal_rate = springRunDSM::natural_adult_removal_rate,

@@ -64,9 +64,8 @@ yearling_growth <- function(year,
                             .surv_juv_rear_floodplain = springRunDSM::.surv_juv_rear_floodplain,
                             min_survival_rate = springRunDSM::min_survival_rate,
                             stochastic) {
-  #TODO refactor to just one id matrix
+  
   growth_rates_identity <- diag(1, 4, 4)
-  growth_rates_floodplain_identity <- diag(1, 4, 4)
 
   for (month in 5:10) {
     # only months 9, 10 experience growth
@@ -75,7 +74,7 @@ yearling_growth <- function(year,
       growth_rates_floodplain_used <- growth_rates_floodplain
     } else {
       growth_rates_used <- growth_rates_identity
-      growth_rates_floodplain_used <- growth_rates_floodplain_identity
+      growth_rates_floodplain_used <- growth_rates_identity
     }
     this_weeks_flooded <- weeks_flooded[, month, year]
 
