@@ -35,14 +35,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     
     scenario_data <- DSMscenario::load_scenario(scenario,
                                                 habitat_inputs = habitats,
-                                                species = DSMscenario::species$SPRING_RUN)
+                                                species = DSMscenario::species$SPRING_RUN,
+                                                stochastic = stochastic)
     
     ..params$spawning_habitat <- scenario_data$spawning_habitat
     ..params$inchannel_habitat_fry <- scenario_data$inchannel_habitat_fry
     ..params$inchannel_habitat_juvenile <- scenario_data$inchannel_habitat_juvenile
     ..params$floodplain_habitat <- scenario_data$floodplain_habitat
     ..params$weeks_flooded <- scenario_data$weeks_flooded
-    
   }
   
   if (mode == "calibrate") {
@@ -97,95 +97,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     } else {
       mean(c(4829.885,4588.097,8689.747)) * ..params$hatchery_allocation
     }
-
-    # if (year == 10) {
-    #   # print('before')
-    #   x <- adults
-    #   # print('----')
-    #   # print('after')
-    #   adults <- structure(c(0, 0.412206818021207, 339.840205578755, 0, 0, 12986.9512027071,
-    #                         788.565428394236, 0, 0, 490.66567240937, 0, 691.261776039144,
-    #                         0, 0, 0, 0, 0, 0, 1441.37510273575, 78.8704216451964, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0.353758008394228, 266.285294303453,
-    #                         0, 0, 11826.9920127831, 731.507223700282, 0, 0, 379.015044535337,
-    #                         0, 609.216493146242, 0, 0, 0, 0, 0, 0, 2053.54409903886, 76.1843323880321,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0249678219094437, 1.77757998134365,
-    #                         262.980291636751, 0, 0.0302795493496409, 9824.94524392232, 517.907403454582,
-    #                         0.0497810823450009, 0, 326.215902261902, 0, 472.04095165171,
-    #                         0, 0, 0.0034054213410213, 0, 0, 0, 943.280397324885, 60.9896304356331,
-    #                         0, 0, 0, 0, 0, 0, 4.84738359352476e-09, 0, 0.000108418777840923,
-    #                         0.000221295584015599, 0, 0.0717950294018173, 5.92181595860771,
-    #                         343.170645291502, 0, 0.0958273023903902, 9255.69966094654, 418.37823423485,
-    #                         0.33384635412495, 0, 345.700906276215, 0, 675.449913169659, 0,
-    #                         0, 0.0197219492324818, 0, 0, 0, 243.897603877153, 53.1565624074762,
-    #                         0, 0, 0, 0, 0, 0, 2.49466583536748e-06, 0, 0.000281408719487314,
-    #                         0.000597127361157015, 0, 0.097526445258113, 8.6487247615538,
-    #                         415.749549874421, 0, 0.144501184540779, 11421.1531587621, 629.9250377396,
-    #                         0.539517151863436, 0, 408.771296622658, 0, 915.011253255, 0,
-    #                         0, 0.0330265421192939, 0, 0, 0, 740.94506712251, 77.5065265557278,
-    #                         0, 0, 0, 0, 0, 0, 1.04244730070789e-05, 0, 0.0021662372932061,
-    #                         0.00206379127074066, 0, 0.0989938866607274, 7.35955041062589,
-    #                         328.855458812173, 0, 0.135395518574438, 13254.6624081894, 777.904453967467,
-    #                         0.402771674513092, 0, 345.751166083255, 0, 817.585737817533,
-    #                         0, 0, 0.0266449203476908, 0, 0, 0, 2034.02659387455, 90.5062653877437,
-    #                         0, 0, 0, 0, 0, 0, 1.55083144019444e-05, 0, 0.00543402512349716,
-    #                         0.00412331291562988, 0, 0.0712045872073951, 6.58057833750118,
-    #                         245.943607476619, 0, 0.0790054188243461, 12593.2189135428, 713.089592506401,
-    #                         0.277075086543319, 0, 281.38048376744, 0, 747.970887632527, 0,
-    #                         0, 0.0169335694083625, 0, 0, 0, 2763.49148818956, 87.5205771463118,
-    #                         0, 0, 0, 0, 0, 0, 1.24057478518488e-05, 0, 0.00538667662072991,
-    #                         0.00343220921307866, 0, 0.0613417723605576, 7.72921041214768,
-    #                         230.473617035424, 0, 0.0923843460409767, 11068.1899783342, 599.775255605578,
-    #                         0.159938742082891, 0, 271.204552693231, 0, 587.716308157684,
-    #                         0, 0, 0.0135326813598808, 0, 0, 0, 1278.0034398998, 118.840044887515,
-    #                         0, 0, 0, 0, 0, 0, 3.21718846869839e-05, 0, 0.00300606456329619,
-    #                         0.00126817364885796, 0, 0.0796893937039662, 8.36612435398589,
-    #                         222.936433993791, 0, 0.147390852145772, 10210.3088246216, 548.573343656489,
-    #                         0.131241240238088, 0, 238.818413570468, 0, 524.717941981775,
-    #                         0, 0, 0.0138793999195346, 0, 0, 0, 80.2609773836419, 157.939767372466,
-    #                         0, 0, 0, 0, 0, 0, 5.19779051020262e-05, 0, 0.00317501463605501,
-    #                         0.000846091513995383, 0, 0.059448118040562, 7.47945087973858,
-    #                         240.85939646228, 0, 0.102444525733284, 9939.06056898501, 531.393011476826,
-    #                         0.263212438950806, 0, 191.838883392242, 0, 613.055450766982,
-    #                         0, 0, 0.0110832895231136, 0, 0, 0, 55.7341666445423, 129.944540818217,
-    #                         0, 0, 0, 0, 0, 0, 2.46449331505261e-05, 0, 0.00454707321018138,
-    #                         0.00100866903039233, 0, 0.034021746327719, 6.48866157058948,
-    #                         232.090483365504, 0, 0.044455067953902, 9773.26114624425, 496.894071651839,
-    #                         0.25404721131521, 0, 164.09856311948, 0, 504.147450779261, 0,
-    #                         0, 0.00683029641442697, 0, 0, 0, 27.484407720225, 66.6548519146172,
-    #                         0, 0, 0, 0, 0, 0, 7.3033878473891e-09, 0, 0.00438621553168578,
-    #                         0.000506408166413379, 0, 0.0197526847090924, 5.10668283291934,
-    #                         147.786094913801, 0, 0.0318413683202997, 7053.24953694085, 365.100410390096,
-    #                         0.096108005217115, 0, 130.944527705102, 0, 244.325540182907,
-    #                         0, 0, 0.0041208984268143, 0, 0, 0, 15.0379389142453, 28.0159032855585,
-    #                         0, 0, 0, 0, 0, 0, 5.55969042409515e-10, 0, 0.00296423866913814,
-    #                         0.00010951167807249, 0, 0.00392149676611984, 1.91411812248536,
-    #                         42.8151479235746, 0, 0.0122609882449482, 2220.78022706505, 123.733479437457,
-    #                         0.00421544258380007, 0, 48.7226708981606, 0, 50.6222605079392,
-    #                         0, 0, 0.00102850968734212, 0, 0, 0, 2.25392696129825, 7.60177746375126,
-    #                         0, 0, 0, 0, 0, 0, 7.73114695514036e-11, 0, 0.00101024742608245,
-    #                         3.69988858659869e-05, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    #                         0, 0, 0), .Dim = c(31L, 25L))
-    #   # print(adults)
-    # }
-
+    
     spawners <- get_spawning_adults(year, adults, hatch_adults, mode = mode,
                                     month_return_proportions = ..params$month_return_proportions,
                                     prop_flow_natal = ..params$prop_flow_natal,
@@ -208,7 +120,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                     stochastic = stochastic)
     
     init_adults <- spawners$init_adults
-
+    
     output$spawners[ , year] <- init_adults
     output$proportion_natural[ , year] <- spawners$proportion_natural
     
@@ -376,7 +288,6 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
         yearlings[c(1:15, 18:20, 23, 25:30), 1:2] <- juveniles[c(1:15, 18:20, 23, 25:30), 1:2]
         juveniles[c(1:15, 18:20, 23, 25:30), 1:2] <- 0 # set all to zero since they are yearlings now
         # all remaining fish outmigrate
-        if(any(yearlings > 0)) browser()
         
         migrants <- juveniles
         
@@ -447,7 +358,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                        .surv_juv_rear_medium = ..params$.surv_juv_rear_medium,
                                        .surv_juv_rear_large = ..params$.surv_juv_rear_large,
                                        .surv_juv_rear_floodplain = ..params$.surv_juv_rear_floodplain,
-                                       min_survival_rate = ..params$min_survival_rate, 
+                                       min_survival_rate = ..params$min_survival_rate,
                                        stochastic = stochastic)
           
           sutter_detoured <- t(sapply(1:nrow(yearlings[1:15, ]), function(i) {
@@ -457,13 +368,13 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           }))
           
           yearlings_at_uppermid <- rbind(
-            migrate(yearlings[1:15, ] - sutter_detoured, migratory_survival$uppermid_sac, 
+            migrate(yearlings[1:15, ] - sutter_detoured, migratory_survival$uppermid_sac,
                     stochastic = stochastic),
             matrix(0, ncol = 4, nrow = 2)
           )
           
           yearlings_at_sutter <- rbind(
-            migrate(sutter_detoured, migratory_survival$sutter, 
+            migrate(sutter_detoured, migratory_survival$sutter,
                     stochastic = stochastic),
             matrix(0, ncol = 4, nrow = 2)
           )
@@ -479,14 +390,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           }))
           
           yearlings_at_lowersac <- rbind(
-            migrate(yearlings_at_lowermid - yolo_detoured, migratory_survival$lowermid_sac, 
+            migrate(yearlings_at_lowermid - yolo_detoured, migratory_survival$lowermid_sac,
                     stochastic = stochastic),
             matrix(0, ncol = 4, nrow = 3)
           )
           
           yearlings_at_lowersac[23, ] <- yearlings[23, ]
           
-          yearlings_at_lowersac <- migrate(yearlings_at_lowersac, migratory_survival$lower_sac, 
+          yearlings_at_lowersac <- migrate(yearlings_at_lowersac, migratory_survival$lower_sac,
                                            stochastic = stochastic)
           
           prop_delta_fish_entrained <- route_south_delta(freeport_flow = ..params$freeport_flows[[month, juv_dynamics_year]] * 35.3147,
@@ -498,7 +409,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           }))
           
           yearlings_at_north_delta <- sac_not_entrained +
-            rbind(migrate(yolo_detoured, migratory_survival$yolo, stochastic = stochastic), 
+            rbind(migrate(yolo_detoured, migratory_survival$yolo, stochastic = stochastic),
                   matrix(0, ncol = 4, nrow = 3))
           
           yearlings_at_north_delta <- rbind(yearlings_at_north_delta,
@@ -507,7 +418,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearlings_at_south_delta <- rbind(
             matrix(0, ncol = 4, nrow = 24), # 24 rows for north delta/sac origin fish
             yearlings[25:27, ], # delta tribs
-            migrate(yearlings[28:30,], migratory_survival$san_joaquin, 
+            migrate(yearlings[28:30,], migratory_survival$san_joaquin,
                     stochastic = stochastic),
             matrix(0, ncol = 4, nrow = 1) # SJR
           ) +
@@ -559,7 +470,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           
           adults_in_ocean <- adults_in_ocean + ocean_entry_success(migrants = yearlings_at_golden_gate,
                                                                    month = 11,
-                                                                   avg_ocean_transition_month = avg_ocean_transition_month, 
+                                                                   avg_ocean_transition_month = avg_ocean_transition_month,
                                                                    stochastic = stochastic)
           
           yearlings <- matrix(0, ncol = 4, nrow = 31, dimnames = list(springRunDSM::watershed_labels, size_class_labels))
@@ -895,6 +806,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                                stochastic = stochastic)
       
     } # end month loop
+    
     
     output$juvenile_biomass[ , year] <- juveniles_at_chipps %*% springRunDSM::params$mass_by_size_class
     
