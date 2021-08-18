@@ -13,14 +13,14 @@
 #' @param south_delta_habitat 2 dimensional array [months, years] representing south delta habitat in square meters
 #' @export
 get_habitat <- function(year, month,
-                        inchannel_habitat_fry = springRunDSM::params$inchannel_habitat_fry,
-                        inchannel_habitat_juvenile = springRunDSM::params$inchannel_habitat_juvenile,
-                        floodplain_habitat = springRunDSM::params$floodplain_habitat,
-                        sutter_habitat = springRunDSM::params$sutter_habitat,
-                        yolo_habitat = springRunDSM::params$yolo_habitat,
-                        sutter_floodplain_habitat = springRunDSM::params$sutter_habitat,
-                        yolo_floodplain_habitat = springRunDSM::params$yolo_habitat,
-                        delta_habitat = springRunDSM::params$delta_habitat) {
+                        inchannel_habitat_fry,
+                        inchannel_habitat_juvenile,
+                        floodplain_habitat,
+                        sutter_habitat,
+                        yolo_habitat,
+                        sutter_floodplain_habitat,
+                        yolo_floodplain_habitat,
+                        delta_habitat) {
   # set monthly habitat values
   ic_habitat <- if (month %in% c(11, 12, 1)) inchannel_habitat_fry[ , month, year] else inchannel_habitat_juvenile[ , month, year]
   floodplain_activation <- matrix(0, nrow = 31, ncol = 12)
