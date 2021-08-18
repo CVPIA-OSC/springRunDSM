@@ -23,9 +23,9 @@ get_migratory_survival(
   avg_temp_delta,
   avg_temp,
   delta_proportion_diverted,
-  .surv_juv_outmigration_sac_delta_intercept_one,
-  .surv_juv_outmigration_sac_delta_intercept_two,
-  .surv_juv_outmigration_sac_delta_intercept_three,
+  ..surv_juv_outmigration_sac_delta_intercept_one,
+  ..surv_juv_outmigration_sac_delta_intercept_two,
+  ..surv_juv_outmigration_sac_delta_intercept_three,
   .surv_juv_outmigration_sac_delta_delta_flow,
   .surv_juv_outmigration_sac_delta_avg_temp,
   .surv_juv_outmigration_sac_delta_perc_diversions,
@@ -64,11 +64,11 @@ get_migratory_survival(
 
 \item{SWP_exports}{More details at \code{\link[DSMflow]{swp_exports}}}
 
-\item{.surv_juv_outmigration_sac_delta_intercept_one}{Intercept \code{\link{surv_juv_outmigration_sac_delta}} for model one}
+\item{..surv_juv_outmigration_sac_delta_intercept_one}{Intercept \code{\link{surv_juv_outmigration_sac_delta}} for model one}
 
-\item{.surv_juv_outmigration_sac_delta_intercept_two}{Intercept \code{\link{surv_juv_outmigration_sac_delta}} for model two}
+\item{..surv_juv_outmigration_sac_delta_intercept_two}{Intercept \code{\link{surv_juv_outmigration_sac_delta}} for model two}
 
-\item{.surv_juv_outmigration_sac_delta_intercept_three}{Intercept \code{\link{surv_juv_outmigration_sac_delta}} for model three}
+\item{..surv_juv_outmigration_sac_delta_intercept_three}{Intercept \code{\link{surv_juv_outmigration_sac_delta}} for model three}
 
 \item{.surv_juv_outmigration_sac_delta_delta_flow}{Coefficient \code{\link{surv_juv_outmigration_sac_delta}} for \code{delta_flow} variable}
 

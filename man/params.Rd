@@ -153,9 +153,9 @@ period in front are model or submodel coefficients. Parameters with double perio
   \item \code{delta_inflow}: More details at \code{\link[DSMflow]{delta_inflow}}
   \item \code{avg_temp_delta}: More details at \code{\link[DSMtemperature]{delta_temperature}}
   \item \code{delta_proportion_diverted}: More details at \code{\link[DSMflow]{delta_proportion_diverted}}
-  \item \code{.surv_juv_outmigration_sac_delta_intercept_one} Intercept for model one, source: TODO
-  \item \code{.surv_juv_outmigration_sac_delta_intercept_two} Intercept for model two, source: TODO
-  \item \code{.surv_juv_outmigration_sac_delta_intercept_three} Intercept for model three, source: TODO
+  \item \code{..surv_juv_outmigration_sac_delta_intercept_one} Intercept for model one, source: Calibration
+  \item \code{..surv_juv_outmigration_sac_delta_intercept_two} Intercept for model two, source: Calibration
+  \item \code{..surv_juv_outmigration_sac_delta_intercept_three} Intercept for model three, source: Calibration
   \item \code{.surv_juv_outmigration_sac_delta_delta_flow} Coefficient for \code{delta_flow} variable, source: TODO
   \item \code{.surv_juv_outmigration_sac_delta_avg_temp} Coefficient for \code{avg_temp} variable, source: TODO
   \item \code{.surv_juv_outmigration_sac_delta_perc_diversions} Coefficient for \code{perc_diversions} variable, source: TODO
