@@ -39,7 +39,10 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                 stochastic = stochastic)
     
     ..params$spawning_habitat <- scenario_data$spawning_habitat
+    
+    habitats$inchannel_habitat_fry == scenario_data$inchannel_habitat_fry
     # ..params$inchannel_habitat_fry <- scenario_data$inchannel_habitat_fry
+    # ..params$inchannel_habitat_fry <- habitats$inchannel_habitat_fry
     ..params$inchannel_habitat_juvenile <- scenario_data$inchannel_habitat_juvenile
     ..params$floodplain_habitat <- scenario_data$floodplain_habitat
     ..params$weeks_flooded <- scenario_data$weeks_flooded
