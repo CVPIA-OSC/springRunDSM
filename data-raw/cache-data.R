@@ -80,11 +80,8 @@ usethis::use_data(hatchery_allocation, overwrite = TRUE)
 
 # Sit defined diversity groups
 original_groups <- read_csv("data-raw/misc/Grouping.csv")
-diversity_group <- original_groups$DiversityGroup
+diversity_group <- original_groups$diversity_group
 names(diversity_group) <- watershed_labels
-diversity_group[c(18,19,20,23,26,27)]<-5 #split diversity group
-diversity_group<-ifelse(DSMscenario::watershed_groups == 7, 6, diversity_group) 
-# TODO update csv after conversation
 usethis::use_data(diversity_group, overwrite = TRUE)
 
 # Size class labels
