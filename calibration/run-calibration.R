@@ -40,8 +40,8 @@ r1_solution <- res@solution[1, ]
 r1_params <- update_params(x = r1_solution, springRunDSM::params)
 r1_params <- DSMCalibrationData::set_synth_years(r1_params)
 r1_sim <- spring_run_model(seeds = DSMCalibrationData::grandtab_imputed$spring, mode = "calibrate",
-                         ..params = r1_params,
-                         stochastic = FALSE)
+                           ..params = r1_params,
+                           stochastic = FALSE)
 
 
 r1_nat_spawners <- as_tibble(r1_sim[keep, ,drop = F]) %>%
@@ -49,6 +49,7 @@ r1_nat_spawners <- as_tibble(r1_sim[keep, ,drop = F]) %>%
   gather(year, spawners, -watershed) %>%
   mutate(type = "simulated",
          year = readr::parse_number(year) + 5)
+
 
 
 r1_observed <- as_tibble((1 - springRunDSM::params$proportion_hatchery[keep]) * DSMCalibrationData::grandtab_observed$spring[keep,, drop=F]) %>%
@@ -68,7 +69,6 @@ r1_eval_df %>%
 
 r1_eval_df %>%
   spread(type, spawners) %>%
-  # filter(watershed == "Yuba River") %>%
   ggplot(aes(observed, simulated)) + geom_point() +
   geom_abline(intercept = 0, slope = 1)
 
