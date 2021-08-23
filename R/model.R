@@ -79,7 +79,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                               "simulate" = 20,
                               "calibrate" = 19)
   
-  yearlings <- matrix(0, ncol = 4, nrow = 31, dimnames = list(springRunDSM::watershed_labels, size_class_labels))
+  yearlings <- matrix(0, ncol = 4, nrow = 31, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
   
   for (year in 1:simulation_length) {
     adults_in_ocean <- numeric(31)
@@ -168,7 +168,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     # Holding period for spring run
     # apply degree days and prespawn survival
     holding_split <- if (stochastic) {
-      rbinom(31, init_adults, 0.5) / init_adults
+      rbinom(31, init_adults, 0.5) / (init_adults + 0.00000001)
     } else {
       init_adults * 0.5 / (init_adults + 0.00000001)
     }
@@ -480,7 +480,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
             )
           
           # estimate fish at Golden Gate Bridge and Chipps Island
-          yearling_holding_south_delta <- matrix(0, nrow = 31, ncol = 4, dimnames = list(watershed_labels, size_class_labels))
+          yearling_holding_south_delta <- matrix(0, nrow = 31, ncol = 4, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
           
           yearling_holding_south_delta[1:24, ] <- t(sapply(1:24, function(i) {
             if (stochastic) {
@@ -547,7 +547,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                                    avg_ocean_transition_month = avg_ocean_transition_month,
                                                                    stochastic = stochastic)
           
-          yearlings <- matrix(0, ncol = 4, nrow = 31, dimnames = list(springRunDSM::watershed_labels, size_class_labels))
+          yearlings <- matrix(0, ncol = 4, nrow = 31, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
         }
         # if month < 8
         # route northern natal fish stay and rear or migrate downstream ------

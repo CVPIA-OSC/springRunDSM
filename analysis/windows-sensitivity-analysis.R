@@ -91,7 +91,7 @@ library(tictoc)
 tic("one param")
 y <- param_sensitivity("hatchery_allocation")
 toc()
-View(x)
+View(y)
 
 
 # how to separate coefficients from other model inputs within params
