@@ -2,7 +2,7 @@ library(DSMscenario)
 library(parallel)
 library(doParallel)
 library(purrr)
-library(fallRunDSM)
+library(springRunDSM)
 library(dplyr)
 
 # set up for parallel processing ----------------------------------
@@ -12,8 +12,8 @@ registerDoParallel(cl)
 
 
 run_scenario <- function(scenario) {
-  s <- fall_run_model(mode = 'seed', stochastic = TRUE)
-  output <- fall_run_model(scenario = scenario, mode = 'simulate',
+  s <- spring_run_model(mode = 'seed', stochastic = TRUE)
+  output <- spring_run_model(scenario = scenario, mode = 'simulate',
                            stochastic = TRUE, seed = s)
 
   # TODO pick metrics
@@ -26,7 +26,7 @@ run_scenario <- function(scenario) {
   ))
 }
 
-clusterExport(cl, list('run_scenario', 'fall_run_model'))
+clusterExport(cl, list('run_scenario', 'spring_run_model'))
 
 run_scenarios_parallel <- function(scenario, number_of_runs = 5000) {
   parLapply(cl, 1:number_of_runs,
