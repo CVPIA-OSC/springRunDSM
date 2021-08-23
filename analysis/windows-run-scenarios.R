@@ -35,7 +35,7 @@ run_scenarios_parallel <- function(scenario, number_of_runs = 5000) {
            })
 }
 
-number_of_runs <- 5000
+number_of_runs <- 5
 
 baseline_results <- run_scenarios_parallel(DSMscenario::scenarios$NO_ACTION, number_of_runs)
 scenario_1_results <- run_scenarios_parallel(DSMscenario::scenarios$ONE, number_of_runs)
