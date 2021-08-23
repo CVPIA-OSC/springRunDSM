@@ -1,8 +1,9 @@
 #' @title Get Spawning Adults
+#' @details See \code{\link{params}} for details on parameter sources
 #' @param year the year of simulation
 #' @param adults potential spawning adults for each watershed (length = 31) values must be integer
 #' @param hatch_adults total hatchery adults
-#' @param seeds a value meant to be inherited to determine if model is in seeding stage or not
+#' @param mode a value meant to be inherited to determine if model is in "seed", "calibrate", or "simulate" mode
 #' @param month_return_proportions The proportion of fish returning for each month
 #' @param prop_flow_natal More details at \code{\link[DSMflow]{proportion_flow_natal}}
 #' @param south_delta_routed_watersheds More details at \code{\link[DSMhabitat]{south_delta_routed_watersheds}}
@@ -11,16 +12,20 @@
 #' @param tisdale_bypass_watershed More details at \code{\link[DSMhabitat]{tisdale_bypass_watershed}}
 #' @param yolo_bypass_watershed More details at \code{\link[DSMhabitat]{yolo_bypass_watershed}}
 #' @param migratory_temperature_proportion_over_20 More details at \code{\link[DSMtemperature]{migratory_temperature_proportion_over_20}}
+#' @param natural_adult_removal_rate More details at \code{\link{natural_adult_removal_rate}}
+#' @param cross_channel_stray_rate More details at \code{\link{cross_channel_stray_rate}}
+#' @param stray_rate More details at \code{\link{stray_rate}}
+#' @param ..surv_adult_enroute_int Intercept for \code{\link{surv_adult_enroute}}
 #' @param .adult_stray_intercept Intercept for \code{\link{adult_stray}}
 #' @param .adult_stray_wild Coefficient for \code{\link{adult_stray}} \code{wild} variable
 #' @param .adult_stray_natal_flow  Coefficient for \code{\link{adult_stray}} \code{natal_flow} variable
 #' @param .adult_stray_cross_channel_gates_closed  Coefficient for \code{\link{adult_stray}} \code{cross_channel_gates_closed} variable
 #' @param .adult_stray_prop_bay_trans  Coefficient for \code{\link{adult_stray}} \code{prop_bay_trans} variable
 #' @param .adult_stray_prop_delta_trans  Coefficient for \code{\link{adult_stray}} \code{prop_delta_trans} variable
-#' @param ..surv_adult_enroute_int Intercept for \code{\link{surv_adult_enroute}}
 #' @param .adult_en_route_migratory_temp Coefficient for \code{\link{surv_adult_enroute}} \code{migratory_temp} variable
 #' @param .adult_en_route_bypass_overtopped Coefficient for \code{\link{surv_adult_enroute}} \code{bypass_overtopped} variable
 #' @param .adult_en_route_adult_harvest_rate  Adult harvest rate for \code{\link{surv_adult_enroute}}
+#' @param stochastic TRUE FALSE value indicating if model is being run stochastically
 #' @source IP-117068
 #' @export
 get_spawning_adults <- function(year, adults, hatch_adults, mode,
@@ -32,6 +37,9 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
                                 tisdale_bypass_watershed,
                                 yolo_bypass_watershed,
                                 migratory_temperature_proportion_over_20,
+                                natural_adult_removal_rate,
+                                cross_channel_stray_rate,
+                                stray_rate,
                                 ..surv_adult_enroute_int,
                                 .adult_stray_intercept,
                                 .adult_stray_wild,
@@ -60,9 +68,9 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
       if (stochastic) {
         rbinom(n = 31,
                size = round(adults_by_month[, month]),
-               prob = 1 - springRunDSM::params$natural_adult_removal_rate)
+               prob = 1 - natural_adult_removal_rate)
       } else {
-        round(adults_by_month[, month] * (1 - springRunDSM::params$natural_adult_removal_rate))
+        round(adults_by_month[, month] * (1 - natural_adult_removal_rate))
       }
     })
 
@@ -112,18 +120,18 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
     south_delta_routed_adults <- round(colSums(straying_adults * south_delta_routed_watersheds))
     south_delta_stray_adults <- sapply(1:4, function(month) {
       if (stochastic) {
-        as.vector(rmultinom(1, south_delta_routed_adults[month], springRunDSM::params$cross_channel_stray_rate))
+        as.vector(rmultinom(1, south_delta_routed_adults[month], cross_channel_stray_rate))
       } else {
-        round(south_delta_routed_adults[month] * springRunDSM::params$cross_channel_stray_rate)
+        round(south_delta_routed_adults[month] * cross_channel_stray_rate)
       }
     })
 
     remaining_stray_adults <- round(colSums(straying_adults * (1 - south_delta_routed_watersheds)))
     stray_adults <- sapply(1:4, function(month) {
       if (stochastic) {
-        as.vector(rmultinom(1, remaining_stray_adults[month], springRunDSM::params$stray_rate))
+        as.vector(rmultinom(1, remaining_stray_adults[month], stray_rate))
       } else {
-        round(remaining_stray_adults[month] * springRunDSM::params$stray_rate)
+        round(remaining_stray_adults[month] * stray_rate)
       }
     })
 
@@ -161,9 +169,9 @@ get_spawning_adults <- function(year, adults, hatch_adults, mode,
 
     surviving_natural_adults_by_month <- sapply(1:4, function(month) {
       if (stochastic) {
-        rbinom(31, round(adults_survived_to_spawning[, month]), (1 - springRunDSM::params$natural_adult_removal_rate))
+        rbinom(31, round(adults_survived_to_spawning[, month]), (1 - natural_adult_removal_rate))
       } else {
-        round(adults_survived_to_spawning[, month] * (1 - springRunDSM::params$natural_adult_removal_rate))
+        round(adults_survived_to_spawning[, month] * (1 - natural_adult_removal_rate))
       }
     })
 

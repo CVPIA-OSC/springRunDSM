@@ -6,7 +6,8 @@
 #' @param seeds The default value is NULL runs the model in seeding mode,
 #' returning a 31 by 25 matrix with the first four years of seeded adults. This
 #' returned value can be fed into the model again as the value for the seeds argument
-#' @param ..params Parameters for model and submodels
+#' @param ..params Parameters for model and submodels. Defaults to \code{fallRunDSM::\code{\link{params}}}.
+#' @param stochastic \code{TRUE} \code{FALSE} value indicating if model should be run stochastically. Defaults to \code{FALSE}.
 #' @source IP-117068
 #' @examples
 #' spring_run_seeds <- springRunDSM::spring_run_model(mode = "seed")
@@ -109,6 +110,9 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                     tisdale_bypass_watershed = ..params$tisdale_bypass_watershed,
                                     yolo_bypass_watershed = ..params$yolo_bypass_watershed,
                                     migratory_temperature_proportion_over_20 = ..params$migratory_temperature_proportion_over_20,
+                                    natural_adult_removal_rate = ..params$natural_adult_removal_rate,
+                                    cross_channel_stray_rate = ..params$cross_channel_stray_rate,
+                                    stray_rate = ..params$stray_rate,
                                     ..surv_adult_enroute_int = ..params$..surv_adult_enroute_int,
                                     .adult_stray_intercept = ..params$.adult_stray_intercept,
                                     .adult_stray_wild = ..params$.adult_stray_wild,
@@ -157,8 +161,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     }
     
     # spring run above capacity die, capacity based on spring run pools
-    # TODO capacity applied incorrectly here
-    init_adults <- ifelse(init_adults >= ..params$spring_run_pools, 
+    init_adults <- ifelse(init_adults * ..params$adult_territory_size >= ..params$spring_run_pools, 
                           ..params$spring_run_pools, 
                           init_adults)
     
@@ -259,23 +262,10 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                    avg_temp_delta = ..params$avg_temp_delta,
                                                    avg_temp = ..params$avg_temp,
                                                    delta_proportion_diverted = ..params$delta_proportion_diverted,
-                                                   ..surv_juv_outmigration_sac_delta_intercept_one = ..params$..surv_juv_outmigration_sac_delta_intercept_one,
-                                                   ..surv_juv_outmigration_sac_delta_intercept_two = ..params$..surv_juv_outmigration_sac_delta_intercept_two,
-                                                   ..surv_juv_outmigration_sac_delta_intercept_three = ..params$..surv_juv_outmigration_sac_delta_intercept_three,
-                                                   .surv_juv_outmigration_sac_delta_delta_flow = ..params$.surv_juv_outmigration_sac_delta_delta_flow,
-                                                   .surv_juv_outmigration_sac_delta_avg_temp = ..params$.surv_juv_outmigration_sac_delta_avg_temp,
-                                                   .surv_juv_outmigration_sac_delta_perc_diversions = ..params$.surv_juv_outmigration_sac_delta_perc_diversions,
-                                                   .surv_juv_outmigration_sac_delta_medium = ..params$.surv_juv_outmigration_sac_delta_medium,
-                                                   .surv_juv_outmigration_sac_delta_large = ..params$.surv_juv_outmigration_sac_delta_large,
                                                    ..surv_juv_outmigration_sj_int = ..params$..surv_juv_outmigration_sj_int,
-                                                   ..surv_juv_outmigration_sac_int_one = ..params$..surv_juv_outmigration_sac_int_one,
-                                                   ..surv_juv_outmigration_sac_prop_diversions = ..params$..surv_juv_outmigration_sac_prop_diversions,
-                                                   ..surv_juv_outmigration_sac_total_diversions = ..params$..surv_juv_outmigration_sac_total_diversions,
-                                                   ..surv_juv_outmigration_sac_int_two = ..params$..surv_juv_outmigration_sac_int_two,
                                                    .surv_juv_outmigration_san_joaquin_medium = ..params$.surv_juv_outmigration_san_joaquin_medium,
                                                    .surv_juv_outmigration_san_joaquin_large = ..params$.surv_juv_outmigration_san_joaquin_large,
                                                    min_survival_rate = ..params$min_survival_rate,
-                                                   surv_juv_outmigration_sac_delta_model_weights = ..params$surv_juv_outmigration_sac_delta_model_weights,
                                                    stochastic = stochastic)
       
       migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
@@ -313,7 +303,6 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                             cc_gates_days_closed = ..params$cc_gates_days_closed,
                                             rearing_survival_delta = rearing_survival$delta,
                                             migratory_survival_delta = migratory_survival$delta,
-                                            migratory_survival_sac_delta = migratory_survival$sac_delta,
                                             migratory_survival_bay_delta = migratory_survival$bay_delta,
                                             juveniles_at_chipps = juveniles_at_chipps,
                                             growth_rates = ..params$growth_rates,
@@ -459,7 +448,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearlings_at_lowersac <- migrate(yearlings_at_lowersac, migratory_survival$lower_sac,
                                            stochastic = stochastic)
           
-          prop_delta_fish_entrained <- route_south_delta(freeport_flow = ..params$freeport_flows[[month, juv_dynamics_year]] * 35.3147,
+          prop_delta_fish_entrained <- route_to_south_delta(freeport_flow = ..params$freeport_flows[[month, juv_dynamics_year]] * 35.3147,
                                                          dcc_closed = ..params$cc_gates_days_closed[month],
                                                          month = month)
           
@@ -526,24 +515,14 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
             }
           }))
           
-          yearlings_out <- t(sapply(1:nrow(yearlings_at_north_delta), function(i) {
+          
+          survived_yearlings_out <- t(sapply(1:nrow(yearlings_at_north_delta), function(i) {
             if (stochastic) {
               rbinom(n = 4,
                      size = round(yearlings_at_north_delta[i, ]),
-                     prob = migratory_survival$sac_delta[1, ])  
-            } else {
-              round(yearlings_at_north_delta[i, ] * migratory_survival$sac_delta[1, ])
-            }
-            
-          }))
-          
-          survived_yearlings_out <- t(sapply(1:nrow(yearlings_out), function(i) {
-            if (stochastic) {
-              rbinom(n = 4,
-                     size = round(yearlings_out[i, ]),
                      prob = migratory_survival$bay_delta)  
             } else {
-              round(yearlings_out[i, ] * migratory_survival$bay_delta)
+              round(yearlings_at_north_delta[i, ] * migratory_survival$bay_delta)
             }
             
           }))
@@ -561,7 +540,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           
           yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
           
-          juveniles_at_chipps <- juveniles_at_chipps + yearlings_out + yearling_holding_south_delta
+          juveniles_at_chipps <- juveniles_at_chipps + yearlings_at_north_delta + yearling_holding_south_delta
           
           adults_in_ocean <- adults_in_ocean + ocean_entry_success(migrants = yearlings_at_golden_gate,
                                                                    month = 11,
@@ -867,7 +846,6 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                             cc_gates_days_closed = ..params$cc_gates_days_closed,
                                             rearing_survival_delta = rearing_survival$delta,
                                             migratory_survival_delta = migratory_survival$delta,
-                                            migratory_survival_sac_delta = migratory_survival$sac_delta,
                                             migratory_survival_bay_delta = migratory_survival$bay_delta,
                                             juveniles_at_chipps = juveniles_at_chipps,
                                             growth_rates = ..params$growth_rates,

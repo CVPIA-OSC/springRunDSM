@@ -4,7 +4,7 @@
 #' @details See \code{\link{params}} for details on parameter sources
 #' @param year The current simulation year, 1-20
 #' @param month The current simulation month, 1-8
-#' @param juvenile An n by 4 matrix of juvenile fish by watershed and size class
+#' @param juveniles An n by 4 matrix of juvenile fish by watershed and size class
 #' @param inchannel_habitat A vector of available habitat in square meters
 #' @param floodplain_habitat A vector of available floodplain habitat in square meters
 #' @param prop_pulse_flows The proportion of pulse flows
@@ -17,6 +17,7 @@
 #' @param .pulse_movement_large_pulse Additional coefficient for \code{\link{pulse_movement}} \code{proportion_pulse} variable for large size fish
 #' @param .pulse_movement_very_large_pulse Additional coefficient for \code{\link{pulse_movement}} \code{proportion_pulse} variable for very large size fish
 #' @param territory_size Array of juvenile fish territory requirements for \code{\link{fill_natal}}
+#' @param stochastic \code{TRUE} \code{FALSE} value indicating if model is being run stochastically
 #' @source IP-117068
 #' @export
 route <- function(year, month, juveniles, inchannel_habitat, floodplain_habitat,
@@ -75,6 +76,7 @@ route <- function(year, month, juveniles, inchannel_habitat, floodplain_habitat,
 #' @param bypass_habitat A vector of available habitat in square meters
 #' @param migration_survival_rate The outmigration survival rate
 #' @param territory_size Array of juvenile fish territory requirements for \code{\link{fill_regional}}
+#' @param stochastic \code{TRUE} \code{FALSE} value indicating if model is being run stochastically
 #' @source IP-117068
 #' @export
 route_bypass <- function(bypass_fish, bypass_habitat, migration_survival_rate,
@@ -101,16 +103,17 @@ route_bypass <- function(bypass_fish, bypass_habitat, migration_survival_rate,
 #' @title Route Regions
 #' @description Determines if juveniles stay in the region (Sections of Mainstem
 #' Sacramento River or San Joaquin River) or out migrate during a simulated month
-#' @param month The simulation month, 1-8
-#' @param year
+#' @param month The current simulation month
+#' @param year The current simulation year, 1-20
 #' @param migrants An n by 4 matrix of juvenile fish by watershed and size class
 #' @param inchannel_habitat A vector of available habitat in square meters
 #' @param floodplain_habitat A vector of available floodplain habitat in square meters
 #' @param prop_pulse_flows The proportion of pulse flows
 #' @param migration_survival_rate The outmigration survival rate
-#' @param proportion_flow_bypass
+#' @param proportion_flow_bypass Variable describing the proportion of flows routed through the bypasses, more details at \code{\link[DSMflow]{proportion_flow_bypasses}}
 #' @param detour Values can be 'sutter' or 'yolo' if some juveniles are detoured on to that bypass, otherwise NULL
 #' @param territory_size Array of juvenile fish territory requirements for \code{\link{fill_regional}}
+#' @param stochastic \code{TRUE} \code{FALSE} value indicating if model is being run stochastically
 #' @source IP-117068
 #' @export
 route_regional <- function(month, year, migrants,
@@ -119,7 +122,6 @@ route_regional <- function(month, year, migrants,
                            proportion_flow_bypass, detour = NULL,
                            territory_size,
                            stochastic) {
-  # fill up upper mainstem, but in river fish can leave due to pulses
 
   if (!is.null(detour)) {
     bypass <- ifelse(detour == 'sutter', "Sutter Bypass", "Yolo Bypass")
@@ -176,25 +178,25 @@ route_regional <- function(month, year, migrants,
 
 }
 
-#' @title South Delta Routing
-#' @description Routes juveniles through the South Delta
+#' @title Route To South Delta
+#' @description Entrains northern juveniles into the South Delta
 #' @param freeport_flow Monthly mean flow at freeport in cubic feet per second
 #' @param dcc_closed Number of days the Delta Cross Channel gates are closed during the month
 #' @param month Current simulation month as an integer for calculating number of days the Delta Cross Channel gates are open
 #' @param mean_freeport_flow Mean of flow at freeport for standardizing discharge
 #' @param sd_freeport_flow Standard Deviation of flow at freeport for standardizing discharge
 #' @param .sss_int Intercept for Sutter and Steamboat Sloughs, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
-#' @param .sss_freeport_discharge Coefficient for freeport_flow for Sutter and Steamboat Sloughs, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
+#' @param .sss_freeport_discharge Coefficient for \code{freeport_flow} for Sutter and Steamboat Sloughs, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .sss_upper_asymptote Parameter representing the upper asymptote for Sutter and Steamboat Sloughs, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .dcc_intercept Intercept for Delta Cross Channel, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
-#' @param .dcc_freeport_discharge Coefficient for freeport_flow for Delta Cross Channel Gates, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
+#' @param .dcc_freeport_discharge Coefficient for \code{freeport_flow} for Delta Cross Channel Gates, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .gs_intercept Intercept for Georgiana Slough, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
-#' @param .gs_freeport_discharge Coefficient for freeport_flow for Georgiana Slough, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
+#' @param .gs_freeport_discharge Coefficient for \code{freeport_flow} for Georgiana Slough, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .gs_dcc_effect_on_routing Parameter representing the dcc effect on routing, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @param .gs_lower_asymptote Parameter representing the lower asymptote for Georgiana Slough, source: \href{https://doi.org/10.1139/cjfas-2017-0310}{This submodel is adapted from Perry et al. (2018)}
 #' @export
 #'
-route_south_delta <- function(freeport_flow, dcc_closed, month,
+route_to_south_delta <- function(freeport_flow, dcc_closed, month,
                               mean_freeport_flow = 21546.19,
                               sd_freeport_flow = 14375.9,
                               .sss_int = 1.8922350,
@@ -246,22 +248,24 @@ route_south_delta <- function(freeport_flow, dcc_closed, month,
 #' @description Determines if juveniles stay in the delta or out migrate to golden gate
 #' during a simulated month. Then the remaining juveniles in the delta rear
 #' (growth and survival rates applied) and survival rates are applied to out migrating juveniles
-#' @param year Simulation year, 1-20
-#' @param month Simulation month, 1-8
+#' @param year The current simulation year, 1-20
+#' @param month The current simulation month
 #' @param migrants An n by 4 matrix of juvenile fish by watershed and size class
 #' @param north_delta_fish An n by 4 matrix of juvenile fish by watershed and size class
 #' @param south_delta_fish An n by 4 matrix of juvenile fish by watershed and size class
 #' @param north_delta_habitat A vector of available habitat in square meters
 #' @param south_delta_habitat A vector of available habitat in square meters
+#' @param freeport_flow Monthly mean flow at freeport in cubic feet per second
+#' @param cc_gates_closed Number of days the Cross Channel gates are closed during the month
 #' @param rearing_survival_delta The rearing survival rate for North and South Delta
 #' @param migratory_survival_delta The outmigration survival rate for North and South Delta
-#' @param migratory_survival_sac_delta The outmigration survival rate in the Sacramento Delta
 #' @param migratory_survival_bay_delta The outmigration survival rate in the Bay Delta
 #' @param juveniles_at_chipps The accumulated juveniles at Chipps Island for the current year
 #' @param growth_rates The delta growth rate
 #' @param location_index Migratory survival probability location index for fish coming from 4 areas (1-4) representing
 #' "northern_fish", "cosumnes_mokelumne_fish", "calaveras_fish", or "southern_fish" respectively
 #' @param territory_size Array of juvenile fish territory requirements for \code{\link{fill_natal}}
+#' @param stochastic \code{TRUE} \code{FALSE} value indicating if model is being run stochastically
 #' @source IP-117068
 #' @export
 route_and_rear_deltas <- function(year, month, migrants, north_delta_fish, south_delta_fish,
@@ -269,13 +273,13 @@ route_and_rear_deltas <- function(year, month, migrants, north_delta_fish, south
                          freeport_flows,
                          cc_gates_days_closed,
                          rearing_survival_delta, migratory_survival_delta,
-                         migratory_survival_sac_delta, migratory_survival_bay_delta,
+                         migratory_survival_bay_delta,
                          juveniles_at_chipps, growth_rates,
                          location_index = c(rep(1, 24), 3, rep(2, 2), rep(4, 4)),
                          territory_size,
                          stochastic) {
 
-  prop_delta_fish_entrained <- route_south_delta(freeport_flow = freeport_flows[[month, year]] * 35.3147,
+  prop_delta_fish_entrained <- route_to_south_delta(freeport_flow = freeport_flows[[month, year]] * 35.3147,
                                                  dcc_closed = cc_gates_days_closed[month],
                                                  month = month)
 
@@ -296,7 +300,7 @@ route_and_rear_deltas <- function(year, month, migrants, north_delta_fish, south
                                     territory_size = territory_size)
 
   south_delta_fish <- fill_regional(juveniles = migrants_and_salvaged + south_delta_fish,
-                                    habitat = north_delta_habitat,
+                                    habitat = south_delta_habitat,
                                     territory_size = territory_size)
 
   if (month == 5) {
@@ -312,23 +316,16 @@ route_and_rear_deltas <- function(year, month, migrants, north_delta_fish, south
     }
   }))
 
-  migrants_out <- t(sapply(1:nrow(north_delta_fish$migrants), function(i) {
+
+  north_delta_out_survived <- t(sapply(1:nrow(north_delta_fish$migrants), function(i) {
     if (stochastic) {
-    rbinom(n = 4, size = round(north_delta_fish$migrants[i, ]), prob = migratory_survival_sac_delta[1, ])
+      rbinom(n = 4, size = round(north_delta_fish$migrants[i, ]), prob = migratory_survival_bay_delta)
     } else {
-      round(north_delta_fish$migrants[i, ] * migratory_survival_sac_delta[1, ])
+      round(north_delta_fish$migrants[i, ] * migratory_survival_bay_delta)
     }
   }))
 
-  migrants_out_survived <- t(sapply(1:nrow(migrants_out), function(i) {
-    if (stochastic) {
-      rbinom(n = 4, size = round(migrants_out[i, ]), prob = migratory_survival_bay_delta)
-    } else {
-      round(migrants_out[i, ] * migratory_survival_bay_delta)
-    }
-  }))
-
-  south_delta_survived <- t(sapply(1:nrow(south_delta_migrants), function(i) {
+  south_delta_out_survived <- t(sapply(1:nrow(south_delta_migrants), function(i) {
     if (stochastic) {
       rbinom(n = 4, size = round(south_delta_migrants[i, ]), prob = migratory_survival_bay_delta)
     } else {
@@ -336,9 +333,9 @@ route_and_rear_deltas <- function(year, month, migrants, north_delta_fish, south
     }
   }))
 
-  migrants_at_golden_gate <- rbind(migrants_out_survived, matrix(0, nrow = 8, ncol = 4)) + south_delta_survived
+  migrants_at_golden_gate <- rbind(north_delta_out_survived, matrix(0, nrow = 8, ncol = 4)) + south_delta_out_survived
 
-  juveniles_at_chipps <- juveniles_at_chipps + rbind(migrants_out, matrix(0, nrow = 8, ncol = 4)) + south_delta_migrants
+  juveniles_at_chipps <- juveniles_at_chipps + rbind(north_delta_fish$migrants, matrix(0, nrow = 8, ncol = 4)) + south_delta_migrants
 
   if (month != 5) {
     north_delta_fish <- rear(juveniles = north_delta_fish$inchannel,

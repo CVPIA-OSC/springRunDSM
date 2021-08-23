@@ -22,9 +22,6 @@ spring_run_fitness <- function(
   surv_juv_delta_contact_points,
   surv_juv_delta_total_diverted,
   surv_juv_outmigration_sj_int,
-  surv_juv_outmigration_sac_delta_intercept_one,
-  surv_juv_outmigration_sac_delta_intercept_two,
-  surv_juv_outmigration_sac_delta_intercept_three,
   default_ocean_int,
   butte_ocean_int,
   deer_battle_clear_ocean_int,
@@ -79,10 +76,6 @@ spring_run_fitness <- function(
   params_init$..surv_juv_delta_total_diverted = surv_juv_delta_total_diverted
   params_init$..surv_juv_outmigration_sj_int = surv_juv_outmigration_sj_int
   
-  params_init$..surv_juv_outmigration_sac_delta_intercept_one = surv_juv_outmigration_sac_delta_intercept_one
-  params_init$..surv_juv_outmigration_sac_delta_intercept_two = surv_juv_outmigration_sac_delta_intercept_two
-  params_init$..surv_juv_outmigration_sac_delta_intercept_three = surv_juv_outmigration_sac_delta_intercept_three
-  
   # Ocean entry success coefficient and variable
   params_init$..ocean_entry_success_int = c(
     `Upper Sacramento River` = default_ocean_int,
@@ -118,7 +111,7 @@ spring_run_fitness <- function(
     `San Joaquin River` = default_ocean_int
   )
   
-  keep <- c(3L, 6L, 10L, 12L, 19L, 20L)
+  keep <- c(2, 3, 6, 7, 10, 12, 19, 20)
   num_obs <- rowSums(!is.na(known_adults[keep, 6:19]))
   total_obs <- sum(!is.na(known_adults[keep, 6:19]))
   weights <- num_obs / total_obs

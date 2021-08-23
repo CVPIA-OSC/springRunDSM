@@ -10,6 +10,7 @@ params <- list(
   spawn_decay_rate = DSMscenario::spawn_decay_rate,
   rear_decay_rate = DSMscenario::rear_decay_rate,
   
+  adult_territory_size = 1,
   # Yearling
   yearling_territory_size = c(0.05423379, 0.14539419, 0.48471474, 0.48471474),
   ## Variable from load baseline data
@@ -142,14 +143,7 @@ params <- list(
   .surv_juv_outmigration_san_joaquin_medium = 1.48,
   .surv_juv_outmigration_san_joaquin_large = 2.223,
   
-  # Sac delta outmigration coefficients and variables
-  .surv_juv_outmigration_sac_delta_delta_flow = 0.0013,
-  .surv_juv_outmigration_sac_delta_avg_temp = 0.386,
-  .surv_juv_outmigration_sac_delta_perc_diversions = -0.033,
-  .surv_juv_outmigration_sac_delta_medium = 1.48,
-  .surv_juv_outmigration_sac_delta_large = 2.223,
-  surv_juv_outmigration_sac_delta_model_weights = rep(1/3, 3),
-  
+
   .ocean_entry_success_length = c(-0.0897309864, -0.0709704348, -0.0208590732, 0.0732620916),
   .ocean_entry_success_months = 0.35,
   
@@ -197,9 +191,6 @@ params <- list(
   ..surv_juv_delta_total_diverted = x[19],
   ..surv_juv_outmigration_sj_int = x[20],
   
-  ..surv_juv_outmigration_sac_delta_intercept_one = x[21],
-  ..surv_juv_outmigration_sac_delta_intercept_two =  x[22],
-  ..surv_juv_outmigration_sac_delta_intercept_three = x[23],
   # Ocean entry success coefficient and variable
   ..ocean_entry_success_int = c(
     `Upper Sacramento River` = x[24],

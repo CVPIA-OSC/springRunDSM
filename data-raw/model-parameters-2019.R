@@ -6,6 +6,7 @@ params_2019 <- list(
   # Data from DSMscenarios
   spawn_decay_rate = DSMscenario::spawn_decay_rate,
   rear_decay_rate = DSMscenario::rear_decay_rate,
+  adult_territory_size = 1,
   
   # Data from springRunDSM cache-data (values vary by run)
   hatchery_allocation = springRunDSM::hatchery_allocation,
@@ -108,18 +109,6 @@ params_2019 <- list(
   ..surv_juv_outmigration_sj_int = -2.794096,
   .surv_juv_outmigration_san_joaquin_medium = 1.48,
   .surv_juv_outmigration_san_joaquin_large = 2.223,
-
-  # TODO 
-  # Sac delta outmigration coefficients and variables
-  ..surv_juv_outmigration_sac_delta_intercept_one = -2.891417,
-  ..surv_juv_outmigration_sac_delta_intercept_two =  0.7507795,
-  ..surv_juv_outmigration_sac_delta_intercept_three = -3.104956,
-  .surv_juv_outmigration_sac_delta_delta_flow = 0.0013,
-  .surv_juv_outmigration_sac_delta_avg_temp = 0.386,
-  .surv_juv_outmigration_sac_delta_perc_diversions = -0.033,
-  .surv_juv_outmigration_sac_delta_medium = 1.48,
-  .surv_juv_outmigration_sac_delta_large = 2.223,
-  surv_juv_outmigration_sac_delta_model_weights = rep(.333, 3),
 
   # Ocean entry success coefficient and variable
   ..ocean_entry_success_int = c(
