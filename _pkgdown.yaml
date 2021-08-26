@@ -1,19 +1,19 @@
 title: springRunDSM
 url: https://CVPIA-OSC.github.io/springRunDSM/
-  template:
+template:
   params:
-  bootswatch: yeti
+    bootswatch: yeti
 
 home:
   links:
   - text: Fish and Wildlife Service's CVPIA website
     href: https://www.fws.gov/lodi/anadromous_fish_restoration/afrp_index.htm
   - text: Bureau of Reclamation's CVPIA website
-href: https://www.usbr.gov/mp/cvpia/
-  
-  reference:
-  - title: Life Cycle Model and Model Parameters
-desc: The spring run life cycle model and it's parameters
+    href: https://www.usbr.gov/mp/cvpia/
+
+reference:
+- title: Life Cycle Model and Model Parameters
+  desc: The spring run life cycle model and it's parameters
   contents:
   - spring_run_model
   - params
@@ -44,7 +44,7 @@ desc: The spring run life cycle model and it's parameters
   - route_and_rear_deltas
   - route_bypass
   - route_regional
-  - route_south_delta
+  - route_to_south_delta
   - growth
   - growth_floodplain
   - rear
