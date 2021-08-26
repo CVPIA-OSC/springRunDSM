@@ -16,54 +16,76 @@ surv_juv_rear(
   total_diversions,
   stranded,
   weeks_flooded,
-  betas = c(`2nd calibration adjustment` = -2.250979, `average temperature` = -0.717,
-    predation = -0.122, `contact points` = 0.09999992, `contact points scaler` = -0.189,
-    `proportion diverted` = 0.0100001, `proportion diverted scaler` = -3.51, `total
-    diverted` = 0.191265, `total diverted scaler` = -0.0021, stranded = -1.939, medium =
-    1.48, large = 2.223, `floodplain habitat` = 0.47, `surival adjustments` = 1)
+  ..surv_juv_rear_int = springRunDSM::params$..surv_juv_rear_int,
+  .avg_temp_thresh = springRunDSM::params$.surv_juv_rear_avg_temp_thresh,
+  .high_predation = springRunDSM::params$.surv_juv_rear_high_predation,
+  .surv_juv_rear_contact_points = springRunDSM::params$.surv_juv_rear_contact_points,
+  ..surv_juv_rear_contact_points = springRunDSM::params$..surv_juv_rear_contact_points,
+  .surv_juv_rear_prop_diversions = springRunDSM::params$.surv_juv_rear_prop_diversions,
+ 
+    ..surv_juv_rear_prop_diversions = springRunDSM::params$..surv_juv_rear_prop_diversions,
+ 
+    .surv_juv_rear_total_diversions = springRunDSM::params$.surv_juv_rear_total_diversions,
+ 
+    ..surv_juv_rear_total_diversions = springRunDSM::params$..surv_juv_rear_total_diversions,
+  .stranded = springRunDSM::params$.surv_juv_rear_stranded,
+  .medium = springRunDSM::params$.surv_juv_rear_medium,
+  .large = springRunDSM::params$.surv_juv_rear_large,
+  .floodplain = springRunDSM::params$.surv_juv_rear_floodplain,
+  min_survival_rate = springRunDSM::params$min_survival_rate,
+  stochastic
 )
 }
 \arguments{
-\item{max_temp_thresh}{The probability of exceeding the max tempeature threshold}
+\item{max_temp_thresh}{variable representing probability of exceeding the max temperature threshold}
 
-\item{avg_temp_thresh}{The probability of exceeding the avg temperatre threshold}
+\item{avg_temp_thresh}{variable representing probability of exceeding the avg temperature threshold}
 
-\item{high_predation}{An indicator of high predation for a watershed}
+\item{high_predation}{variable representing indicator of high predation for a watershed}
 
-\item{contact_points}{The total number of contact points per watershed}
+\item{contact_points}{variable representing total number of contact points per watershed}
 
-\item{prop_diversions}{The proportion of water diverted}
+\item{prop_diversions}{variable representing proportion of water diverted}
 
-\item{total_diversions}{The total amount of water diverted}
+\item{total_diversions}{variable representing total amount of water diverted}
 
-\item{stranded}{The stranding rate per watershed}
+\item{stranded}{variable representing stranding rate per watershed}
 
-\item{weeks_flooded}{The total weeks flooded per watershed}
+\item{weeks_flooded}{variable representing total weeks flooded per watershed}
 
-\item{betas}{The parameters from calibration process}
+\item{..surv_juv_rear_int}{intercept, source: calibration (varies by tributary)}
+
+\item{.avg_temp_thresh}{coefficient for \code{avg_temp_thresh} variable}
+
+\item{.high_predation}{coefficient for \code{high_predation} variable}
+
+\item{.surv_juv_rear_contact_points}{coefficient for \code{contact_points} variable}
+
+\item{..surv_juv_rear_contact_points}{calibrated coefficient for \code{contact_points} variable}
+
+\item{.surv_juv_rear_prop_diversions}{coefficient for \code{prop_diversions} variable}
+
+\item{..surv_juv_rear_prop_diversions}{calibrated coefficient for \code{prop_diversions} variable}
+
+\item{.surv_juv_rear_total_diversions}{coefficient for \code{total_diversions} variable}
+
+\item{..surv_juv_rear_total_diversions}{calibrated coefficient for \code{total_diversions} variable}
+
+\item{.stranded}{coefficient for \code{stranded} variable}
+
+\item{.medium}{size related intercept for medium sized fish}
+
+\item{.large}{size related intercept for large sized fish}
+
+\item{.floodplain}{Additional intercept for floodplain rearing benefit}
+
+\item{min_survival_rate}{estimated survival rate if temperature threshold is exceeded}
+
+\item{stochastic}{\code{TRUE} \code{FALSE} value indicating if model is being run stochastically}
 }
 \description{
 Calculates the juvenile rearing survival inchannel and on the floodplain
 }
-\section{Parameters}{
-
-Parameters from the model are obtained from either literature, calibration, export elicitation,
-and meta-analysis. The source for each parameter in this function are detailed below.
-\itemize{
-\item calibration adjustment: calibration estimate; varies by tributary
-\item average temperature: \href{https://www.noaa.gov/sites/default/files/atoms/files/07354626766.pdf}{Marine and Chech (2004)}
-\item predation \href{https://pubag.nal.usda.gov/catalog/512123}{Cavallo et al. (2012)}
-\item contact points: calibration estimate
-\item contact points scaler
-\item proportion diverted: calibration estimate
-\item proportion diverted scaler
-\item total diverted: calibration estimate
-\item total diverted scaler
-\item stranded: \href{#}{USFWS (2006) and CDWR (2006)}
-\item medium: \href{https://afspubs.onlinelibrary.wiley.com/doi/abs/10.1577/M02-161.1}{Connor et al. (2004)}
-\item large" \href{https://afspubs.onlinelibrary.wiley.com/doi/abs/10.1577/M02-161.1}{Connor et al. (2004)}
-\item floodplain habitat: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/SOMMER_T-SDWA+180+Floodplain+rearing+of+juvenile+chinook+salmon+evidence+of+enhanced+growth+and+survival+.pdf}{Sommer et al. (2001)}
-\item survival adjustment:
+\details{
+See \code{\link{params}} for details on parameter sources
 }
-}
-

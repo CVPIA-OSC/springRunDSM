@@ -7,16 +7,34 @@
 IP-117068
 }
 \usage{
-spring_run_model(scenario = NULL, seeds = NULL)
+spring_run_model(
+  scenario = NULL,
+  mode = c("seed", "simulate", "calibrate"),
+  seeds = NULL,
+  ..params = springRunDSM::params,
+  stochastic = FALSE
+)
 }
 \arguments{
 \item{scenario}{Model inputs, can be modified to test management actions}
 
+\item{mode}{The mode to run model in. Can be \code{"seed"}, \code{"simulate"}, \code{"calibrate"}}
+
 \item{seeds}{The default value is NULL runs the model in seeding mode,
 returning a 31 by 25 matrix with the first four years of seeded adults. This
 returned value can be fed into the model again as the value for the seeds argument}
+
+\item{..params}{Parameters for model and submodels. Defaults to \code{fallRunDSM::\code{\link{params}}}.}
+
+\item{stochastic}{\code{TRUE} \code{FALSE} value indicating if model should be run stochastically. Defaults to \code{FALSE}.}
 }
 \description{
 Spring Run Chinook life cycle model used for CVPIA's Structured
 Decision Making Process
+}
+\examples{
+spring_run_seeds <- springRunDSM::spring_run_model(mode = "seed")
+springRunDSM::spring_run_model(scenario = DSMscenario::scenarios$ONE,
+                           mode = "simulate",
+                           seeds = spring_run_seeds)
 }

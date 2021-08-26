@@ -10,32 +10,29 @@ IP-117068
 surv_egg_to_fry(
   proportion_natural,
   scour,
-  temperature_effect,
-  betas = c(intercept = 0.041, `Natural Adults` = 0.533, scour = -0.655)
+  temperature_effect = springRunDSM::params$mean_egg_temp_effect,
+  ..surv_egg_to_fry_int = springRunDSM::params$..surv_egg_to_fry_int,
+  .proportion_natural = springRunDSM::params$.surv_egg_to_fry_proportion_natural,
+  .scour = springRunDSM::params$.surv_egg_to_fry_scour
 )
 }
 \arguments{
-\item{proportion_natural}{The proportion of natural-origin spawners}
+\item{proportion_natural}{Variable describing the proportion of natural-origin spawners}
 
-\item{scour}{The probability of redd scouring event}
+\item{scour}{Variable describing the probability of redd scouring event}
 
-\item{temperature_effect}{The effect of inchannel temperature on egg survival.
-Fall and spring estimated by C. Hammersmark (CBEC Ecoengineering Inc.). Winter-run value was calibrated.}
+\item{temperature_effect}{Variable describing the effect of inchannel temperature on egg survival.
+fall and spring estimated by C. Hammersmark (CBEC Ecoengineering Inc.). Winter-run value was calibrated.}
+
+\item{..surv_egg_to_fry_int}{Intercept}
+
+\item{.proportion_natural}{Coefficient for \code{proportion_natural} variable}
+
+\item{.scour}{Coefficient for \code{scour} variable}
 }
 \description{
 Calculates the survival of transitioning from egg to fry
 }
-\section{Parameters}{
-
-Parameters from the model are obtained from either literature, calibration, export elicitation,
-or meta-analysis. The source for each parameter in this function are detailed below.
-
-
-\itemize{
-\item intercept: Calibration
-\item Natural Adults: \href{https://cdnsciencepub.com/doi/abs/10.1139/F10-168}{Chilcote et al. (2011)}
-\item scour: \href{https://dsm-docs.s3-us-west-2.amazonaws.com/montogemery_1996.pdf}{Montgomery et al. (1996)}
-\item temperature_effect: Fall and spring estimated by C. Hammersmark (CBEC Ecoengineering Inc.)
+\details{
+See \code{\link{params}} for details on parameter sources
 }
-}
-

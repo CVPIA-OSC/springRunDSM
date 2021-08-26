@@ -11,32 +11,27 @@ surv_adult_enroute(
   migratory_temp,
   bypass_overtopped,
   adult_harvest,
-  betas = c(intercept = 3, temperature = -0.26, overtop = -0.019)
+  ..surv_adult_enroute_int = springRunDSM::params$..surv_adult_enroute_int,
+  .migratory_temp = springRunDSM::params$.adult_en_route_migratory_temp,
+  .bypass_overtopped = springRunDSM::params$.adult_en_route_bypass_overtopped
 )
 }
 \arguments{
-\item{migratory_temp}{Proportion of migratory corridor temperature above  20°C}
+\item{migratory_temp}{variable representing proportion of migratory corridor temperature above  20°C}
 
 \item{bypass_overtopped}{Indicator for bypass overtopped}
 
-\item{adult_harvest}{Adult harvest rate (Estimated with Coded Wire Tag data 2012–2013 (Palmer-Zwahlen & Kormos 2015; Palmer-Zwahlen et al. 2018))}
+\item{adult_harvest}{Adult harvest rate}
 
-\item{betas}{Parameters estimated from calibration}
+\item{..surv_adult_enroute_int}{Intercept}
+
+\item{.migratory_temp}{Coefficient for \code{migratory_temp} variable}
+
+\item{.bypass_overtopped}{Coefficient for \code{bypass_overtopped} variable}
 }
 \description{
-Calculate adult survial en route to spawning grounds
+Calculate adult survival en route to spawning grounds
 }
-\section{Parameters}{
-
-Parameters from the model are obtained from either literature, calibration, export elicitation,
-or meta-analysis. The source for each parameter in this function are detailed below.
-
-
-\itemize{
-\item intercept: Calibration Estimate
-\item temperature (Average daily temperature): \href{https://nrm.dfg.ca.gov/FileHandler.ashx?DocumentID=162355&usg= AOvVaw0VgMOwD7knFfSxRZy6k8RG}{Schreck et al. (1994)}
-\item overtop (Bypass overtopped parameter): Expert opinion Ted Sommer, California Department of Water Resources (tributaries above bypasses only)
-\item gates open - Cross Channel Gates Parameter: Empirical model fit using  2008–2011 tagging data provided by East Bay Municipal Utility District.
+\details{
+See \code{\link{params}} for details on parameter sources
 }
-}
-

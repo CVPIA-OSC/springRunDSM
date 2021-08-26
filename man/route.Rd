@@ -14,7 +14,16 @@ route(
   inchannel_habitat,
   floodplain_habitat,
   prop_pulse_flows,
-  detour = NULL
+  .pulse_movement_intercept,
+  .pulse_movement_proportion_pulse,
+  .pulse_movement_medium,
+  .pulse_movement_large,
+  .pulse_movement_vlarge,
+  .pulse_movement_medium_pulse,
+  .pulse_movement_large_pulse,
+  .pulse_movement_very_large_pulse,
+  territory_size,
+  stochastic
 )
 }
 \arguments{
@@ -22,17 +31,38 @@ route(
 
 \item{month}{The current simulation month, 1-8}
 
+\item{juveniles}{An n by 4 matrix of juvenile fish by watershed and size class}
+
 \item{inchannel_habitat}{A vector of available habitat in square meters}
 
 \item{floodplain_habitat}{A vector of available floodplain habitat in square meters}
 
 \item{prop_pulse_flows}{The proportion of pulse flows}
 
-\item{detour}{Values can be 'sutter' or 'yolo' if some juveniles are detoured on to that bypass, otherwise NULL}
+\item{.pulse_movement_intercept}{Intercept for \code{\link{pulse_movement}}}
 
-\item{juvenile}{An n by 4 matrix of juvenile fish by watershed and size class}
+\item{.pulse_movement_proportion_pulse}{Coefficient for \code{\link{pulse_movement}} \code{proportion_pulse} variable}
+
+\item{.pulse_movement_medium}{Size related intercept for \code{\link{pulse_movement}} medium sized fish}
+
+\item{.pulse_movement_large}{Size related intercept for \code{\link{pulse_movement}} large sized fish}
+
+\item{.pulse_movement_vlarge}{Size related intercept for \code{\link{pulse_movement}} very large sized fish}
+
+\item{.pulse_movement_medium_pulse}{Additional coefficient for \code{\link{pulse_movement}} \code{proportion_pulse} variable for medium size fish}
+
+\item{.pulse_movement_large_pulse}{Additional coefficient for \code{\link{pulse_movement}} \code{proportion_pulse} variable for large size fish}
+
+\item{.pulse_movement_very_large_pulse}{Additional coefficient for \code{\link{pulse_movement}} \code{proportion_pulse} variable for very large size fish}
+
+\item{territory_size}{Array of juvenile fish territory requirements for \code{\link{fill_natal}}}
+
+\item{stochastic}{\code{TRUE} \code{FALSE} value indicating if model is being run stochastically}
 }
 \description{
 Determines if juveniles stay in their natal tributary, are detoured
 to a bypass, or out migrate during a simulated month
+}
+\details{
+See \code{\link{params}} for details on parameter sources
 }

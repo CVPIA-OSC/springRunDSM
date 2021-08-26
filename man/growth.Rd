@@ -2,12 +2,12 @@
 % Please edit documentation in R/growth.R
 \name{growth}
 \alias{growth}
-\title{Growth Transistion Probability}
+\title{Growth Transition Probability}
 \source{
 IP-117068
 }
 \usage{
-growth(daily_growth_rate = 0.5, size_class_breaks = c(35, 43, 73, 109))
+growth(daily_growth_rate = 0.5, size_class_breaks = c(35, 42, 72, 110))
 }
 \arguments{
 \item{size_class_breaks}{The fork size class breaks}
