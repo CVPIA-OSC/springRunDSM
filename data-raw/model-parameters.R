@@ -2,7 +2,7 @@ library(tidyverse)
 
 calibration_solution <- read_rds('calibration/calibrated-results.rds')
 
-x <- calibration_solution@solution[1, ]
+x <- calibration_solution@solution[1,]
 
 params <- list(
   
