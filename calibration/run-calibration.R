@@ -9,7 +9,7 @@ source("calibration/fitness.R")
 source("calibration/update-params.R")
 
 params <- DSMCalibrationData::set_synth_years(springRunDSM::params)
-current_best_solution <- read_rds("calibration/calibration-result.rds")
+current_best_solution <- read_rds("calibration/calibrated-results.rds")
 
 # Perform calibration --------------------
 res <- ga(type = "real-valued",
