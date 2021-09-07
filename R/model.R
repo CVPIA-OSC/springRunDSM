@@ -309,7 +309,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                             territory_size = ..params$territory_size,
                                             stochastic = stochastic)
         
-        
+        juveniles_at_chipps <- delta_fish$juveniles_at_chipps
         migrants_at_golden_gate <- delta_fish$migrants_at_golden_gate
       } else {
         
@@ -541,7 +541,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
           
           juveniles_at_chipps <- juveniles_at_chipps + yearlings_at_north_delta + yearling_holding_south_delta
-          
+          juveniles_at_chipps <- delta_fish$juveniles_at_chipps
           adults_in_ocean <- adults_in_ocean + ocean_entry_success(migrants = yearlings_at_golden_gate,
                                                                    month = 11,
                                                                    avg_ocean_transition_month = avg_ocean_transition_month,
