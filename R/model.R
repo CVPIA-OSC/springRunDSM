@@ -61,7 +61,8 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
     juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
-    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20))
+    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
+    juveniles_at_chipps = data.frame()
   )
   
   if (mode == 'calibrate') {
@@ -141,7 +142,6 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     
     min_spawn_habitat <- apply(..params$spawning_habitat[ , 3:6, year], 1, min)
     
-    #TODO double check this calculation compared to theirs
     accumulated_degree_days <- cbind(march = rowSums(..params$degree_days[ , 3:6, year]),
                                      april = rowSums(..params$degree_days[ , 4:6, year]),
                                      may = rowSums(..params$degree_days[ , 5:6, year]),
@@ -311,6 +311,9 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
         
         
         migrants_at_golden_gate <- delta_fish$migrants_at_golden_gate
+        juveniles_at_chipps <- delta_fish$juveniles_at_chipps
+        output$juveniles_at_chipps <- append_new_chipps_juvs(output$juveniles_at_chipps,
+                                                             juveniles_at_chipps, year, month)
       } else {
         
         if (month == 11 & year > 1) {
@@ -541,6 +544,8 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
           
           juveniles_at_chipps <- juveniles_at_chipps + yearlings_at_north_delta + yearling_holding_south_delta
+          output$juveniles_at_chipps <- append_new_chipps_juvs(output$juveniles_at_chipps,
+                                                               juveniles_at_chipps, juv_dynamics_year, month)
           
           adults_in_ocean <- adults_in_ocean + ocean_entry_success(migrants = yearlings_at_golden_gate,
                                                                    month = 11,
@@ -856,6 +861,9 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
         north_delta_fish <- delta_fish$north_delta_fish
         south_delta_fish <- delta_fish$south_delta_fish
         juveniles_at_chipps <- delta_fish$juveniles_at_chipps
+        output$juveniles_at_chipps <- append_new_chipps_juvs(output$juveniles_at_chipps,
+                                                             juveniles_at_chipps, year, month)
+        
       }
       
       adults_in_ocean <- adults_in_ocean + ocean_entry_success(migrants = migrants_at_golden_gate,
