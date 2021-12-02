@@ -137,6 +137,7 @@ spring_run_fitness <- function(
   )
 }
 
+# TODO for debugging purposes
 # x <- runif(27)
 # print(spring_run_fitness(
 #   known_adults = DSMCalibrationData::grandtab_observed$spring,
