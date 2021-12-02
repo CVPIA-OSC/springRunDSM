@@ -373,50 +373,44 @@ _Note: Deer Creek survival intercept was used for all Upper Sacramento Tributari
 
 Intercepts listed below are supplied into the model as a vector `..surv_juv_int`
 
-* Bypass (Yolo and Sutter) = `r calib_2021_results[4]`
-* Upper Sacramento River = `r calib_2021_results[5]`
+c("Antelope Creek", "Battle Creek", "Butte Creek", "Clear Creek", 
+"Deer Creek", "Mill Creek", "Feather River", "Yuba River")
+
+* Default Intercept = `r calib_2021_results[4]`
+* Battle Creek = `r calib_2021_results[5]`
 * Butte Creek = `r calib_2021_results[6]`
-* Clear Creek = `r calib_2021_results[7]`
-* Deer Creek = `r calib_2021_results[8]`
-* Mill Creek = `r calib_2021_results[9]`
-* Sacramento River = `r calib_2021_results[10]`
-* Feather and Bear River = `r calib_2021_results[11]`
-* Yuba River = `r calib_2021_results[12]`
-* American River = `r calib_2021_results[13]`
-* Calaveras and Cosumnes River = `r calib_2021_results[14]`
-* Mokelumne River = `r calib_2021_results[15]`
-* Merced River = `r calib_2021_results[16]`
-* Stanislaus River = `r calib_2021_results[17]`
-* Tuolumne River = `r calib_2021_results[18]`
-* San Joaquin River = `r calib_2021_results[19]`
-* `..surv_juv_rear_contact_points` = `r calib_2021_results[20]`
-* `..surv_juv_rear_prop_diversions` = `r calib_2021_results[21]`
-* `..surv_juv_rear_total_diversions` = `r calib_2021_results[22]`
+* Deer Creek = `r calib_2021_results[7]`
+* Mill Creek = `r calib_2021_results[8]`
+* Upper-mid Sacramento River = `r calib_2021_results[9]`
+* Lower-mid Sacramento River = `r calib_2021_results[9]`
+* Lower Sacramento River = `r calib_2021_results[9]`
+* Feather River = `r calib_2021_results[10]`
+* Yuba River = `r calib_2021_results[11]`
+* San Joaquin River = `r calib_2021_results[12]`
+* `..surv_juv_rear_contact_points` = `r calib_2021_results[13]`
+* `..surv_juv_rear_prop_diversions` = `r calib_2021_results[14]`
+* `..surv_juv_rear_total_diversions` = `r calib_2021_results[15]`
 
 **Migration Intercepts**
 
-* `..surv_juv_bypass_int` = `r calib_2021_results[23]`
-* `..surv_juv_delta_int` = `r calib_2021_results[24]`
-* `..surv_juv_delta_contact_points` = `r calib_2021_results[25]`
-* `..surv_juv_delta_total_diverted` = `r calib_2021_results[26]`
-* `..surv_juv_outmigration_sj_int` = `r calib_2021_results[27]`
+* `..surv_juv_bypass_int` = `r calib_2021_results[16]`
+* `..surv_juv_delta_int` = `r calib_2021_results[17]`
+* `..surv_juv_delta_contact_points` = `r calib_2021_results[18]`
+* `..surv_juv_delta_total_diverted` = `r calib_2021_results[19]`
+* `..surv_juv_outmigration_sj_int` = `r calib_2021_results[20]`
 
 **Ocean Entry Success**
 
 Intercepts listed below are supplied into the model as a vector `..ocean_entry_success_int`
 
-* Default Ocean Entry = `r calib_2021_results[28]`
-* Upper Sacramento River = `r calib_2021_results[29]`
-* Butte Creek = `r calib_2021_results[30]`
-* Deer Creek = `r calib_2021_results[31]`
-* Mill Creek = `r calib_2021_results[32]`
-* Bear and Feather River = `r calib_2021_results[33]`
-* Yuba River = `r calib_2021_results[34]`
-* American River = `r calib_2021_results[35]`
-* Calaveras and Cosumnes River = `r calib_2021_results[36]`
-* Mokelumne River = `r calib_2021_results[37]`
-* Merced River = `r calib_2021_results[38]`
-* Stanislaus River = `r calib_2021_results[39]`
-* Tuolumne River = `r calib_2021_results[40]`
+* Default Ocean Entry = `r calib_2021_results[21]`
+* Battle Creek = `r calib_2021_results[22]`
+* Clear Creek = `r calib_2021_results[22]`
+* Butte Creek = `r calib_2021_results[23]`
+* Deer Creek = `r calib_2021_results[24]`
+* Mill Creek = `r calib_2021_results[25]`
+* Bear River = `r calib_2021_results[26]`
+* Feather River = `r calib_2021_results[26]`
+* Yuba River = `r calib_2021_results[27]`
 
 _Default Ocean Entry is used for all watersheds not listed above_
