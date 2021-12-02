@@ -373,9 +373,6 @@ _Note: Deer Creek survival intercept was used for all Upper Sacramento Tributari
 
 Intercepts listed below are supplied into the model as a vector `..surv_juv_int`
 
-c("Antelope Creek", "Battle Creek", "Butte Creek", "Clear Creek", 
-"Deer Creek", "Mill Creek", "Feather River", "Yuba River")
-
 * Default Intercept = `r calib_2021_results[4]`
 * Battle Creek = `r calib_2021_results[5]`
 * Butte Creek = `r calib_2021_results[6]`

@@ -28,7 +28,6 @@ reference:
   - surv_juv_delta
   - surv_juv_outmigration_delta
   - surv_juv_outmigration_sac
-  - surv_juv_outmigration_sac_delta
   - surv_juv_outmigration_san_joaquin
   - surv_juv_rear
   - spawn_success
@@ -50,6 +49,7 @@ reference:
   - rear
   - migrate
   - ocean_transition_month
+  - yearling_growth
 
 - title: Datasets
   desc: Data used by the lifecycle model
@@ -79,12 +79,16 @@ reference:
 
 navbar:
   structure:
-    left:  [home, reference, news]
+    left:  [home, reference, articles, news]
     right: [github]
   type: default
   left:
   - text: 'Reference'
     href: reference/index.html
+  - text: 'Articles'
+    menu:
+      - text: 'Calibration (2021)'
+        href: 'articles/calibration.html'
   - text: 'News'
     href: news/index.html
 
