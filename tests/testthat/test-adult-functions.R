@@ -225,6 +225,77 @@ test_that("Get spawning adults returns the expected values", {
   expect_equal(spawning_adults, expected_spawners)
 })
 
+# TODO add tests for get_spawning_adults in simulate mode
+
+output_get_spawning_adults_seed_mode <- list(init_adults = c(`Upper Sacramento River` = 12, `Antelope Creek` = 12, 
+                                                             `Battle Creek` = 286, `Bear Creek` = 0, `Big Chico Creek` = 12, 
+                                                             `Butte Creek` = 5746, `Clear Creek` = 170, `Cottonwood Creek` = 12, 
+                                                             `Cow Creek` = 0, `Deer Creek` = 472, `Elder Creek` = 0, `Mill Creek` = 376, 
+                                                             `Paynes Creek` = 0, `Stony Creek` = 0, `Thomes Creek` = 0, `Upper-mid Sacramento River` = 0, 
+                                                             `Sutter Bypass` = 0, `Bear River` = 0, `Feather River` = 10, 
+                                                             `Yuba River` = 12, `Lower-mid Sacramento River` = 0, `Yolo Bypass` = 0, 
+                                                             `American River` = 0, `Lower Sacramento River` = 0, `Calaveras River` = 0, 
+                                                             `Cosumnes River` = 0, `Mokelumne River` = 12, `Merced River` = 0, 
+                                                             `Stanislaus River` = 12, `Tuolumne River` = 12, `San Joaquin River` = 0
+), proportion_natural = c(`Upper Sacramento River` = 1, `Antelope Creek` = 1, 
+                          `Battle Creek` = 1, `Bear Creek` = 1, `Big Chico Creek` = 1, 
+                          `Butte Creek` = 0.9975, `Clear Creek` = 1, `Cottonwood Creek` = 1, 
+                          `Cow Creek` = 1, `Deer Creek` = 1, `Elder Creek` = 1, `Mill Creek` = 1, 
+                          `Paynes Creek` = 1, `Stony Creek` = 1, `Thomes Creek` = 1, `Upper-mid Sacramento River` = 1, 
+                          `Sutter Bypass` = 1, `Bear River` = 1, `Feather River` = 0.145, 
+                          `Yuba River` = 0.50875, `Lower-mid Sacramento River` = 1, `Yolo Bypass` = 1, 
+                          `American River` = 1, `Lower Sacramento River` = 1, `Calaveras River` = 1, 
+                          `Cosumnes River` = 1, `Mokelumne River` = 1, `Merced River` = 1, 
+                          `Stanislaus River` = 1, `Tuolumne River` = 1, `San Joaquin River` = 1
+), init_adults_by_month = structure(c(2, 2, 36, 0, 2, 718, 21, 
+                                      2, 0, 59, 0, 47, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 2, 
+                                      0, 2, 2, 0, 4, 4, 107, 0, 4, 2155, 64, 4, 0, 177, 0, 141, 0, 
+                                      0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 4, 0, 4, 4, 0, 4, 4, 107, 
+                                      0, 4, 2155, 64, 4, 0, 177, 0, 141, 0, 0, 0, 0, 0, 0, 3, 4, 0, 
+                                      0, 0, 0, 0, 0, 4, 0, 4, 4, 0, 2, 2, 36, 0, 2, 718, 21, 2, 0, 
+                                      59, 0, 47, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 2, 0, 2, 
+                                      2, 0), .Dim = c(31L, 4L), .Dimnames = list(c("Upper Sacramento River", 
+                                                                                   "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
+                                                                                   "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
+                                                                                   "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
+                                                                                   "Thomes Creek", "Upper-mid Sacramento River", "Sutter Bypass", 
+                                                                                   "Bear River", "Feather River", "Yuba River", "Lower-mid Sacramento River", 
+                                                                                   "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
+                                                                                   "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
+                                                                                   "Tuolumne River", "San Joaquin River"), NULL)))
+
+test_that("Get spawning (seed mode) returns the expected values", {
+  res <- get_spawning_adults(year = 1, 
+                      adults = get_spawning_adults_inputs$adults, 
+                      hatch_adults = get_spawning_adults_inputs$hatch_adults, 
+                      mode = "seed",
+                      month_return_proportions = params$month_return_proportions,
+                      prop_flow_natal = params$prop_flow_natal,
+                      south_delta_routed_watersheds = params$south_delta_routed_watersheds,
+                      cc_gates_days_closed = params$cc_gates_days_closed,
+                      gates_overtopped = params$gates_overtopped,
+                      tisdale_bypass_watershed = params$tisdale_bypass_watershed,
+                      yolo_bypass_watershed = params$yolo_bypass_watershed,
+                      migratory_temperature_proportion_over_20 = params$migratory_temperature_proportion_over_20,
+                      natural_adult_removal_rate = params$natural_adult_removal_rate,
+                      cross_channel_stray_rate = params$cross_channel_stray_rate,
+                      stray_rate = params$stray_rate,
+                      ..surv_adult_enroute_int = params$..surv_adult_enroute_int,
+                      .adult_stray_intercept = params$.adult_stray_intercept,
+                      .adult_stray_wild = params$.adult_stray_wild,
+                      .adult_stray_natal_flow = params$.adult_stray_natal_flow,
+                      .adult_stray_cross_channel_gates_closed = params$.adult_stray_cross_channel_gates_closed,
+                      .adult_stray_prop_bay_trans = params$.adult_stray_prop_bay_trans,
+                      .adult_stray_prop_delta_trans = params$.adult_stray_prop_delta_trans,
+                      .adult_en_route_migratory_temp = params$.adult_en_route_migratory_temp,
+                      .adult_en_route_bypass_overtopped = params$.adult_en_route_bypass_overtopped,
+                      .adult_en_route_adult_harvest_rate = params$.adult_en_route_adult_harvest_rate,
+                      stochastic = FALSE)
+  
+  expect_equal(res, output_get_spawning_adults_seed_mode)
+  
+})
+
 
 # Tests spawn success function
 init_adults <- expected_spawners$init_adults
