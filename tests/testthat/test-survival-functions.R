@@ -23,13 +23,11 @@ mean_egg_temp_effect <- c(0.900631877, 0.879803496, 0.876306213, 0.843355432, 0.
                           0.893724672, 0)
 
 # Tests surv_juv_rear survival function
-expected_surv_juv_rear <- list(inchannel = structure(c(0.00714123269831683, 0.0306289144194922,
-                                                       0.0622863095352219, 1),
-                                                     .Dim = c(1L, 4L),
-                                                     .Dimnames = list(NULL, c("s", "m", "l", "vl"))),
-                               floodplain = structure(c(0.0304552063499971, 0.110137287888533, 0.189997758240063, 1),
-                                                      .Dim = c(1L, 4L),
-                                                      .Dimnames = list("Upper Sacramento River", c("s", "m", "l", "vl"))))
+expected_surv_juv_rear <- list(inchannel = structure(c(0.00820006173903215, 0.0350473263273152, 
+                                                       0.0709373073656477, 1), .Dim = c(1L, 4L), .Dimnames = list("Upper Sacramento River", 
+                                                                                                                  c("s", "m", "l", "vl"))), floodplain = structure(c(0.031628440645925, 
+                                                                                                                                                                     0.11525567525299, 0.199668187475351, 1), .Dim = c(1L, 4L), .Dimnames = list(
+                                                                                                                                                                       "Upper Sacramento River", c("s", "m", "l", "vl"))))
 
 test_that('The surv_juv_rear function returns the expected values for year 1 month 9 watershed 1', {
   expect_equal(surv_juv_rear(max_temp_thresh = maxT25[1],
