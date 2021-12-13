@@ -55,22 +55,34 @@ test_that('The surv_juv_rear function returns the expected values for year 1 mon
                              stochastic = FALSE),
                expected_surv_juv_rear)
 })
-# 
-# # Tests surv_juv_delta survival function
-# expected_delta_juv_surv <- structure(c(2.28347300347935e-06, 1e-04, 1.00310951502147e-05, 
-#                                        1e-04, 2.10874637097035e-05, 1e-04, 1, 1), 
-#                                      .Dim = c(2L, 4L), 
-#                                      .Dimnames = list(NULL, c("s", "m", "l", "vl")))
-# 
-# test_that('The delta_juv_surv function returns the expected values for year 1 month 9', {
-#   expect_equal(surv_juv_delta(max_temp_thresh = maxT25D,
-#                               avg_temp_thresh = aveT20D,
-#                               high_predation = delta_prop_high_predation,
-#                               contact_points = delta_contact_points,
-#                               prop_diverted = delta_proportion_diverted,
-#                               total_diverted = delta_total_diverted),
-#                expected_delta_juv_surv)
-# })
+
+# Tests surv_juv_delta survival function
+expected_delta_juv_surv <- structure(c(0.0932457862245425, 1e-04, 0.0932457862245425, 1e-04, 
+                                       0.0932457862245425, 1e-04, 1, 1), .Dim = c(2L, 4L), .Dimnames = list(
+                                         c("North Delta", "South Delta"), c("s", "m", "l", "vl")))
+
+test_that('The delta_juv_surv function returns the expected values for year 1 month 9', {
+  expect_equal(surv_juv_delta(avg_temp = params$avg_temp_delta[month, year, "North Delta"],
+                              max_temp_thresh = maxT25D,
+                              avg_temp_thresh = aveT20D,
+                              high_predation = params$delta_prop_high_predation,
+                              contact_points = params$delta_contact_points,
+                              prop_diverted = params$delta_proportion_diverted,
+                              total_diverted = params$delta_total_diverted,
+                              ..surv_juv_delta_int = params$..surv_juv_delta_int,
+                              .surv_juv_delta_contact_points = params$.surv_juv_delta_contact_points,
+                              ..surv_juv_delta_contact_points = params$..surv_juv_delta_contact_points,
+                              .surv_juv_delta_total_diverted = params$.surv_juv_delta_total_diverted,
+                              ..surv_juv_delta_total_diverted = params$..surv_juv_delta_total_diverted,
+                              .avg_temp_thresh = params$.surv_juv_delta_avg_temp_thresh,
+                              .high_predation = params$.surv_juv_delta_high_predation,
+                              .prop_diverted = params$.surv_juv_delta_prop_diverted,
+                              .medium = params$.surv_juv_delta_medium,
+                              .large = params$.surv_juv_delta_large,
+                              min_survival_rate = params$min_survival_rate,
+                              stochastic = FALSE),
+               expected_delta_juv_surv)
+})
 # 
 # # Tests surv_juv_bypass survival function
 # expected_bypass_juv_surv <- structure(c(1e-04, 1e-04, 1e-04, 1), 
