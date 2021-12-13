@@ -334,7 +334,8 @@ get_rearing_survival <- function(year, month,
   } else {
     prop_high_predation
   }
-
+  
+  #TODO check why renamed all of these variables
   num_contact_points <- contact_points
   delta_num_contact_points <- delta_contact_points
   delta_high_predation <- delta_prop_high_predation
