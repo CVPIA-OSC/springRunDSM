@@ -83,18 +83,19 @@ test_that('The delta_juv_surv function returns the expected values for year 1 mo
                               stochastic = FALSE),
                expected_delta_juv_surv)
 })
-# 
-# # Tests surv_juv_bypass survival function
-# expected_bypass_juv_surv <- structure(c(1e-04, 1e-04, 1e-04, 1), 
-#                                       .Dim = c(1L, 4L), 
-#                                       .Dimnames = list(NULL, c("s", "m", "l", "vl")))
-# 
-# test_that('The bypass_juv_surv function returns the expected values for year 1 month 9', {
-#   expect_equal(surv_juv_bypass(max_temp_thresh = maxT25[22],
-#                                avg_temp_thresh = aveT20[22],
-#                                high_predation = 0),
-#                expected_bypass_juv_surv)
-# })
+
+# Tests surv_juv_bypass survival function
+expected_bypass_juv_surv <- structure(c(1e-04, 1e-04, 1e-04, 1),
+                                      .Dim = c(1L, 4L),
+                                      .Dimnames = list(NULL, c("s", "m", "l", "vl")))
+
+test_that('The bypass_juv_surv function returns the expected values for year 1 month 9', {
+  expect_equal(surv_juv_bypass(max_temp_thresh = maxT25[22],
+                               avg_temp_thresh = aveT20[22],
+                               high_predation = 0, 
+                               stochastic = FALSE),
+               expected_bypass_juv_surv)
+})
 # 
 # # Tests migratory survival for lower mid sac fish survival function
 # expected_lms_mig_surv <-structure(c(0.98682029951278, 0.996937462511772, 0.998538504859141, 
