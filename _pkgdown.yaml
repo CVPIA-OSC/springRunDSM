@@ -76,6 +76,11 @@ reference:
   - territory_by_size
   - gamma_MOM
   - days_in_month
+  
+- title: Utility Functions 
+  desc: functions used for formatting and other uility purposes.
+  contents:
+  - pretty_num
 
 navbar:
   structure:
@@ -89,6 +94,8 @@ navbar:
     menu:
       - text: 'Calibration (2021)'
         href: 'articles/calibration.html'
+      - text: 'Sensitivity Analysis'
+        href: 'articles/sensitivity-analysis.html'
   - text: 'News'
     href: news/index.html
 
