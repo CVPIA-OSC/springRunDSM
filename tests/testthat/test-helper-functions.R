@@ -2,14 +2,14 @@ library(testthat)
 library(springRunDSM)
 source("../../R/utils.R")
 # Tests util functions and other helper functions
-# Tests territory function
+# Tests territory function------------------------------------------------------
 expected_territory <- c(0.0498944803729702, 0.138941944739835, 0.471083652829798, 0)
 
 test_that('The territory_by_size funciton returns the expected output', {
   expect_equal(territory_by_size(), expected_territory)
 })
 
-# Tests utils functions
+# Tests utils functions --------------------------------------------------------
 test_that('Days in month funciton returns the correct number of days for that month', {
   expect_equal(days_in_month(1), 31)
   expect_equal(days_in_month(5), 31)

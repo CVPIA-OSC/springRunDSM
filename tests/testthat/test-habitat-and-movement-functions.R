@@ -1,8 +1,54 @@
 library(testthat)
 library(springRunDSM)
-# tests for routing functions
-# Lists inputs to use in testing
-# list2env(load_baseline_data(), envir = .GlobalEnv)
+
+#tests for habitat and movement functions
+# Set time
+year <- 1
+month <- 3
+
+# tests habitat functions
+# tests get_habitat------------------------------------------------------------
+expected_habitat <- list(inchannel = c(`Upper Sacramento River` = 284862.518600717, 
+                                       `Antelope Creek` = 150892.043988146, `Battle Creek` = 82045.9239658986, 
+                                       `Bear Creek` = 104731.101330098, `Big Chico Creek` = 67785.7236296131, 
+                                       `Butte Creek` = 44724.0799825342, `Clear Creek` = 38107.1430306237, 
+                                       `Cottonwood Creek` = 645383.29795896, `Cow Creek` = 321962.223658825, 
+                                       `Deer Creek` = 693573.699406254, `Elder Creek` = 37322.1846943144, 
+                                       `Mill Creek` = 78253.2693226914, `Paynes Creek` = 71506.5145287255, 
+                                       `Stony Creek` = 159332.669240259, `Thomes Creek` = 123579.72814241, 
+                                       `Upper-mid Sacramento River` = 182988.017385245, `Sutter Bypass` = 0, 
+                                       `Bear River` = 127250.864421874, `Feather River` = 2183493.49627923, 
+                                       `Yuba River` = 15291.0798779482, `Lower-mid Sacramento River` = 80276.739386738, 
+                                       `Yolo Bypass` = 0, `American River` = 489755.382540208, `Lower Sacramento River` = 5659.50923988249, 
+                                       `Calaveras River` = 57130.9315219469, `Cosumnes River` = 194952.984087356, 
+                                       `Mokelumne River` = 484714.241442331, `Merced River` = 493340.623200333, 
+                                       `Stanislaus River` = 36376.26961304, `Tuolumne River` = 845729.47341036, 
+                                       `San Joaquin River` = 688450.253724245), floodplain = c(`Upper Sacramento River` = 0, 
+                                                                                               `Antelope Creek` = 0, `Battle Creek` = 0, `Bear Creek` = 0, `Big Chico Creek` = 0, 
+                                                                                               `Butte Creek` = 122329.695068898, `Clear Creek` = 2355.46832318245, 
+                                                                                               `Cottonwood Creek` = 63413.1055808076, `Cow Creek` = 0, `Deer Creek` = 0, 
+                                                                                               `Elder Creek` = 21367.9751522632, `Mill Creek` = 0, `Paynes Creek` = 0, 
+                                                                                               `Stony Creek` = 2900.68426339273, `Thomes Creek` = 19832.2255934245, 
+                                                                                               `Upper-mid Sacramento River` = 132712.481344752, `Sutter Bypass` = 0, 
+                                                                                               `Bear River` = 244256.485299771, `Feather River` = 1291949.94566363, 
+                                                                                               `Yuba River` = 303137.575686449, `Lower-mid Sacramento River` = 207618.75582803, 
+                                                                                               `Yolo Bypass` = 0, `American River` = 300033.514585385, `Lower Sacramento River` = 10789.5889932842, 
+                                                                                               `Calaveras River` = 11047.0706784565, `Cosumnes River` = 790248.402703304, 
+                                                                                               `Mokelumne River` = 80319.5503935574, `Merced River` = 0, `Stanislaus River` = 117776.359037656, 
+                                                                                               `Tuolumne River` = 621732.143016127, `San Joaquin River` = 4846596.81997531
+                                       ), sutter = 25969285.5112023, yolo = 27767654.9254387, north_delta = 20327680.998477, 
+                         south_delta = 20685020.6986651)
+test_that('The get_habitat function returns the expected values for year 1 and month 3', {
+  expect_equal(get_habitat(year = year, 
+                           month = month, 
+                           inchannel_habitat_fry  = params$inchannel_habitat_fry, 
+                           inchannel_habitat_juvenile = params$inchannel_habitat_juvenile,
+                           floodplain_habitat = params$floodplain_habitat,
+                           sutter_habitat = params$sutter_habitat,
+                           yolo_habitat = params$yolo_habitat,
+                           delta_habitat = params$delta_habitat), expected_habitat)
+})
+#test movement function --------------------------------------------------------
 migrants_at_golden_gate <- structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -10,8 +56,7 @@ migrants_at_golden_gate <- structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 585, 0, 0, 12383, 
                                        346, 0, 0, 571, 0, 2477, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 
                                        0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L))
-year <- 1
-month <- 3
+# tests Ocean entry success ----------------------------------------------------
 avg_ocean_transition_month <- 1
 
 migratory_survival <- list(delta = structure(c(0.266668614822945, 2.26283033759458e-26,
@@ -96,92 +141,37 @@ growth_rates <- structure(c(0.0030986844080139, 0, 0, 0, 0.996809996864753, 0.50
                             0, 0, 1.27897692436818e-13, 0.186181640595347, 1), .Dim = c(4L,
                                                                                         4L), .Dimnames = list(c("s", "m", "l", "vl"), c("s", "m", "l",
                                                                                                                                         "vl")))
-# tests habitat functions
-# tests get_habitat
-# expected_habitat <- list(inchannel = c(`Upper Sacramento River` = 284862.518600717, 
-#                                        `Antelope Creek` = 150892.043953801, `Battle Creek` = 82045.9239608057, 
-#                                        `Bear Creek` = 0, `Big Chico Creek` = 67785.7236280781, `Butte Creek` = 44724.0799819993, 
-#                                        `Clear Creek` = 38107.1430325164, `Cottonwood Creek` = 10371735.0341142, 
-#                                        `Cow Creek` = 0, `Deer Creek` = 57710.8836318761, `Elder Creek` = 0, 
-#                                        `Mill Creek` = 78253.2693255011, `Paynes Creek` = 0, `Stony Creek` = 0, 
-#                                        `Thomes Creek` = 123579.728111806, `Upper-mid Sacramento River` = 0, 
-#                                        `Sutter Bypass` = 0, `Bear River` = 0, `Feather River` = 2183493.49600558, 
-#                                        `Yuba River` = 15291.0798721742, `Lower-mid Sacramento River` = 0, 
-#                                        `Yolo Bypass` = 0, `American River` = 0, `Lower Sacramento River` = 0, 
-#                                        `Calaveras River` = 57130.9315205419, `Cosumnes River` = 194952.984131122, 
-#                                        `Mokelumne River` = 484714.241498923, `Merced River` = 493340.623276151, 
-#                                        `Stanislaus River` = 36376.2696147534, `Tuolumne River` = 845729.473271797, 
-#                                        `San Joaquin River` = 0), 
-#                          floodplain = c(`Upper Sacramento River` = 0, 
-#                                         `Antelope Creek` = 0, `Battle Creek` = 0, `Bear Creek` = 0, `Big Chico Creek` = 0, 
-#                                         `Butte Creek` = 453089.62418109, `Clear Creek` = 0, `Cottonwood Creek` = 0, 
-#                                         `Cow Creek` = 0, `Deer Creek` = 0, `Elder Creek` = 0, `Mill Creek` = 0, 
-#                                         `Paynes Creek` = 0, `Stony Creek` = 0, `Thomes Creek` = 0, `Upper-mid Sacramento River` = 132712.481344752, 
-#                                         `Sutter Bypass` = 0, `Bear River` = 0, `Feather River` = 4784986.02233532, 
-#                                         `Yuba River` = 1122747.47656838, `Lower-mid Sacramento River` = 207618.75582803, 
-#                                         `Yolo Bypass` = 0, `American River` = 0, `Lower Sacramento River` = 10789.5889932842, 
-#                                         `Calaveras River` = 40921.6375921084, `Cosumnes River` = 2926828.34621612, 
-#                                         `Mokelumne River` = 297478.10319996, `Merced River` = 0, `Stanislaus River` = 436224.593844581, 
-#                                         `Tuolumne River` = 2302709.1282023, `San Joaquin River` = 17650826.4402582
-#                          ), 
-#                          sutter = 25969285.5112023, 
-#                          yolo = 27767654.9254387, 
-#                          north_delta = 20327680.998477, 
-#                          south_delta = 20685020.6986651)
-expected_habitat <- list(inchannel = c(`Upper Sacramento River` = 284862.518600717, 
-                   `Antelope Creek` = 150892.043988146, `Battle Creek` = 82045.9239658986, 
-                   `Bear Creek` = 104731.101330098, `Big Chico Creek` = 67785.7236296131, 
-                   `Butte Creek` = 44724.0799825342, `Clear Creek` = 38107.1430306237, 
-                   `Cottonwood Creek` = 645383.29795896, `Cow Creek` = 321962.223658825, 
-                   `Deer Creek` = 693573.699406254, `Elder Creek` = 37322.1846943144, 
-                   `Mill Creek` = 78253.2693226914, `Paynes Creek` = 71506.5145287255, 
-                   `Stony Creek` = 159332.669240259, `Thomes Creek` = 123579.72814241, 
-                   `Upper-mid Sacramento River` = 182988.017385245, `Sutter Bypass` = 0, 
-                   `Bear River` = 127250.864421874, `Feather River` = 2183493.49627923, 
-                   `Yuba River` = 15291.0798779482, `Lower-mid Sacramento River` = 80276.739386738, 
-                   `Yolo Bypass` = 0, `American River` = 489755.382540208, `Lower Sacramento River` = 5659.50923988249, 
-                   `Calaveras River` = 57130.9315219469, `Cosumnes River` = 194952.984087356, 
-                   `Mokelumne River` = 484714.241442331, `Merced River` = 493340.623200333, 
-                   `Stanislaus River` = 36376.26961304, `Tuolumne River` = 845729.47341036, 
-                   `San Joaquin River` = 688450.253724245), floodplain = c(`Upper Sacramento River` = 0, 
-                                                                           `Antelope Creek` = 0, `Battle Creek` = 0, `Bear Creek` = 0, `Big Chico Creek` = 0, 
-                                                                           `Butte Creek` = 122329.695068898, `Clear Creek` = 2355.46832318245, 
-                                                                           `Cottonwood Creek` = 63413.1055808076, `Cow Creek` = 0, `Deer Creek` = 0, 
-                                                                           `Elder Creek` = 21367.9751522632, `Mill Creek` = 0, `Paynes Creek` = 0, 
-                                                                           `Stony Creek` = 2900.68426339273, `Thomes Creek` = 19832.2255934245, 
-                                                                           `Upper-mid Sacramento River` = 132712.481344752, `Sutter Bypass` = 0, 
-                                                                           `Bear River` = 244256.485299771, `Feather River` = 1291949.94566363, 
-                                                                           `Yuba River` = 303137.575686449, `Lower-mid Sacramento River` = 207618.75582803, 
-                                                                           `Yolo Bypass` = 0, `American River` = 300033.514585385, `Lower Sacramento River` = 10789.5889932842, 
-                                                                           `Calaveras River` = 11047.0706784565, `Cosumnes River` = 790248.402703304, 
-                                                                           `Mokelumne River` = 80319.5503935574, `Merced River` = 0, `Stanislaus River` = 117776.359037656, 
-                                                                           `Tuolumne River` = 621732.143016127, `San Joaquin River` = 4846596.81997531
-                   ), sutter = 25969285.5112023, yolo = 27767654.9254387, north_delta = 20327680.998477, 
-     south_delta = 20685020.6986651)
-test_that('The get_habitat function returns the expected values for year 1 and month 3', {
-  expect_equal(get_habitat(year = year, 
-                           month = month, 
-                           inchannel_habitat_fry  = params$inchannel_habitat_fry, 
-                           inchannel_habitat_juvenile = params$inchannel_habitat_juvenile,
-                           floodplain_habitat = params$floodplain_habitat,
-                           sutter_habitat = params$sutter_habitat,
-                           yolo_habitat = params$yolo_habitat,
-                           delta_habitat = params$delta_habitat), expected_habitat)
-})
 
 
-# Test that we have the expected amount of ocean entry success for
-expected_ocean_entry_success <- c(0, 0, 537, 0, 0, 12204, 318, 0, 0, 409, 0, 2328, 0, 0, 0, 0, 
-                                  0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+# Test Ocean entry success  ----------------------------------------------------
+# Stochastic
+expected_ocean_entry_success <- c(0, 0, 534, 0, 0, 12226, 313, 0, 0, 400, 0, 2326, 0, 0, 0, 0, 
+                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-test_that('The ocen entry success function returns the expected values for year 1 month 3', {
-  expect_equal(ocean_entry_success(migrants = migrants_at_golden_gate,
-                                   month = month,
-                                   avg_ocean_transition_month = avg_ocean_transition_month, stochastic = FALSE),
+test_that('The ocen entry success function returns the expected values for year 1 month 3 (stochastic)', {
+  set.seed(2021)
+  ocean_entry_actual <- ocean_entry_success(migrants = migrants_at_golden_gate,
+                                            month = month,
+                                            avg_ocean_transition_month = avg_ocean_transition_month,
+                                            .ocean_entry_success_length =params$.ocean_entry_success_length,
+                                            ..ocean_entry_success_int = params$..ocean_entry_success_int,
+                                            .ocean_entry_success_months = params$.ocean_entry_success_months,
+                                            stochastic = TRUE)
+  expect_equal(ocean_entry_actual,
                expected_ocean_entry_success)
 })
 
-# Test that we have the expected amount of pulse movement for fish
+#Deterministic
+expected_ocean_entry_success_det <- c(0, 0, 537, 0, 0, 12204, 318, 0, 0, 409, 0, 2328, 0, 0, 0, 0, 
+                                  0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+test_that('The ocen entry success function returns the expected values for year 1 month 3 (deterministic)', {
+  expect_equal(ocean_entry_success(migrants = migrants_at_golden_gate,
+                                   month = month,
+                                   avg_ocean_transition_month = avg_ocean_transition_month, stochastic = FALSE),
+               expected_ocean_entry_success_det)
+})
+# Test pulse movement ----------------------------------------------------------
 expected_pulse_movement <- structure(c(0.000453375580564798, 0.00045004799330693, 0.000449971142814747,
                                        0.000450640926108725, 0.000450641147814439, 0.000450303029409245,
                                        0.000449542137770137, 0.000451037873144696, 0.000450451197899443,
@@ -241,7 +231,8 @@ test_that('The pulse_movement function returns the expected values for year 1 mo
 
 
 
-# Test routing functions
+# Test routing functions--------------------------------------------------------
+#Stochastic
 juveniles <- structure(c(23562632.6818975, 95877.4873630614, 400486.276147004,
                          14696.4466670538, 15466.5250672724, 1230801.99830721, 11392333.5307564,
                          1505953.40992132, 2237111.18034545, 770950.136852591, 15511.9369082167,
@@ -263,89 +254,112 @@ juveniles <- structure(c(23562632.6818975, 95877.4873630614, 400486.276147004,
                                           "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River",
                                           "Tuolumne River", "San Joaquin River"), c("fry", "", "", "")))
 
-# expected_route <- list(inchannel = structure(c(5706730, 95829.4873630614, 400327.276147004, 
-#                                                0, 15457.5250672724, 0, 763403, 1505275.40992132, 0, 770608.136852591, 
-#                                                0, 1567636, 0, 0, 14811.7873816012, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                0, 0, 0, 1231393.55285853, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L)), floodplain = structure(c(0, 0, 0, 0, 0, 
-#                                                                                                                                                             1230801.99830721, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26878201.5840594, 
-#                                                                                                                                                             9066230.94759099, 0, 0, 0, 0, 14870.5408311819, 651645.917994898, 
-#                                                                                                                                                             3060092.04898684, 0, 6286476.48377481, 1223531.384084, 0, 0, 
-#                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L)), 
-#                        migrants = structure(c(17855902.6818975, 
-#                                               48, 159, 14696.4466670538, 9, 0, 10628930.5307564, 678, 2237111.18034545, 
-#                                               342, 15511.9369082167, 93266.32553158, 62818.1321951005, 14307.5895999285, 
-#                                               11, 0, 0, 15335.6115608913, 0, 0, 0, 0, 23405376.6695231, 0, 
-#                                               0, 0, 0, 574, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
-#                                             .Dim = c(31L, 4L), 
-#                                             .Dimnames = list(c("Upper Sacramento River", "Antelope Creek", 
-#                                                                "Battle Creek", "Bear Creek", "Big Chico Creek", "Butte Creek", 
-#                                                                "Clear Creek", "Cottonwood Creek", "Cow Creek", "Deer Creek", 
-#                                                                "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek", 
-#                                                                "Upper-mid Sacramento River", "Sutter Bypass", "Bear River", 
-#                                                                "Feather River", "Yuba River", "Lower-mid Sacramento River", 
-#                                                                "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
-#                                                                "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
-#                                                                "Tuolumne River", "San Joaquin River"), c("fry", "", "", ""))))
-
-expected_route <- list(inchannel = structure(c(5706711, 95834.4873630614, 400306.276147004, 
-                                               14689.4466670538, 15459.5250672724, 0, 763412, 234903.40992132, 
-                                               2236103.18034545, 770603.136852591, 0, 1567669, 62790.1321951005, 
-                                               0, 0, 0, 0, 0, 984111.584059399, 306330, 0, 0, 9811398, 0, 0, 
-                                               0, 1449648.04898684, 1231407.55285853, 728731, 0, 0, 0, 0, 0, 
+expected_route <- list(inchannel = structure(c(5706730, 95829.4873630614, 400327.276147004, 
+                                               14687.4466670538, 15453.5250672724, 0, 763441, 234893.40992132, 
+                                               2236115.18034545, 770630.136852591, 0, 1567655, 62789.1321951005, 
+                                               0, 0, 0, 0, 0, 984111.584059399, 306309, 0, 0, 9811488, 0, 0, 
+                                               0, 1449680.04898684, 1231385.55285853, 728720, 0, 0, 0, 0, 0, 
                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                               0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L), .Dimnames = list(c("Upper Sacramento River", 
-                                                                                                        "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
-                                                                                                        "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
-                                                                                                        "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
-                                                                                                        "Thomes Creek", "Upper-mid Sacramento River", "Sutter Bypass", 
-                                                                                                        "Bear River", "Feather River", "Yuba River", "Lower-mid Sacramento River", 
-                                                                                                        "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
-                                                                                                        "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
-                                                                                                        "Tuolumne River", "San Joaquin River"), c("s", "m", "l", "vl"
-                                                                                                        ))), floodplain = structure(c(0, 0, 0, 0, 0, 1230801.99830721, 
-                                                                                                                                      47209, 1270944, 0, 0, 15511.9369082167, 0, 0, 14307.5895999285, 
-                                                                                                                                      14822.7873816012, 0, 0, 15335.6115608913, 25893645, 6075573, 
-                                                                                                                                      0, 0, 6013361, 0, 14870.5408311819, 651645.917994898, 1609788, 
-                                                                                                                                      0, 2360509, 1223531.384084, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 
-                                                                                                                                                                                                            4L)), migrants = structure(c(17855921.6818975, 43, 180, 7, 7, 
-                                                                                                                                                                                                                                         0, 10581712.5307564, 106, 1008, 347, 0, 93233.32553158, 28, 0, 
-                                                                                                                                                                                                                                         0, 0, 0, 0, 445, 2684327.94759099, 0, 0, 7580617.6695231, 0, 
-                                                                                                                                                                                                                                         0, 0, 656, 560, 3197236.48377481, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                         0, 0), .Dim = c(31L, 4L), .Dimnames = list(c("Upper Sacramento River", 
-                                                                                                                                                                                                                                                                                      "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
-                                                                                                                                                                                                                                                                                      "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
-                                                                                                                                                                                                                                                                                      "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
-                                                                                                                                                                                                                                                                                      "Thomes Creek", "Upper-mid Sacramento River", "Sutter Bypass", 
-                                                                                                                                                                                                                                                                                      "Bear River", "Feather River", "Yuba River", "Lower-mid Sacramento River", 
-                                                                                                                                                                                                                                                                                      "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
-                                                                                                                                                                                                                                                                                      "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
-                                                                                                                                                                                                                                                                                      "Tuolumne River", "San Joaquin River"), c("fry", "", "", ""))))
-test_that('The route() function returns the expected values for year 1 month 3', {
+                                               0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L)), floodplain = structure(c(0, 
+                                                                                                               0, 0, 0, 0, 1230801.99830721, 47209, 1270944, 0, 0, 15511.9369082167, 
+                                                                                                               0, 0, 14307.5895999285, 14822.7873816012, 0, 0, 15335.6115608913, 
+                                                                                                               25893645, 6075573, 0, 0, 6013361, 0, 14870.5408311819, 651645.917994898, 
+                                                                                                               1609788, 0, 2360509, 1223531.384084, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                               0, 0), .Dim = c(31L, 4L)), migrants = structure(c(17855902.6818975, 
+                                                                                                                                                                 48, 159, 9, 13, 0, 10581683.5307564, 116, 996, 320, 0, 93247.32553158, 
+                                                                                                                                                                 29, 0, 0, 0, 0, 0, 445, 2684348.94759099, 0, 0, 7580527.6695231, 
+                                                                                                                                                                 0, 0, 0, 624, 582, 3197247.48377481, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                 0, 0, 0), .Dim = c(31L, 4L), .Dimnames = list(c("Upper Sacramento River", 
+                                                                                                                                                                                                                 "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
+                                                                                                                                                                                                                 "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
+                                                                                                                                                                                                                 "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
+                                                                                                                                                                                                                 "Thomes Creek", "Upper-mid Sacramento River", "Sutter Bypass", 
+                                                                                                                                                                                                                 "Bear River", "Feather River", "Yuba River", "Lower-mid Sacramento River", 
+                                                                                                                                                                                                                 "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
+                                                                                                                                                                                                                 "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
+                                                                                                                                                                                                                 "Tuolumne River", "San Joaquin River"), c("fry", "", "", ""))))
+test_that('The route function returns the expected values for year 1 month 3 (stochastic),', {
   set.seed(2021)
-  route <- route(year = year, month = month, juveniles = juveniles, inchannel_habitat = expected_habitat$inchannel, floodplain_habitat = expected_habitat$floodplain,
+  route <- route(year = year, month = month, 
+                 juveniles = juveniles, 
+                 inchannel_habitat = expected_habitat$inchannel, 
+                 floodplain_habitat = expected_habitat$floodplain,
+                 prop_pulse_flows = params$prop_pulse_flows,
+                 .pulse_movement_intercept = params$.pulse_movement_intercept,
+                 .pulse_movement_proportion_pulse = params$.pulse_movement_proportion_pulse,
+                 .pulse_movement_medium = params$.pulse_movement_medium,
+                 .pulse_movement_large = params$.pulse_movement_large,
+                 .pulse_movement_vlarge = params$.pulse_movement_vlarge,
+                 .pulse_movement_medium_pulse = params$.pulse_movement_medium_pulse,
+                 .pulse_movement_large_pulse = params$.pulse_movement_large_pulse,
+                 .pulse_movement_very_large_pulse = params$.pulse_movement_very_large_pulse,
+                 territory_size = params$territory_size,
+                 stochastic = TRUE)
+  expect_equal(route, expected_route)
+})
+
+#Deterministic
+expected_route_det <- list(inchannel = structure(c(5706711, 95834.4873630614, 400306.276147004, 
+                                                   14689.4466670538, 15459.5250672724, 0, 763412, 234903.40992132, 
+                                                   2236103.18034545, 770603.136852591, 0, 1567669, 62790.1321951005, 
+                                                   0, 0, 0, 0, 0, 984111.584059399, 306330, 0, 0, 9811398, 0, 0, 
+                                                   0, 1449648.04898684, 1231407.55285853, 728731, 0, 0, 0, 0, 0, 
+                                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                   0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L), .Dimnames = list(c("Upper Sacramento River", 
+                                                                                                            "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
+                                                                                                            "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
+                                                                                                            "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
+                                                                                                            "Thomes Creek", "Upper-mid Sacramento River", "Sutter Bypass", 
+                                                                                                            "Bear River", "Feather River", "Yuba River", "Lower-mid Sacramento River", 
+                                                                                                            "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
+                                                                                                            "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
+                                                                                                            "Tuolumne River", "San Joaquin River"), c("s", "m", "l", "vl"
+                                                                                                            ))), floodplain = structure(c(0, 0, 0, 0, 0, 1230801.99830721, 
+                                                                                                                                          47209, 1270944, 0, 0, 15511.9369082167, 0, 0, 14307.5895999285, 
+                                                                                                                                          14822.7873816012, 0, 0, 15335.6115608913, 25893645, 6075573, 
+                                                                                                                                          0, 0, 6013361, 0, 14870.5408311819, 651645.917994898, 1609788, 
+                                                                                                                                          0, 2360509, 1223531.384084, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 
+                                                                                                                                                                                                                4L)), migrants = structure(c(17855921.6818975, 43, 180, 7, 7, 
+                                                                                                                                                                                                                                             0, 10581712.5307564, 106, 1008, 347, 0, 93233.32553158, 28, 0, 
+                                                                                                                                                                                                                                             0, 0, 0, 0, 445, 2684327.94759099, 0, 0, 7580617.6695231, 0, 
+                                                                                                                                                                                                                                             0, 0, 656, 560, 3197236.48377481, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                             0, 0), .Dim = c(31L, 4L), .Dimnames = list(c("Upper Sacramento River", 
+                                                                                                                                                                                                                                                                                          "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
+                                                                                                                                                                                                                                                                                          "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
+                                                                                                                                                                                                                                                                                          "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
+                                                                                                                                                                                                                                                                                          "Thomes Creek", "Upper-mid Sacramento River", "Sutter Bypass", 
+                                                                                                                                                                                                                                                                                          "Bear River", "Feather River", "Yuba River", "Lower-mid Sacramento River", 
+                                                                                                                                                                                                                                                                                          "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
+                                                                                                                                                                                                                                                                                          "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
+                                                                                                                                                                                                                                                                                          "Tuolumne River", "San Joaquin River"), c("fry", "", "", ""))))
+  
+test_that('The route function returns the expected values for year 1 month 3 (deterministic)', {
+  route <- route(year = year, month = month, 
+                 juveniles = juveniles, 
+                 inchannel_habitat = expected_habitat$inchannel, 
+                 floodplain_habitat = expected_habitat$floodplain,
                  prop_pulse_flows = params$prop_pulse_flows,
                  .pulse_movement_intercept = params$.pulse_movement_intercept,
                  .pulse_movement_proportion_pulse = params$.pulse_movement_proportion_pulse,
@@ -357,10 +371,11 @@ test_that('The route() function returns the expected values for year 1 month 3',
                  .pulse_movement_very_large_pulse = params$.pulse_movement_very_large_pulse,
                  territory_size = params$territory_size,
                  stochastic = FALSE)
-  expect_equal(route, expected_route)
+  expect_equal(route, expected_route_det)
 })
 
-# Test the route regional function
+# Test the route bypass function ---------------------------------------------
+#Stochastic
 sutter_fish <- structure(c(12298980, 0, 50880, 0, 10, 0, 6144095, 378, 0, 0,
                            0, 276, 0, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -386,18 +401,43 @@ expected_route_sutter <- list(inchannel = structure(c(12298980, 0, 50880, 0, 10,
                                                      0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L), .Dim = c(15L, 4L), .Dimnames = list(
                                                        NULL, c("s", "m", "l", "vl"))))
 
-test_that('The route_bypass() function returns the expected values for year 1 month 3', {
+test_that('The route_bypass function returns the expected values for year 1 month 3 (stochastic)', {
   set.seed(2021)
+  route_sutter <- route_bypass(bypass_fish = sutter_fish,
+                               bypass_habitat = expected_habitat$sutter,
+                               migration_survival_rate = migratory_survival$sutter,
+                               territory_size = params$territory_size,
+                               stochastic = TRUE)
+  expect_equal(route_sutter, expected_route_sutter)
+})
+
+#Deterministic
+expected_route_sutter <-list(inchannel = structure(c(12298980, 0, 50880, 0, 10, 0, 6144095, 
+                                                     378, 0, 0, 0, 276, 0, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(15L, 4L), .Dimnames = list(
+                                                       c("Upper Sacramento River", "Antelope Creek", "Battle Creek", 
+                                                         "Bear Creek", "Big Chico Creek", "Butte Creek", "Clear Creek", 
+                                                         "Cottonwood Creek", "Cow Creek", "Deer Creek", "Elder Creek", 
+                                                         "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek"
+                                                       ), c("s", "m", "l", "vl"))), migrants = structure(c(0, 0, 
+                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(15L, 
+                                                                                                                                                                     4L), .Dimnames = list(NULL, c("s", "m", "l", "vl"))))
+  
+test_that('The route_bypass function returns the expected values for year 1 month 3 (deterministic)', {
   route_sutter <- route_bypass(bypass_fish = sutter_fish,
                                bypass_habitat = expected_habitat$sutter,
                                migration_survival_rate = migratory_survival$sutter,
                                territory_size = params$territory_size,
                                stochastic = FALSE)
   expect_equal(route_sutter, expected_route_sutter)
+  
 })
-
-# Test the route regional function
-expected_route_regional <- list(inchannel = structure(c(2437798, 0, 10085, 0, 2, 0, 1217829, 
+# Test the route regional function ---------------------------------------------
+#Stochastic
+expected_route_regional <- list(inchannel = structure(c(2437809, 0, 10084, 0, 2, 0, 1217820, 
                                                         75, 0, 0, 0, 55, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(15L, 4L), .Dimnames = list(
@@ -413,14 +453,13 @@ expected_route_regional <- list(inchannel = structure(c(2437798, 0, 10085, 0, 2,
                                                                                                    "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
                                                                                                    "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
                                                                                                    "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
-                                                                                                   "Thomes Creek"), c("s", "m", "l", "vl"))), migrants = structure(c(1529457, 
-                                                                                                                                                                     0, 6327, 0, 1, 0, 764058, 47, 0, 0, 0, 34, 0, 0, 1, 0, 0, 0, 
-                                                                                                                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-                                                                                                   ), .Dim = c(15L, 4L), .Dimnames = list(NULL, c("s", "m", "l", 
-                                                                                                                                                  "vl"))))
-
-test_that('The route_regional() function returns the expected values for year 1 month 3', {
+                                                                                                   "Thomes Creek"), c("s", "m", "l", "vl"))), migrants = structure(c(1527499L, 
+                                                                                                                                                                     0L, 6363L, 0L, 2L, 0L, 763762L, 37L, 0L, 0L, 0L, 33L, 0L, 1L, 
+                                                                                                                                                                     0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                                                                                                                                                     0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                                                                                                                                                     0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L), .Dim = c(15L, 
+                                                                                                                                                                                                                                       4L)))
+test_that('The route_regional function returns the expected values for year 1 month 3 (stochastic)', {
   set.seed(2021)
   route <- route_regional(month = month,
                           migrants = sutter_fish,
@@ -429,11 +468,47 @@ test_that('The route_regional() function returns the expected values for year 1 
                           prop_pulse_flows = params$prop_pulse_flows[16, , drop = FALSE],
                           migration_survival_rate = migratory_survival$uppermid_sac,
                           territory_size = params$territory_size,
-                          stochastic = FALSE)
+                          stochastic = TRUE)
   expect_equal(route, expected_route_regional)
 })
 
-# Test that route south delta works as expected
+#Deterministic
+expected_route_regional_det <- list(inchannel = structure(c(2437798, 0, 10085, 0, 2, 0, 1217829, 
+                                                            75, 0, 0, 0, 55, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(15L, 4L), .Dimnames = list(
+                                                              c("Upper Sacramento River", "Antelope Creek", "Battle Creek", 
+                                                                "Bear Creek", "Big Chico Creek", "Butte Creek", "Clear Creek", 
+                                                                "Cottonwood Creek", "Cow Creek", "Deer Creek", "Elder Creek", 
+                                                                "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek"
+                                                              ), c("s", "m", "l", "vl"))), floodplain = structure(c(1768816, 
+                                                                                                                    0, 7317, 0, 1, 0, 883632, 54, 0, 0, 0, 40, 0, 0, 1, 0, 0, 0, 
+                                                                                                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                                                              ), .Dim = c(15L, 4L), .Dimnames = list(c("Upper Sacramento River", 
+                                                                                                       "Antelope Creek", "Battle Creek", "Bear Creek", "Big Chico Creek", 
+                                                                                                       "Butte Creek", "Clear Creek", "Cottonwood Creek", "Cow Creek", 
+                                                                                                       "Deer Creek", "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", 
+                                                                                                       "Thomes Creek"), c("s", "m", "l", "vl"))), migrants = structure(c(1529457, 
+                                                                                                                                                                         0, 6327, 0, 1, 0, 764058, 47, 0, 0, 0, 34, 0, 0, 1, 0, 0, 0, 
+                                                                                                                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                                                                                                       ), .Dim = c(15L, 4L), .Dimnames = list(NULL, c("s", "m", "l", 
+                                                                                                                                                      "vl"))))
+
+test_that('The route_regional function returns the expected values for year 1 month 3 (deterministic)', {
+  route <- route_regional(month = month,
+                          migrants = sutter_fish,
+                          inchannel_habitat = expected_habitat$inchannel[16],
+                          floodplain_habitat = expected_habitat$floodplain[16],
+                          prop_pulse_flows = params$prop_pulse_flows[16, , drop = FALSE],
+                          migration_survival_rate = migratory_survival$uppermid_sac,
+                          territory_size = params$territory_size,
+                          stochastic = FALSE)
+  expect_equal(route, expected_route_regional_det)
+})
+
+# Test that route south delta works as expected --------------------------------
 expected_route_to_south_delta <- 0.184891187138488
 
 test_that('The south delta routing function returns the expected values for year 1 month 3', {
@@ -443,7 +518,7 @@ test_that('The south delta routing function returns the expected values for year
                expected_route_to_south_delta)
 })
 
-# Test the route and rear deltas
+# Test the route and rear deltas -----------------------------------------------
 south_delta_fish <- structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -497,44 +572,45 @@ migrants <- structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0), .Dim = c(31L, 4L))
 
+#Stochastic
 expected_delta_routing <- list(migrants_at_golden_gate = structure(c(0, 0, 0, 0, 0, 0, 
-                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                            0, 0, 0, 0, 122377, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L
-                                                            ), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), north_delta_fish = structure(c(0, 
-                                                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                               0, 0, 0, 0, 510720, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                               0, 0, 0, 0, 0, 0, 0, 0, 116840), .Dim = c(23L, 4L), .Dimnames = list(
-                                                                                                                                                 NULL, c("s", "m", "l", "vl"))), south_delta_fish = structure(c(0, 
-                                                                                                                                                                                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0), .Dim = c(31L, 
-                                                                                                                                                                                                                                                                                   4L), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), juveniles_at_chipps = structure(c(0, 
-                                                                                                                                                                                                                                                                                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                                                                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                                                                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                                                                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                                                                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                                                                                                                                                                                                                                                                                                                                                           0, 0, 0, 0, 0, 0, 0, 0, 0, 341834, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                4L), .Dimnames = list(c("Upper Sacramento River", "Antelope Creek", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Battle Creek", "Bear Creek", "Big Chico Creek", "Butte Creek", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Clear Creek", "Cottonwood Creek", "Cow Creek", "Deer Creek", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Upper-mid Sacramento River", "Sutter Bypass", "Bear River", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Feather River", "Yuba River", "Lower-mid Sacramento River", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Tuolumne River", "San Joaquin River"), c("s", "m", "l", "vl"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ))))
-test_that('The route_and_rear_deltas() function returns the expected values for year 1 month 3', {
+                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                     0, 0, 0, 0, 122718, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L
+                                                                     )), north_delta_fish = structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 510871, 0, 
+                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                        116875), .Dim = c(23L, 4L), .Dimnames = list(NULL, c("s", "m", 
+                                                                                                                                                             "l", "vl"))), south_delta_fish = structure(c(0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 
+                                                                                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                          0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0), .Dim = c(31L, 4L), .Dimnames = list(
+                                                                                                                                                                                                            NULL, c("s", "m", "l", "vl"))), juveniles_at_chipps = structure(c(0, 
+                                                                                                                                                                                                                                                                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                              0, 0, 0, 0, 0, 0, 0, 0, 0, 341834, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 
+                                                                                                                                                                                                                                                                                                                                                   4L), .Dimnames = list(c("Upper Sacramento River", "Antelope Creek", 
+                                                                                                                                                                                                                                                                                                                                                                           "Battle Creek", "Bear Creek", "Big Chico Creek", "Butte Creek", 
+                                                                                                                                                                                                                                                                                                                                                                           "Clear Creek", "Cottonwood Creek", "Cow Creek", "Deer Creek", 
+                                                                                                                                                                                                                                                                                                                                                                           "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek", 
+                                                                                                                                                                                                                                                                                                                                                                           "Upper-mid Sacramento River", "Sutter Bypass", "Bear River", 
+                                                                                                                                                                                                                                                                                                                                                                           "Feather River", "Yuba River", "Lower-mid Sacramento River", 
+                                                                                                                                                                                                                                                                                                                                                                           "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
+                                                                                                                                                                                                                                                                                                                                                                           "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
+                                                                                                                                                                                                                                                                                                                                                                           "Tuolumne River", "San Joaquin River"), c("s", "m", "l", "vl"
+                                                                                                                                                                                                                                                                                                                                                                           ))))
+test_that('The route_and_rear_deltas function returns the expected values for year 1 month 3 (stochastic)', {
   set.seed(2021)
   delta_routing <- route_and_rear_deltas(year = year, month = month, migrants = migrants,
                                                   north_delta_fish = north_delta_fish,
@@ -549,11 +625,67 @@ test_that('The route_and_rear_deltas() function returns the expected values for 
                                                   freeport_flows = params$freeport_flows,
                                                   growth_rates = params$growth_rates,
                                                   territory_size = params$territory_size,
-                                                  stochastic = FALSE)
+                                                  stochastic = TRUE)
   
   expect_equal(delta_routing, expected_delta_routing)
 })
-# Test that fill functions work as expected
+#Deterministic
+expected_delta_routing_det <- list(migrants_at_golden_gate = structure(c(0, 0, 0, 0, 0, 0, 
+                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                         0, 0, 0, 0, 122377, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 4L
+                                                                         ), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), north_delta_fish = structure(c(0, 
+                                                                                                                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                            0, 0, 0, 0, 510720, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                            0, 0, 0, 0, 0, 0, 0, 0, 116840), .Dim = c(23L, 4L), .Dimnames = list(
+                                                                                                                                                              NULL, c("s", "m", "l", "vl"))), south_delta_fish = structure(c(0, 
+                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                             0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0), .Dim = c(31L, 
+                                                                                                                                                                                                                                                                                                4L), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), juveniles_at_chipps = structure(c(0, 
+                                                                                                                                                                                                                                                                                                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                                                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                                                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                                                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                                                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                                                                                                                                                                                                                                                                                                                                                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 341834, 0, 0, 0, 0, 0, 0, 0, 0), .Dim = c(31L, 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                             4L), .Dimnames = list(c("Upper Sacramento River", "Antelope Creek", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Battle Creek", "Bear Creek", "Big Chico Creek", "Butte Creek", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Clear Creek", "Cottonwood Creek", "Cow Creek", "Deer Creek", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Elder Creek", "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Upper-mid Sacramento River", "Sutter Bypass", "Bear River", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Feather River", "Yuba River", "Lower-mid Sacramento River", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "Tuolumne River", "San Joaquin River"), c("s", "m", "l", "vl"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ))))
+test_that('The route_and_rear_deltas function returns the expected values for year 1 month 3 (deterministic)', {
+  delta_routing <- route_and_rear_deltas(year = year, month = month, migrants = migrants,
+                                         north_delta_fish = north_delta_fish,
+                                         south_delta_fish = south_delta_fish,
+                                         north_delta_habitat = expected_habitat$north_delta,
+                                         south_delta_habitat = expected_habitat$south_delta,
+                                         rearing_survival_delta = rearing_survival$delta,
+                                         migratory_survival_delta = migratory_survival$delta,
+                                         migratory_survival_bay_delta = migratory_survival$bay_delta,
+                                         juveniles_at_chipps = juveniles_at_chipps,
+                                         cc_gates_days_closed = params$cc_gates_days_closed,
+                                         freeport_flows = params$freeport_flows,
+                                         growth_rates = params$growth_rates,
+                                         territory_size = params$territory_size,
+                                         stochastic = FALSE)
+
+  expect_equal(delta_routing, expected_delta_routing_det)
+})
+# Test that fill functions work as expected ------------------------------------
 expected_fill_natal <- list(inchannel = structure(c(5709299, 95877.4873630614, 400486.276147004, 
                                                     14696.4466670538, 15466.5250672724, 0, 763755, 235009.40992132, 
                                                     2237111.18034545, 770950.136852591, 0, 1568375, 62818.1321951005, 
@@ -589,9 +721,11 @@ expected_fill_natal <- list(inchannel = structure(c(5709299, 95877.4873630614, 4
                                                                                                                                                                                                                 "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
                                                                                                                                                                                                                 "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
                                                                                                                                                                                                                 "Tuolumne River", "San Joaquin River"), c("fry", "", "", ""))))
-test_that('the fill_natal() function returns the expected output', {
+
+test_that('the fill_natal function returns the expected output', {
   expect_equal(fill_natal(juveniles = juveniles, inchannel_habitat = expected_habitat$inchannel,
-                          floodplain_habitat = expected_habitat$floodplain, territory_size = params$territory_size, up_to_size_class = 2,yearlings = FALSE ),
+                          floodplain_habitat = expected_habitat$floodplain, 
+                          territory_size = params$territory_size),
                expected_fill_natal)
 })
 
@@ -648,13 +782,15 @@ expected_fill_regional <- list(inchannel = structure(c(3630265, 14772, 61702, 22
                                                                                                                                                                               "Calaveras River", "Cosumnes River", "Mokelumne River", 
                                                                                                                                                                               "Merced River", "Stanislaus River", "Tuolumne River", 
                                                                                                                                                                               "San Joaquin River"), c("fry", "", "", ""))))
-test_that('the fill_regional() function returns the expected output', {
+test_that('the fill_regional function returns the expected output', {
   expect_equal(fill_regional(juveniles = juveniles, habitat = expected_habitat$inchannel,
-                             floodplain_habitat = expected_habitat$floodplain, territory_size = params$territory_size,up_to_size_class = 3),
+                             floodplain_habitat = expected_habitat$floodplain, 
+                             territory_size = params$territory_size,up_to_size_class = 3),
                expected_fill_regional)
 })
 
-# Tests migration function
+# Tests migration function -----------------------------------------------------
+#Stochastic
 migrants <- structure(c(50, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 50, 0, 50, 0, 0, 0, 0, 0, 50, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 110, 0, 0, 110, 0, 0, 0,
@@ -662,16 +798,33 @@ migrants <- structure(c(50, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0), .Dim = c(31L, 4L))
-expected_migrants <- structure(c(9, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                 0, 0, 9, 0, 9, 0, 0, 0, 0, 0, 9, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 21, 0, 0, 21, 0, 0, 
-                                 0, 0, 0, 0, 9, 0, 0, 9, 0, 0, 9, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 
-                                 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                 0, 0, 0, 0), .Dim = c(31L, 4L), .Dimnames = list(NULL, c("s", 
-                                                                                          "m", "l", "vl")))
-test_that('the migrate() funciton returns the expected output', {
+expected_migrants <- structure(c(9L, 0L, 0L, 0L, 0L, 0L, 0L, 10L, 0L, 0L, 0L, 0L, 
+                                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 8L, 0L, 16L, 0L, 0L, 0L, 0L, 0L, 
+                                 10L, 0L, 12L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 12L, 13L, 0L, 0L, 22L, 0L, 
+                                 0L, 0L, 0L, 0L, 0L, 12L, 0L, 0L, 11L, 0L, 0L, 9L, 0L, 0L, 0L, 
+                                 11L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 12L, 0L, 0L, 0L, 
+                                 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                 0L, 22L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                 0L, 0L, 0L, 0L, 0L, 0L), .Dim = c(31L, 4L))
+test_that('the migrate function returns the expected output (stochastic)', {
   set.seed(2021)
-  current_migrants <- migrate(migrants = migrants, migration_survival_rate = migratory_survival$uppermid_sac, stochastic = FALSE)
+  current_migrants <- migrate(migrants = migrants, migration_survival_rate = migratory_survival$uppermid_sac, 
+                              stochastic = TRUE)
   expect_equal(current_migrants, expected_migrants)
+})
+
+#Deterministic
+expected_migrants_det <- structure(c(9, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                     0, 0, 9, 0, 9, 0, 0, 0, 0, 0, 9, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 21, 0, 0, 21, 0, 0, 
+                                     0, 0, 0, 0, 9, 0, 0, 9, 0, 0, 9, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 
+                                     0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                     0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                     0, 0, 0, 0), .Dim = c(31L, 4L), .Dimnames = list(NULL, c("s", 
+                                                                                              "m", "l", "vl")))
+test_that("the migrate function returns the expected output (deterministic)", {
+  current_migrants <- migrate(migrants = migrants, migration_survival_rate = migratory_survival$uppermid_sac, 
+                             stochastic = FALSE)
+  expect_equal(current_migrants, expected_migrants_det)
 })

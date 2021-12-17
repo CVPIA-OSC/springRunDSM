@@ -22,14 +22,15 @@ mean_egg_temp_effect <- c(0.900631877, 0.879803496, 0.876306213, 0.843355432, 0.
                           0, 0.8091012, 0.8178536045, 0.8611316565, 0.6133825745, 0.869917628, 
                           0.893724672, 0)
 
-# Tests surv_juv_rear survival function
-expected_surv_juv_rear <- list(inchannel = structure(c(0.00820006173903215, 0.0350473263273152, 
+# Tests surv_juv_rear survival function ----------------------------------------
+#Deterministic
+expected_surv_juv_rear_det <- list(inchannel = structure(c(0.00820006173903215, 0.0350473263273152, 
                                                        0.0709373073656477, 1), .Dim = c(1L, 4L), .Dimnames = list("Upper Sacramento River", 
                                                                                                                   c("s", "m", "l", "vl"))), floodplain = structure(c(0.031628440645925, 
                                                                                                                                                                      0.11525567525299, 0.199668187475351, 1), .Dim = c(1L, 4L), .Dimnames = list(
                                                                                                                                                                        "Upper Sacramento River", c("s", "m", "l", "vl"))))
 
-test_that('The surv_juv_rear function returns the expected values for year 1 month 9 watershed 1', {
+test_that('The surv_juv_rear function returns the expected values for year 1 month 9 watershed 1 (deterministic)', {
   expect_equal(surv_juv_rear(max_temp_thresh = maxT25[1],
                              avg_temp_thresh = aveT20[1],
                              high_predation = high_predation[1],
@@ -53,11 +54,45 @@ test_that('The surv_juv_rear function returns the expected values for year 1 mon
                              .floodplain = params$.surv_juv_rear_floodplain,
                              min_survival_rate = params$min_survival_rate,
                              stochastic = FALSE),
-               expected_surv_juv_rear)
+               expected_surv_juv_rear_det)
 })
 
-# Tests surv_juv_delta survival function
-expected_delta_juv_surv <- structure(c(0.0932457862245425, 1e-04, 0.0932457862245425, 1e-04, 
+#Stochastic
+expected_surv_juv_rear <- list(inchannel = structure(c(0.00820006173903215, 0.0350473263273152, 
+                                                           0.0709373073656477, 1), .Dim = c(1L, 4L), .Dimnames = list(NULL, 
+                                                                                                                      c("s", "m", "l", "vl"))), floodplain = structure(c(0.031628440645925, 
+                                                                                                                                                                         0.11525567525299, 0.199668187475351, 1), .Dim = c(1L, 4L), .Dimnames = list(
+                                                                                                                                                                           NULL, c("s", "m", "l", "vl"))))
+test_that('The surv_juv_rear function returns the expected values for year 1 month 9 watershed 1 (stochastic)', {
+  set.seed(2021)
+  surv_juv_rear <- surv_juv_rear(max_temp_thresh = maxT25[1],
+                                 avg_temp_thresh = aveT20[1],
+                                 high_predation = high_predation[1],
+                                 contact_points = params$contact_points[1],
+                                 prop_diversions = params$proportion_diverted[1],
+                                 total_diversions = params$total_diverted[1],
+                                 stranded = ws_strand[1],
+                                 weeks_flooded = params$weeks_flood[1],
+                                 ..surv_juv_rear_int = params$..surv_juv_rear_int[1],
+                                 .surv_juv_rear_contact_points = params$.surv_juv_rear_contact_points,
+                                 ..surv_juv_rear_contact_points = params$..surv_juv_rear_contact_points,
+                                 .surv_juv_rear_prop_diversions = params$.surv_juv_rear_prop_diversions,
+                                 ..surv_juv_rear_prop_diversions = params$..surv_juv_rear_prop_diversions,
+                                 .surv_juv_rear_total_diversions = params$.surv_juv_rear_total_diversions,
+                                 ..surv_juv_rear_total_diversions = params$..surv_juv_rear_total_diversions,
+                                 .avg_temp_thresh = params$.surv_juv_rear_avg_temp_thresh,
+                                 .high_predation = params$.surv_juv_rear_high_predation,
+                                 .stranded = params$.surv_juv_rear_stranded,
+                                 .medium = params$.surv_juv_rear_medium,
+                                 .large = params$.surv_juv_rear_large,
+                                 .floodplain = params$.surv_juv_rear_floodplain,
+                                 min_survival_rate = params$min_survival_rate,
+                                 stochastic = TRUE)
+  expect_equal(surv_juv_rear, expected_surv_juv_rear)
+})
+# Tests surv_juv_delta survival function ---------------------------------------
+#Deterministic
+expected_delta_juv_surv_det <- structure(c(0.0932457862245425, 1e-04, 0.0932457862245425, 1e-04, 
                                        0.0932457862245425, 1e-04, 1, 1), .Dim = c(2L, 4L), .Dimnames = list(
                                          c("North Delta", "South Delta"), c("s", "m", "l", "vl")))
 
@@ -81,11 +116,41 @@ test_that('The delta_juv_surv function returns the expected values for year 1 mo
                               .large = params$.surv_juv_delta_large,
                               min_survival_rate = params$min_survival_rate,
                               stochastic = FALSE),
-               expected_delta_juv_surv)
+               expected_delta_juv_surv_det)
 })
 
-# Tests surv_juv_bypass survival function
-expected_bypass_juv_surv <- structure(c(1e-04, 1e-04, 1e-04, 1),
+#Stochastic
+expected_delta_juv_surv <- structure(c(0.0932457862245425, 1e-04, 0.0932457862245425, 1e-04, 
+                                      0.0932457862245425, 1e-04, 1, 1), .Dim = c(2L, 4L), .Dimnames = list(
+                                        c("North Delta", "South Delta"), c("s", "m", "l", "vl")))
+
+test_that('The delta_juv_surv function returns the expected values for year 1 month 9', {
+  set.seed(2021)
+  surv_juv_delta <- surv_juv_delta(avg_temp = params$avg_temp_delta[month, year, "North Delta"],
+                              max_temp_thresh = maxT25D,
+                              avg_temp_thresh = aveT20D,
+                              high_predation = params$delta_prop_high_predation,
+                              contact_points = params$delta_contact_points,
+                              prop_diverted = params$delta_proportion_diverted,
+                              total_diverted = params$delta_total_diverted,
+                              ..surv_juv_delta_int = params$..surv_juv_delta_int,
+                              .surv_juv_delta_contact_points = params$.surv_juv_delta_contact_points,
+                              ..surv_juv_delta_contact_points = params$..surv_juv_delta_contact_points,
+                              .surv_juv_delta_total_diverted = params$.surv_juv_delta_total_diverted,
+                              ..surv_juv_delta_total_diverted = params$..surv_juv_delta_total_diverted,
+                              .avg_temp_thresh = params$.surv_juv_delta_avg_temp_thresh,
+                              .high_predation = params$.surv_juv_delta_high_predation,
+                              .prop_diverted = params$.surv_juv_delta_prop_diverted,
+                              .medium = params$.surv_juv_delta_medium,
+                              .large = params$.surv_juv_delta_large,
+                              min_survival_rate = params$min_survival_rate,
+                              stochastic = TRUE)
+  expect_equal(surv_juv_delta, expected_delta_juv_surv)
+})
+
+# Tests surv_juv_bypass survival function --------------------------------------
+#Deterministic
+expected_bypass_juv_surv_det <- structure(c(1e-04, 1e-04, 1e-04, 1),
                                       .Dim = c(1L, 4L),
                                       .Dimnames = list(NULL, c("s", "m", "l", "vl")))
 
@@ -94,10 +159,22 @@ test_that('The bypass_juv_surv function returns the expected values for year 1 m
                                avg_temp_thresh = aveT20[22],
                                high_predation = 0, 
                                stochastic = FALSE),
-               expected_bypass_juv_surv)
+               expected_bypass_juv_surv_det)
+})
+
+#Stochastic
+expected_bypass_juv_surv <- structure(c(1e-04, 1e-04, 1e-04, 1), .Dim = c(1L, 4L), .Dimnames = list(
+  NULL, c("s", "m", "l", "vl")))
+test_that('The bypass_juv_surv function returns the expected values for year 1 month 9', {
+  set.seed(2021)
+  surv_juv_surv_bypass <- surv_juv_bypass(max_temp_thresh = maxT25[22],
+                                          avg_temp_thresh = aveT20[22],
+                                          high_predation = 0, 
+                                          stochastic = TRUE)
+  expect_equal(surv_juv_surv_bypass,expected_bypass_juv_surv)
 })
 # 
-# Tests migratory survival for lower mid sac fish survival function
+# Tests migratory survival for lower mid sac fish survival function ------------
 expected_lms_mig_surv <-c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189)
 
 test_that('The migratory_juv_surv function for lower mid sac returns the expected values for year 1 month 9', {
@@ -106,7 +183,7 @@ test_that('The migratory_juv_surv function for lower mid sac returns the expecte
 })
 
 
-# Tests migratory survival for san joaquin fish survival function
+# Tests migratory survival for san joaquin fish survival function --------------
 expected_lms_mig_surv <- structure(c(0.94909764929578, 0.987938508316242, 0.99422601791841, 
                                      0.99422601791841), .Dim = c(1L, 4L), .Dimnames = list(NULL, c("s", 
                                                                                                    "m", "l", "vl")))
@@ -116,7 +193,7 @@ test_that('The migratory_juv_surv function for lower mid sac returns the expecte
                expected_lms_mig_surv)
 })
 
-# Test egg to fry survival function
+# Test egg to fry survival function --------------------------------------------
 expected_egg_to_fry_surv <- c(`Upper Sacramento River` = 0.864901519822763, `Antelope Creek` = 0.847846700197009, 
                               `Battle Creek` = 0.844476447788732, `Bear Creek` = 0.812722526524745, 
                               `Big Chico Creek` = 0.81551797501442, `Butte Creek` = 0.864091733769654, 
@@ -152,7 +229,7 @@ test_that('The egg_to_fry survival function returns the expected values for year
                expected_egg_to_fry_surv)
 })
 # 
-# tests the surv_juv_outmigration_delta function'
+# Tests the surv_juv_outmigration_delta function -------------------------------
 expected_surv_juv_outmigration <- structure(c(0.266668614822945, 0.000123932662831837, 0.000819655793037249, 
                                               0.00566155265467863, 0.266668614822945, 0.000123932662831837, 
                                               0.000819655793037249, 0.00566155265467863, 0.266668614822945, 
@@ -175,77 +252,50 @@ test_that('tests that the surv_juv_outmigration_delta function returns the corre
                expected_surv_juv_outmigration)
 })
 
-## Tests survival functions with randomness (set.seed() for testing these)
-# Tests the rearing survival rates function
-expected_survival <- list(inchannel = structure(c(0.125441180055978, 0.974056662027463, 
-                                                  0.0375329131799549, 0.00174762600818678, 0.000243749049632853, 
-                                                  0.00192953891680829, 0.788628326849881, 0.000117439586626742, 
-                                                  0.00011560588700464, 0.0313236690546031, 0.916313794657251, 0.0314138642944959, 
-                                                  0.0701154582020285, 0.000140912769650905, 0.000252297462985282, 
-                                                  0.0382380715432165, 0.00263260560674758, 0.210949595131945, 0.549611416886024, 
-                                                  0.261281446824522, 0.000172376589322069, 0.000683629600942927, 
-                                                  0.0887468731026543, 0.00299300627354314, 0.987826021426153, 0.000104984109951456, 
-                                                  0.0498317421119726, 0.0438085806068452, 0.0328971869136023, 0.00130718522983631, 
-                                                  0.000143114034039866, 0.384512429269215, 0.977564967692279, 0.0441213989423155, 
-                                                  0.00597096414408703, 0.000624624499828506, 0.00192954926534693, 
-                                                  0.941969837473876, 0.000165781770842705, 0.00015977061643463, 
-                                                  0.031337353728176, 0.916360277856402, 0.0314249961534745, 0.245534762820155, 
-                                                  0.000172152231592856, 0.000252310743741265, 0.0384082183449072, 
-                                                  0.0089400249119576, 0.539846310711765, 0.842783014990221, 0.279963956039602, 
-                                                  0.000304002271720472, 0.00217673132211202, 0.217556392678981, 
-                                                  0.00371386591468184, 0.988263668369107, 0.000119229737736365, 
-                                                  0.138326836744771, 0.0677202577932641, 0.129922286067928, 0.00437372300998651, 
-                                                  0.000226515251440526, 0.564756266000544, 0.978109365331924, 0.0453521712253206, 
-                                                  0.00981419815288415, 0.000987502702866018, 0.00192955086452738, 
-                                                  0.971150110104616, 0.000214925906076156, 0.000206065336134224, 
-                                                  0.0313394695044576, 0.916367461372249, 0.0314267170767421, 0.400314253932719, 
-                                                  0.000181803458867741, 0.000252312796236341, 0.0384346468082225, 
-                                                  0.0144610225935579, 0.711197353003192, 0.918493845122121, 0.283092044698709, 
-                                                  0.000383693666807792, 0.00353184898153592, 0.280499842421754, 
-                                                  0.00385858570292711, 0.988331332983295, 0.000134386144099697, 
-                                                  0.190721250772555, 0.073964221467895, 0.238727817722131, 0.00713018871196758, 
-                                                  0.000280420286324018, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-                                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), .Dim = c(31L, 
-                                                                                                                  4L)), floodplain = structure(c(0.126980944356866, 0.974056662027463, 
-                                                                                                                                                 0.0375329131799549, 0.00174762600818678, 0.000243749049632853, 
-                                                                                                                                                 0.00192953891680829, 0.831809783866848, 0.000123117954310951, 
-                                                                                                                                                 0.00011560588700464, 0.0313236690546031, 0.916313794657251, 0.0314138642944959, 
-                                                                                                                                                 0.0701154582020285, 0.000140912769650905, 0.000252297462985282, 
-                                                                                                                                                 0.0376550421372517, 0.00263260560674758, 0.210949595131945, 0.376695661679863, 
-                                                                                                                                                 0.261281446824522, 0.000298010872995005, 0.000683629600942927, 
-                                                                                                                                                 0.0655814343799477, 0.00299300627354314, 0.987826021426153, 0.000104984109951456, 
-                                                                                                                                                 0.0424861714848881, 0.0438085806068452, 0.0636391581245602, 0.00130718522983631, 
-                                                                                                                                                 0.000264552675689124, 0.387787560226362, 0.977564967692279, 0.0441213989423155, 
-                                                                                                                                                 0.00597096414408703, 0.000624624499828506, 0.00192954926534693, 
-                                                                                                                                                 0.955194020186611, 0.000182126925134328, 0.00015977061643463, 
-                                                                                                                                                 0.031337353728176, 0.916360277856402, 0.0314249961534745, 0.245534762820155, 
-                                                                                                                                                 0.000172152231592856, 0.000252310743741265, 0.0382719068802503, 
-                                                                                                                                                 0.0089400249119576, 0.539846310711765, 0.72639205998998, 0.279963956039602, 
-                                                                                                                                                 0.000402779711139126, 0.00217673132211202, 0.179777024876694, 
-                                                                                                                                                 0.00371386591468184, 0.988263668369107, 0.000119229737736365, 
-                                                                                                                                                 0.124325443022557, 0.0677202577932641, 0.222421094167108, 0.00437372300998651, 
-                                                                                                                                                 0.000349398430445447, 0.568104205841275, 0.978109365331924, 0.0453521712253206, 
-                                                                                                                                                 0.00981419815288415, 0.000987502702866018, 0.00192955086452738, 
-                                                                                                                                                 0.977765192255139, 0.000236697254938572, 0.000206065336134224, 
-                                                                                                                                                 0.0313394695044576, 0.916367461372249, 0.0314267170767421, 0.400314253932719, 
-                                                                                                                                                 0.000181803458867741, 0.000252312796236341, 0.0383695339600307, 
-                                                                                                                                                 0.0144610225935579, 0.711197353003192, 0.84804906785186, 0.283092044698709, 
-                                                                                                                                                 0.000453771752742799, 0.00353184898153592, 0.247455060305143, 
-                                                                                                                                                 0.00385858570292711, 0.988331332983295, 0.000134386144099697, 
-                                                                                                                                                 0.17737889856605, 0.073964221467895, 0.36654742668121, 0.00713018871196758, 
-                                                                                                                                                 0.000370988884224001, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-                                                                                                                                                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), .Dim = c(31L, 
-                                                                                                                                                                                                                 4L)), sutter = structure(c(0.00297377321675923, 0.00594563539714444, 
-                                                                                                                                                                                                                                            0.00705725176223706, 1), .Dim = c(1L, 4L), .Dimnames = list("Yolo Bypass", 
-                                                                                                                                                                                                                                                                                                        c("s", "m", "l", "vl"))), yolo = structure(c(0.00297377321675923, 
-                                                                                                                                                                                                                                                                                                                                                     0.00594563539714444, 0.00705725176223706, 1), .Dim = c(1L, 4L
-                                                                                                                                                                                                                                                                                                                                                     ), .Dimnames = list("Yolo Bypass", c("s", "m", "l", "vl"))), 
-                          delta = structure(c(0.0932457862245425, 1.09977606108503e-07, 
-                                              0.0932457862245425, 1.09977606108503e-07, 0.0932457862245425, 
-                                              1.09977606108503e-07, 1, 1), .Dim = c(2L, 4L), .Dimnames = list(
-                                                c("North Delta", "South Delta"), c("s", "m", "l", "vl"
-                                                ))))
-test_that("get_rearing_survival returns the expected result", {
+
+# Tests the rearing survival rates function ------------------------------------
+#Stochastic
+expected_rearing_survival <- list(inchannel = structure(c(0.168910380396745, 0.99585593665108, 
+                                                          1e-04, 1e-04, 1e-04, 1e-04, 0.798937964090576, 1e-04, 1e-04, 
+                                                          1e-04, 0.99994289649163, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 
+                                                          0.0443243107087596, 0.530192552918942, 1e-04, 1e-04, 1e-04, 1e-04, 
+                                                          1e-04, 0.998174214307878, 1e-04, 1e-04, 1e-04, 0.0100125562012786, 
+                                                          1e-04, 1e-04, 0.471687978677659, 0.99905362592186, 1e-04, 1e-04, 
+                                                          1e-04, 1e-04, 0.945816380206148, 1e-04, 1e-04, 1e-04, 0.999987000516019, 
+                                                          1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 0.169259375440897, 
+                                                          0.832146554805834, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 0.999583795447195, 
+                                                          1e-04, 1e-04, 1e-04, 0.0425394623800292, 1e-04, 1e-04, 0.652405707629452, 
+                                                          0.999549600825565, 1e-04, 1e-04, 1e-04, 1e-04, 0.973472039272464, 
+                                                          1e-04, 1e-04, 1e-04, 0.999993816301973, 1e-04, 1e-04, 1e-04, 
+                                                          1e-04, 1e-04, 1e-04, 0.299876648531815, 0.91244952816286, 1e-04, 
+                                                          1e-04, 1e-04, 1e-04, 1e-04, 0.999801974640831, 1e-04, 1e-04, 
+                                                          1e-04, 0.0854225268236819, 1e-04, 1e-04, 1, 1, 1, 1, 1, 1, 1, 
+                                                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+                                                          1, 1, 1), .Dim = c(31L, 4L)), floodplain = structure(c(0.143548080515853, 
+                                                                                                                 0.99585593665108, 1e-04, 1e-04, 1e-04, 1e-04, 0.837611040417569, 
+                                                                                                                 1e-04, 1e-04, 1e-04, 0.99994289649163, 1e-04, 1e-04, 1e-04, 1e-04, 
+                                                                                                                 1e-04, 1e-04, 0.0443243107087596, 0.368732594771647, 1e-04, 1e-04, 
+                                                                                                                 1e-04, 1e-04, 1e-04, 0.998174214307878, 1e-04, 1e-04, 1e-04, 
+                                                                                                                 0.0349495592353, 1e-04, 1e-04, 0.4228265770404, 0.99905362592186, 
+                                                                                                                 1e-04, 1e-04, 1e-04, 1e-04, 0.957526887891546, 1e-04, 1e-04, 
+                                                                                                                 1e-04, 0.999987000516019, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 
+                                                                                                                 1e-04, 0.169259375440897, 0.71957251855093, 1e-04, 1e-04, 1e-04, 
+                                                                                                                 1e-04, 1e-04, 0.999583795447195, 1e-04, 1e-04, 1e-04, 0.12697869862704, 
+                                                                                                                 1e-04, 1e-04, 0.605522662345088, 0.999549600825565, 1e-04, 1e-04, 
+                                                                                                                 1e-04, 1e-04, 0.979317494322219, 1e-04, 1e-04, 1e-04, 0.999993816301973, 
+                                                                                                                 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 0.299876648531815, 
+                                                                                                                 0.843610625097142, 1e-04, 1e-04, 1e-04, 1e-04, 1e-04, 0.999801974640831, 
+                                                                                                                 1e-04, 1e-04, 1e-04, 0.219107746760949, 1e-04, 1e-04, 1, 1, 1, 
+                                                                                                                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+                                                                                                                 1, 1, 1, 1, 1, 1, 1), .Dim = c(31L, 4L)), sutter = structure(c(1e-04, 
+                                                                                                                                                                                1e-04, 1e-04, 1), .Dim = c(1L, 4L), .Dimnames = list(NULL, c("s", 
+                                                                                                                                                                                                                                             "m", "l", "vl"))), yolo = structure(c(1e-04, 1e-04, 1e-04, 1), .Dim = c(1L, 
+                                                                                                                                                                                                                                                                                                                     4L), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), delta = structure(c(0.0932457862245425, 
+                                                                                                                                                                                                                                                                                                                                                                                               1.96199010033533e-114, 0.0932457862245425, 8.61891593727359e-114, 
+                                                                                                                                                                                                                                                                                                                                                                                               0.0932457862245425, 1.81189674578674e-113, 1, 1), .Dim = c(2L, 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          4L), .Dimnames = list(c("North Delta", "South Delta"), c("s", 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "m", "l", "vl"))))
+test_that("get_rearing_survival returns the expected result (stochastic)", {
   set.seed(2021)
   survival <- get_rearing_survival(year, month,
                                    survival_adjustment = scenario_data$survival_adjustment,
@@ -293,11 +343,133 @@ test_that("get_rearing_survival returns the expected result", {
                                    .surv_juv_delta_medium = params$.surv_juv_delta_medium,
                                    .surv_juv_delta_large = params$.surv_juv_delta_large,
                                    min_survival_rate = params$min_survival_rate,
+                                   stochastic = TRUE)
+  expect_equal(survival, expected_rearing_survival)
+})
+#Deterministic
+expected_rearing_survival_det <- list(inchannel = structure(c(0.125441180055978, 0.974056662027463, 
+                                                          0.0375329131799549, 0.00174762600818678, 0.000243749049632853, 
+                                                          0.00192953891680829, 0.788628326849881, 0.000117439586626742, 
+                                                          0.00011560588700464, 0.0313236690546031, 0.916313794657251, 0.0314138642944959, 
+                                                          0.0701154582020285, 0.000140912769650905, 0.000252297462985282, 
+                                                          0.0382380715432165, 0.00263260560674758, 0.210949595131945, 0.549611416886024, 
+                                                          0.261281446824522, 0.000172376589322069, 0.000683629600942927, 
+                                                          0.0887468731026543, 0.00299300627354314, 0.987826021426153, 0.000104984109951456, 
+                                                          0.0498317421119726, 0.0438085806068452, 0.0328971869136023, 0.00130718522983631, 
+                                                          0.000143114034039866, 0.384512429269215, 0.977564967692279, 0.0441213989423155, 
+                                                          0.00597096414408703, 0.000624624499828506, 0.00192954926534693, 
+                                                          0.941969837473876, 0.000165781770842705, 0.00015977061643463, 
+                                                          0.031337353728176, 0.916360277856402, 0.0314249961534745, 0.245534762820155, 
+                                                          0.000172152231592856, 0.000252310743741265, 0.0384082183449072, 
+                                                          0.0089400249119576, 0.539846310711765, 0.842783014990221, 0.279963956039602, 
+                                                          0.000304002271720472, 0.00217673132211202, 0.217556392678981, 
+                                                          0.00371386591468184, 0.988263668369107, 0.000119229737736365, 
+                                                          0.138326836744771, 0.0677202577932641, 0.129922286067928, 0.00437372300998651, 
+                                                          0.000226515251440526, 0.564756266000544, 0.978109365331924, 0.0453521712253206, 
+                                                          0.00981419815288415, 0.000987502702866018, 0.00192955086452738, 
+                                                          0.971150110104616, 0.000214925906076156, 0.000206065336134224, 
+                                                          0.0313394695044576, 0.916367461372249, 0.0314267170767421, 0.400314253932719, 
+                                                          0.000181803458867741, 0.000252312796236341, 0.0384346468082225, 
+                                                          0.0144610225935579, 0.711197353003192, 0.918493845122121, 0.283092044698709, 
+                                                          0.000383693666807792, 0.00353184898153592, 0.280499842421754, 
+                                                          0.00385858570292711, 0.988331332983295, 0.000134386144099697, 
+                                                          0.190721250772555, 0.073964221467895, 0.238727817722131, 0.00713018871196758, 
+                                                          0.000280420286324018, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+                                                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), .Dim = c(31L, 
+                                                                                                                          4L)), floodplain = structure(c(0.126980944356866, 0.974056662027463, 
+                                                                                                                                                         0.0375329131799549, 0.00174762600818678, 0.000243749049632853, 
+                                                                                                                                                         0.00192953891680829, 0.831809783866848, 0.000123117954310951, 
+                                                                                                                                                         0.00011560588700464, 0.0313236690546031, 0.916313794657251, 0.0314138642944959, 
+                                                                                                                                                         0.0701154582020285, 0.000140912769650905, 0.000252297462985282, 
+                                                                                                                                                         0.0376550421372517, 0.00263260560674758, 0.210949595131945, 0.376695661679863, 
+                                                                                                                                                         0.261281446824522, 0.000298010872995005, 0.000683629600942927, 
+                                                                                                                                                         0.0655814343799477, 0.00299300627354314, 0.987826021426153, 0.000104984109951456, 
+                                                                                                                                                         0.0424861714848881, 0.0438085806068452, 0.0636391581245602, 0.00130718522983631, 
+                                                                                                                                                         0.000264552675689124, 0.387787560226362, 0.977564967692279, 0.0441213989423155, 
+                                                                                                                                                         0.00597096414408703, 0.000624624499828506, 0.00192954926534693, 
+                                                                                                                                                         0.955194020186611, 0.000182126925134328, 0.00015977061643463, 
+                                                                                                                                                         0.031337353728176, 0.916360277856402, 0.0314249961534745, 0.245534762820155, 
+                                                                                                                                                         0.000172152231592856, 0.000252310743741265, 0.0382719068802503, 
+                                                                                                                                                         0.0089400249119576, 0.539846310711765, 0.72639205998998, 0.279963956039602, 
+                                                                                                                                                         0.000402779711139126, 0.00217673132211202, 0.179777024876694, 
+                                                                                                                                                         0.00371386591468184, 0.988263668369107, 0.000119229737736365, 
+                                                                                                                                                         0.124325443022557, 0.0677202577932641, 0.222421094167108, 0.00437372300998651, 
+                                                                                                                                                         0.000349398430445447, 0.568104205841275, 0.978109365331924, 0.0453521712253206, 
+                                                                                                                                                         0.00981419815288415, 0.000987502702866018, 0.00192955086452738, 
+                                                                                                                                                         0.977765192255139, 0.000236697254938572, 0.000206065336134224, 
+                                                                                                                                                         0.0313394695044576, 0.916367461372249, 0.0314267170767421, 0.400314253932719, 
+                                                                                                                                                         0.000181803458867741, 0.000252312796236341, 0.0383695339600307, 
+                                                                                                                                                         0.0144610225935579, 0.711197353003192, 0.84804906785186, 0.283092044698709, 
+                                                                                                                                                         0.000453771752742799, 0.00353184898153592, 0.247455060305143, 
+                                                                                                                                                         0.00385858570292711, 0.988331332983295, 0.000134386144099697, 
+                                                                                                                                                         0.17737889856605, 0.073964221467895, 0.36654742668121, 0.00713018871196758, 
+                                                                                                                                                         0.000370988884224001, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+                                                                                                                                                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), .Dim = c(31L, 
+                                                                                                                                                                                                                         4L)), sutter = structure(c(0.00297377321675923, 0.00594563539714444, 
+                                                                                                                                                                                                                                                    0.00705725176223706, 1), .Dim = c(1L, 4L), .Dimnames = list("Yolo Bypass", 
+                                                                                                                                                                                                                                                                                                                c("s", "m", "l", "vl"))), yolo = structure(c(0.00297377321675923, 
+                                                                                                                                                                                                                                                                                                                                                             0.00594563539714444, 0.00705725176223706, 1), .Dim = c(1L, 4L
+                                                                                                                                                                                                                                                                                                                                                             ), .Dimnames = list("Yolo Bypass", c("s", "m", "l", "vl"))), 
+                                  delta = structure(c(0.0932457862245425, 1.09977606108503e-07, 
+                                                      0.0932457862245425, 1.09977606108503e-07, 0.0932457862245425, 
+                                                      1.09977606108503e-07, 1, 1), .Dim = c(2L, 4L), .Dimnames = list(
+                                                        c("North Delta", "South Delta"), c("s", "m", "l", "vl"
+                                                        ))))
+
+test_that("get_rearing_survival returns the expected result (deterministic)", {
+  survival <- get_rearing_survival(year, month,
+                                   survival_adjustment = scenario_data$survival_adjustment,
+                                   mode = "seed",
+                                   avg_temp = params$avg_temp,
+                                   avg_temp_delta = params$avg_temp_delta,
+                                   prob_strand_early = params$prob_strand_early,
+                                   prob_strand_late = params$prob_strand_late,
+                                   proportion_diverted = params$proportion_diverted,
+                                   total_diverted = params$total_diverted,
+                                   delta_proportion_diverted = params$delta_proportion_diverted,
+                                   delta_total_diverted = params$delta_total_diverted,
+                                   weeks_flooded = params$weeks_flooded,
+                                   prop_high_predation = params$prop_high_predation,
+                                   contact_points = params$contact_points,
+                                   delta_contact_points = params$delta_contact_points,
+                                   delta_prop_high_predation = params$delta_prop_high_predation,
+                                   ..surv_juv_rear_int = params$..surv_juv_rear_int,
+                                   .surv_juv_rear_contact_points = params$.surv_juv_rear_contact_points,
+                                   ..surv_juv_rear_contact_points = params$..surv_juv_rear_contact_points,
+                                   .surv_juv_rear_prop_diversions = params$.surv_juv_rear_prop_diversions,
+                                   ..surv_juv_rear_prop_diversions = params$..surv_juv_rear_prop_diversions,
+                                   .surv_juv_rear_total_diversions = params$.surv_juv_rear_total_diversions,
+                                   ..surv_juv_rear_total_diversions = params$..surv_juv_rear_total_diversions,
+                                   ..surv_juv_bypass_int = params$..surv_juv_bypass_int,
+                                   ..surv_juv_delta_int = params$..surv_juv_delta_int,
+                                   .surv_juv_delta_contact_points = params$.surv_juv_delta_contact_points,
+                                   ..surv_juv_delta_contact_points = params$..surv_juv_delta_contact_points,
+                                   .surv_juv_delta_total_diverted = params$.surv_juv_delta_total_diverted,
+                                   ..surv_juv_delta_total_diverted = params$..surv_juv_delta_total_diverted,
+                                   .surv_juv_rear_avg_temp_thresh = params$.surv_juv_rear_avg_temp_thresh,
+                                   .surv_juv_rear_high_predation = params$.surv_juv_rear_high_predation,
+                                   .surv_juv_rear_stranded = params$.surv_juv_rear_stranded,
+                                   .surv_juv_rear_medium = params$.surv_juv_rear_medium,
+                                   .surv_juv_rear_large = params$.surv_juv_rear_large,
+                                   .surv_juv_rear_floodplain = params$.surv_juv_rear_floodplain,
+                                   .surv_juv_bypass_avg_temp_thresh = params$.surv_juv_bypass_avg_temp_thresh,
+                                   .surv_juv_bypass_high_predation = params$.surv_juv_bypass_high_predation,
+                                   .surv_juv_bypass_medium = params$.surv_juv_bypass_medium,
+                                   .surv_juv_bypass_large = params$.surv_juv_bypass_large,
+                                   .surv_juv_bypass_floodplain = params$.surv_juv_bypass_floodplain,
+                                   .surv_juv_delta_avg_temp_thresh = params$.surv_juv_delta_avg_temp_thresh,
+                                   .surv_juv_delta_high_predation = params$.surv_juv_delta_high_predation,
+                                   .surv_juv_delta_prop_diverted = params$.surv_juv_delta_prop_diverted,
+                                   .surv_juv_delta_medium = params$.surv_juv_delta_medium,
+                                   .surv_juv_delta_large = params$.surv_juv_delta_large,
+                                   min_survival_rate = params$min_survival_rate,
                                    stochastic = FALSE)
-  expect_equal(survival, expected_survival)
+  expect_equal(survival, expected_rearing_survival_det)
 })
 
-expected_migratory_survival <- list(uppermid_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189
+# Tests the migratory survival rates function ----------------------------------
+# Deterministic
+expected_migratory_survival_det <- list(uppermid_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189
 ), lowermid_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189
 ), lower_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189), 
 sutter = structure(c(0.0545323135100578, 0.0771079463942883, 
@@ -317,7 +489,7 @@ sutter = structure(c(0.0545323135100578, 0.0771079463942883,
                                                                                                                                                                                                                  "cosumnes_mokelumne_fish", "calaveras_fish", "southern_fish"
                                                                                                                                                                          ), c("s", "m", "l", "vl"))), bay_delta = 0.358)
 
-test_that("get_migratory_survival returns the expected result", {
+test_that("get_migratory_survival returns the expected result (deterministic)", {
   migratory_survival <- get_migratory_survival(year, month,
                                                cc_gates_prop_days_closed = params$cc_gates_prop_days_closed,
                                                freeport_flows = params$freeport_flows,
@@ -337,5 +509,47 @@ test_that("get_migratory_survival returns the expected result", {
                                                .surv_juv_outmigration_san_joaquin_large = params$.surv_juv_outmigration_san_joaquin_large,
                                                min_survival_rate = params$min_survival_rate,
                                                stochastic = FALSE)
-  expect_equal(migratory_survival, expected_migratory_survival)
+  expect_equal(migratory_survival, expected_migratory_survival_det)
 })
+
+#Stochastic
+expected_migratory_survival <- list(uppermid_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189
+), lowermid_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189
+), lower_sac = c(s = 0.189, m = 0.189, l = 0.189, vl = 0.189), 
+sutter = structure(c(0.01, 0.01, 0.01, 1), .Dim = c(1L, 4L
+), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), yolo = structure(c(0.01, 
+                                                                       0.01, 0.01, 1), .Dim = c(1L, 4L), .Dimnames = list(NULL, 
+                                                                                                                          c("s", "m", "l", "vl"))), san_joaquin = structure(c(0.94909764929578, 
+                                                                                                                                                                              0.987938508316242, 0.99422601791841, 0.99422601791841), .Dim = c(1L, 
+                                                                                                                                                                                                                                               4L), .Dimnames = list(NULL, c("s", "m", "l", "vl"))), delta = structure(c(0.266668614822945, 
+                                                                                                                                                                                                                                                                                                                         0.000123932662831837, 0.000819655793037249, 0.00566155265467863, 
+                                                                                                                                                                                                                                                                                                                         0.266668614822945, 0.000123932662831837, 0.000819655793037249, 
+                                                                                                                                                                                                                                                                                                                         0.00566155265467863, 0.266668614822945, 0.000123932662831837, 
+                                                                                                                                                                                                                                                                                                                         0.000819655793037249, 0.00566155265467863, 0.373914118050784, 
+                                                                                                                                                                                                                                                                                                                         0.000245928323835351, 0.00124096914866476, 0.0110614050155086
+                                                                                                                                                                                                                                               ), .Dim = c(4L, 4L), .Dimnames = list(c("northern_fish", 
+                                                                                                                                                                                                                                                                                       "cosumnes_mokelumne_fish", "calaveras_fish", "southern_fish"
+                                                                                                                                                                                                                                               ), c("s", "m", "l", "vl"))), bay_delta = 0.358)
+test_that("get_migratory_survival returns the expected result (stochastic)", {
+  set.seed(2021)
+  migratory_survival <- get_migratory_survival(year, month,
+                                                 cc_gates_prop_days_closed = params$cc_gates_prop_days_closed,
+                                                 freeport_flows = params$freeport_flows,
+                                                 vernalis_flows = params$vernalis_flows,
+                                                 stockton_flows = params$stockton_flows,
+                                                 vernalis_temps = params$vernalis_temps,
+                                                 prisoners_point_temps = params$prisoners_point_temps,
+                                                 CVP_exports = params$CVP_exports,
+                                                 SWP_exports = params$SWP_exports,
+                                                 upper_sacramento_flows = params$upper_sacramento_flows,
+                                                 delta_inflow = params$delta_inflow,
+                                                 avg_temp_delta = params$avg_temp_delta,
+                                                 avg_temp = params$avg_temp,
+                                                 delta_proportion_diverted = params$delta_proportion_diverted,
+                                                 ..surv_juv_outmigration_sj_int = params$..surv_juv_outmigration_sj_int,
+                                                 .surv_juv_outmigration_san_joaquin_medium = params$.surv_juv_outmigration_san_joaquin_medium,
+                                                 .surv_juv_outmigration_san_joaquin_large = params$.surv_juv_outmigration_san_joaquin_large,
+                                                 min_survival_rate = params$min_survival_rate,
+                                                 stochastic = TRUE)
+    expect_equal(migratory_survival, expected_migratory_survival)
+  })

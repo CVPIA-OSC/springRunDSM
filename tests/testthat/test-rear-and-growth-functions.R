@@ -11,7 +11,7 @@ growth <- structure(c(0.0030986844080139, 0, 0, 0, 0.996809996864753, 0.50831147
                       0, 0, 9.13187272335581e-05, 0.491688523698443, 0.813818359404653,
                       0, 0, 1.27897692436818e-13, 0.186181640595347, 1), .Dim = c(4L,
                                                                                   4L), .Dimnames = list(c("s", "m", "l", "vl"), c("s", "m", "l",  "vl")))
-# Tests rear function
+# Tests rear function ----------------------------------------------------------
 
 expected_rearing_output <- structure(c(0, 33216, 0, 0, 10685173, 0, 0, 979, 0, 0, 0, 0), .Dim = 3:4, .Dimnames = list(
   NULL, c("s", "m", "l", "vl")))
@@ -20,7 +20,7 @@ test_that('The rearing function returns the expected values for year 1', {
                expected_rearing_output)
 })
 
-# Tests growth functions
+# Tests growth functions -------------------------------------------------------
 
 expected_growth <- structure(c(0.0030986844080139, 0, 0, 0, 0.996809996864753, 0.508311476301429, 
                                0, 0, 9.13187272335581e-05, 0.491688523698443, 0.813818359404653, 
@@ -29,12 +29,11 @@ expected_growth <- structure(c(0.0030986844080139, 0, 0, 0, 0.996809996864753, 0
                                                                                                                                            "vl")))
 
 test_that('The growth() function returns the expected value', {
-  # set.seed(2021)
   growth <- growth()
   expect_equal(growth, expected_growth)
 })
 
-#Test Floodplain growth function
+#Test Floodplain growth function -----------------------------------------------
 expected_growth_floodplain <- structure(c(0.0023943318247171, 0, 0, 0, 0.89449258142548, 0.389276740027636, 
                                           0, 0, 0.103074557012702, 0.606275800235655, 0.63188508414161, 
                                           0, 3.85297371013615e-05, 0.00444745973670987, 0.36811491585839, 
@@ -51,8 +50,7 @@ expected_growth_floodplain <- structure(c(0.0023943318247171, 0, 0, 0, 0.8944925
                                           ), c("s", "m", "l", "vl"), c("1 week flooded", "2 weeks flooded", 
                                                                        "3 weeks flooded", "4 weeks flooded")))
 
-test_that('The growth_floodplain() function returns the expected value', {
-  # set.seed(2021)
+test_that('The growth_floodplain function returns the expected value', {
   growth_floodplain <- growth_floodplain()
   expect_equal(growth_floodplain, expected_growth_floodplain)
 })
