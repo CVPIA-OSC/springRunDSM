@@ -9,7 +9,6 @@ source("calibration/fitness.R")
 source("calibration/update-params.R")
 
 params <- DSMCalibrationData::set_synth_years(springRunDSM::params)
-current_best_solution <- read_rds("calibration/calibrated-results.rds")
 
 # Perform calibration --------------------
 res <- ga(type = "real-valued",
@@ -89,5 +88,3 @@ r1_eval_df %>%
   summarise(
     r = cor(observed, simulated, use = "pairwise.complete.obs")
   )
-
-

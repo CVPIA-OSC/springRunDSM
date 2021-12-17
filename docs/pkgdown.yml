@@ -1,9 +1,11 @@
-pandoc: 2.11.4
-pkgdown: 1.6.1
+pandoc: 2.14.0.3
+pkgdown: 2.0.0
 pkgdown_sha: ~
-articles: {}
-last_built: 2021-08-26T21:05Z
+articles:
+  calibration: calibration.html
+  sensitivity-analysis: sensitivity-analysis.html
+last_built: 2021-12-15T20:36Z
 urls:
-  reference: https://CVPIA-OSC.github.io/springRunDSM//reference
-  article: https://CVPIA-OSC.github.io/springRunDSM//articles
+  reference: https://CVPIA-OSC.github.io/springRunDSM/reference
+  article: https://CVPIA-OSC.github.io/springRunDSM/articles
 
