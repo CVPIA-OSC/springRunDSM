@@ -20,9 +20,10 @@ URL: https://CVPIA-OSC.github.io/springRunDSM/
 Imports: 
     boot
 Suggests: 
-    rmarkdown,
-    knitr,
-    testthat (>= 2.1.0)
+    testthat (>= 3.0.0)
 Depends: 
     R (>= 2.10)
+    rmarkdown,
+    knitr,
 VignetteBuilder: knitr
+Config/testthat/edition: 3
