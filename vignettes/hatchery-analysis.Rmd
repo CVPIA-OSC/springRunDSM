@@ -75,7 +75,6 @@ datatable(cwt_data %>% filter(Run == "Spring") %>% select(-Run),
 
 The `proportion_hatchery` for each tributary is calculated below. To find the `proportion_hatchery`, we grouped our data by tributary and summarized to find the mean percentage of hatchery fish for each tributary. 
 
-TODO figure out why most tribs match but some do not. Must be missing a piece of the analysis here
 
 ```{r}
 proportion_hatchery <- cwt_data %>% 
@@ -98,8 +97,7 @@ The number of `hatch_adults` is determined in the `model.R` script through a mul
 
 To find the `hatchery_allocation` we calculated the proportion of hatchery fish allocated to each tributary in each year, grouped our data by tributary and Run, and summarized to find the mean percentage of hatchery fish for each tributary. 
 
-There are 5 tributaries missing data for Fall Run fish. We assign lowest proportion of Spring Run hatchery fish spawning in our observed dataset to these tributaries and we renormalize the values so that they all sum to 1.
-TODO: find how many tributaries missing data for spring run?
+We assign lowest proportion of Spring Run hatchery fish spawning in our observed dataset to these tributaries and we renormalize the values so that they all sum to 1.
 
 
 ```{r}
@@ -135,7 +133,7 @@ datatable(hatchery_per_trib,
 
 We calculated the natural adult removal rate for each tributary by estimating the proportion of naturally produced fish used in a hatchery (i.e., they did not spawn). 
 
-For Spring Run `natural_adult_removal_rate`, there are 5 tributaries where fish are removed for use in hatcheries. 
+For Spring Run `natural_adult_removal_rate`, there is 1 tributary where fish is removed for use in hatcheries. 
 
 
 ```{r}
