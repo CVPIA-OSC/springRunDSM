@@ -32,7 +32,11 @@
 "adult_seeds"
 
 #' @title Proportion Hatchery
-#' @description TODO
+#' @description Proportion of spawning fish that are from a hatchery.
+#' @format 1 dimensional array [31 watersheds]
+#' @source Coded Wire Tag Analysis and data from chinookprod database
+#'
+#' More details \href{https://cvpia-osc.github.io/springRunDSM/articles/hatchery-analysis.html}{here}
 "proportion_hatchery"
 
 #' @title Month Return Proportions
@@ -206,9 +210,9 @@ NULL
 #'   \item \code{..surv_juv_outmigration_sac_delta_intercept_one} Intercept for model one, source: Calibration
 #'   \item \code{..surv_juv_outmigration_sac_delta_intercept_two} Intercept for model two, source: Calibration
 #'   \item \code{..surv_juv_outmigration_sac_delta_intercept_three} Intercept for model three, source: Calibration
-#'   \item \code{.surv_juv_outmigration_sac_delta_delta_flow} Coefficient for \code{delta_flow} variable, source: TODO
-#'   \item \code{.surv_juv_outmigration_sac_delta_avg_temp} Coefficient for \code{avg_temp} variable, source: TODO
-#'   \item \code{.surv_juv_outmigration_sac_delta_perc_diversions} Coefficient for \code{perc_diversions} variable, source: TODO
+#'   \item \code{.surv_juv_outmigration_sac_delta_delta_flow} Coefficient for \code{delta_flow} variable, source: This parameter and function have been deprecated and its documentation is for archival purposes.
+#'   \item \code{.surv_juv_outmigration_sac_delta_avg_temp} Coefficient for \code{avg_temp} variable, source: This parameter and function have been deprecated and its documentation is for archival purposes.
+#'   \item \code{.surv_juv_outmigration_sac_delta_perc_diversions} Coefficient for \code{perc_diversions} variable, source: This parameter and function have been deprecated and its documentation is for archival purposes.
 #'   \item \code{.surv_juv_outmigration_sac_delta_medium} Size related intercept for medium sized fish, source: \href{https://afspubs.onlinelibrary.wiley.com/doi/abs/10.1577/M02-161.1}{Connor et al. (2004)}
 #'   \item \code{.surv_juv_outmigration_sac_delta_large} Size related intercept for large sized fish, source: \href{https://afspubs.onlinelibrary.wiley.com/doi/abs/10.1577/M02-161.1}{Connor et al. (2004)}
 #' }
