@@ -5,12 +5,17 @@
 \alias{proportion_hatchery}
 \title{Proportion Hatchery}
 \format{
-An object of class \code{numeric} of length 31.
+1 dimensional array [31 watersheds]
+}
+\source{
+Coded Wire Tag Analysis and data from chinookprod database
+
+More details \href{https://cvpia-osc.github.io/springRunDSM/articles/hatchery-analysis.html}{here}
 }
 \usage{
 proportion_hatchery
 }
 \description{
-TODO
+Proportion of spawning fish that are from a hatchery.
 }
 \keyword{datasets}

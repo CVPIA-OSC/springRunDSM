@@ -5,7 +5,10 @@
 \alias{mass_by_size_class}
 \title{Mass by Size Class}
 \format{
-An object of class \code{numeric} of length 4.
+Vector of length 4 (4 size classes)
+}
+\source{
+TODO
 }
 \usage{
 mass_by_size_class
