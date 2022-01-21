@@ -3,7 +3,7 @@
 #' @details See \code{\link{params}} for details on parameter sources
 #' @param year Current simulation year
 #' @param yearlings Yearlings in tributaries
-#' @param mode
+#' @param mode The mode to run model in. Can be \code{"seed"}, \code{"simulate"}, \code{"calibrate"}
 #' @param yearling_territory_size Array of juvenile fish territory requirements
 #' @param inchannel_habitat_fry 3 dimensional array [watersheds, months, years] representing fry inchannel habitat in square meters
 #' @param inchannel_habitat_juvenile 3 dimensional array [watersheds, months, years] representing juvenile inchannel habitat in square meters

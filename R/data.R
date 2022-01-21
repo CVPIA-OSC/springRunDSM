@@ -283,7 +283,7 @@ NULL
 #' }
 #' @section Yearling Growth:
 #' \itemize{
-#'   \item \code{yearling_territory_size}: TODO
+#'   \item \code{yearling_territory_size}: yearling territory size by size class. Source: Expert opinion from SIT members.
 #'}
 #' @usage params
 "params"
