@@ -8,7 +8,7 @@
 Vector of length 4 (4 size classes)
 }
 \source{
-TODO
+Expert opinion from SIT members.
 }
 \usage{
 mass_by_size_class
