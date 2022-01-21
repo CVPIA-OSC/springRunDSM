@@ -81,7 +81,8 @@ proportion_hatchery <- cwt_data %>%
   filter(Run == "Spring") %>% 
   select(-Run) %>% 
   group_by(Trib) %>% 
-  summarise(prop_hatchery = mean(Hatchery, na.rm = T))
+  summarise(prop_hatchery = round(mean(Hatchery, na.rm = T), 3)) %>% 
+  filter(Trib %in% springRunDSM::watershed_labels)
 datatable(proportion_hatchery, 
           options = list(
                     searching = FALSE,

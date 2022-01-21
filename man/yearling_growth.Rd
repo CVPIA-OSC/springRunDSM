@@ -45,6 +45,8 @@ yearling_growth(
 
 \item{yearlings}{Yearlings in tributaries}
 
+\item{mode}{The mode to run model in. Can be \code{"seed"}, \code{"simulate"}, \code{"calibrate"}}
+
 \item{yearling_territory_size}{Array of juvenile fish territory requirements}
 
 \item{inchannel_habitat_fry}{3 dimensional array [watersheds, months, years] representing fry inchannel habitat in square meters}

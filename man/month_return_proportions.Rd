@@ -5,12 +5,15 @@
 \alias{month_return_proportions}
 \title{Month Return Proportions}
 \format{
-An object of class \code{numeric} of length 4.
+Vector of length 4
+}
+\source{
+Expert opinion from SIT members.
 }
 \usage{
 month_return_proportions
 }
 \description{
-the proportion of spawning fish in Oct-Dec
+The proportion of spawning fish in March-June
 }
 \keyword{datasets}
