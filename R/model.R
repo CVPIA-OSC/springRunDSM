@@ -61,7 +61,8 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
     juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
-    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20))
+    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
+    juveniles_at_chipps = data.frame()
   )
   
   if (mode == 'calibrate') {
@@ -866,7 +867,19 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                                .ocean_entry_success_months = ..params$.ocean_entry_success_months,
                                                                stochastic = stochastic)
       
-    } # end month loop
+      fish_1_df <- data.frame(delta_fish$juveniles_at_chipps)
+      fish_1_df$watershed = springRunDSM::watershed_labels
+      fish_1_df$month = month
+      fish_1_df$year = year
+      fish_1_df$hypothesis = "one"
+      rownames(fish_1_df) <- NULL
+      
+      
+      output$juveniles_at_chipps <- dplyr::bind_rows(
+        output$juveniles_at_chipps,
+        fish_1_df
+      )
+      } # end month loop
     
     output$juvenile_biomass[ , year] <- juveniles_at_chipps %*% springRunDSM::params$mass_by_size_class
     
