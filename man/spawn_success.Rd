@@ -22,13 +22,15 @@ spawn_success(
 \arguments{
 \item{escapement}{The number of returning adults}
 
-\item{adult_prespawn_survival}{The adult prespawn surival rate}
+\item{adult_prespawn_survival}{The adult prespawn survival rate}
 
 \item{egg_to_fry_survival}{The egg to fry survival rate}
 
 \item{prob_scour}{The probability of nest scouring}
 
 \item{spawn_habitat}{The available spawning habitat in square meters}
+
+\item{stochastic}{\code{TRUE} \code{FALSE} value indicating if model is being run stochastically}
 
 \item{sex_ratio}{The female to male spawning ratio}
 

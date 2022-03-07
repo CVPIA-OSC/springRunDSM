@@ -22,7 +22,7 @@ surv_egg_to_fry(
 \item{scour}{Variable describing the probability of redd scouring event}
 
 \item{temperature_effect}{Variable describing the effect of inchannel temperature on egg survival.
-fall and spring estimated by C. Hammersmark (CBEC Ecoengineering Inc.). Winter-run value was calibrated.}
+Fall and spring estimated by C. Hammersmark (CBEC Ecoengineering Inc.). Winter-run value was calibrated.}
 
 \item{..surv_egg_to_fry_int}{Intercept}
 
