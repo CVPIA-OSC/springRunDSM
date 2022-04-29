@@ -14,6 +14,6 @@ Expert opinion from SIT members.
 mass_by_size_class
 }
 \description{
-mass of fish by the size class
+Mass of fish by the size class
 }
 \keyword{datasets}

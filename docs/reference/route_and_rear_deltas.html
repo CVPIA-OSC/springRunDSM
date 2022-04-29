@@ -75,7 +75,8 @@ during a simulated month. Then the remaining juveniles in the delta rear
 (growth and survival rates applied) and survival rates are applied to out migrating juveniles</p>
     </div>
 
-    <div id="ref-usage">Usage,<div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">route_and_rear_deltas</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">route_and_rear_deltas</span><span class="op">(</span>
   <span class="va">year</span>,
   <span class="va">month</span>,
   <span class="va">migrants</span>,
@@ -93,7 +94,8 @@ during a simulated month. Then the remaining juveniles in the delta rear
   location_index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">24</span><span class="op">)</span>, <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,
   <span class="va">territory_size</span>,
   <span class="va">stochastic</span>
-<span class="op">)</span></code></pre></div></div>
+<span class="op">)</span></code></pre></div>
+    </div>
 
     <div id="source">
     <h2>Source</h2>
@@ -115,6 +117,10 @@ during a simulated month. Then the remaining juveniles in the delta rear
 <dd><p>A vector of available habitat in square meters</p></dd>
 <dt>south_delta_habitat</dt>
 <dd><p>A vector of available habitat in square meters</p></dd>
+<dt>freeport_flows</dt>
+<dd><p>Monthly mean flow at freeport in cubic feet per second</p></dd>
+<dt>cc_gates_days_closed</dt>
+<dd><p>Number of days the Cross Channel gates are closed during the month</p></dd>
 <dt>rearing_survival_delta</dt>
 <dd><p>The rearing survival rate for North and South Delta</p></dd>
 <dt>migratory_survival_delta</dt>
@@ -132,10 +138,6 @@ during a simulated month. Then the remaining juveniles in the delta rear
 <dd><p>Array of juvenile fish territory requirements for <code><a href="fill.html">fill_natal</a></code></p></dd>
 <dt>stochastic</dt>
 <dd><p><code>TRUE</code> <code>FALSE</code> value indicating if model is being run stochastically</p></dd>
-<dt>freeport_flow</dt>
-<dd><p>Monthly mean flow at freeport in cubic feet per second</p></dd>
-<dt>cc_gates_closed</dt>
-<dd><p>Number of days the Cross Channel gates are closed during the month</p></dd>
 </dl></div>
 
   </div>
@@ -150,7 +152,7 @@ during a simulated month. Then the remaining juveniles in the delta rear
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer></div>
