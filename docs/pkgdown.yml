@@ -4,9 +4,10 @@ pkgdown_sha: ~
 articles:
   calibration: calibration.html
   hatchery-analysis: hatchery-analysis.html
+  model-faq: model-faq.html
   sensitivity-analysis: sensitivity-analysis.html
   temperature-model: temperature-model.html
-last_built: 2022-06-15T20:49Z
+last_built: 2022-06-27T23:30Z
 urls:
   reference: https://CVPIA-OSC.github.io/springRunDSM/reference
   article: https://CVPIA-OSC.github.io/springRunDSM/articles
