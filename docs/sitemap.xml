@@ -4,9 +4,6 @@
     <loc>https://CVPIA-OSC.github.io/springRunDSM/404.html</loc>
   </url>
   <url>
-    <loc>https://CVPIA-OSC.github.io/springRunDSM/LICENSE.html</loc>
-  </url>
-  <url>
     <loc>https://CVPIA-OSC.github.io/springRunDSM/articles/calibration.html</loc>
   </url>
   <url>
@@ -14,6 +11,9 @@
   </url>
   <url>
     <loc>https://CVPIA-OSC.github.io/springRunDSM/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://CVPIA-OSC.github.io/springRunDSM/articles/model-faq.html</loc>
   </url>
   <url>
     <loc>https://CVPIA-OSC.github.io/springRunDSM/articles/sensitivity-analysis.html</loc>
@@ -26,6 +26,9 @@
   </url>
   <url>
     <loc>https://CVPIA-OSC.github.io/springRunDSM/index.html</loc>
+  </url>
+  <url>
+    <loc>https://CVPIA-OSC.github.io/springRunDSM/LICENSE.html</loc>
   </url>
   <url>
     <loc>https://CVPIA-OSC.github.io/springRunDSM/news/index.html</loc>
