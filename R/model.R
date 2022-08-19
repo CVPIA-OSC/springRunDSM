@@ -179,7 +179,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     if (mode == "simulate") {
       output$adult_prespawn_survival <- dplyr::bind_rows(
         output$adult_prespawn_survival,
-        tibble(
+        tibble::tibble(
           watershed = springRunDSM::watershed_labels,
           survival = prespawn_survival,
           year = year
@@ -391,7 +391,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           delta_migratory_surv,
           san_joaquin_migratory_surv
         ) |>
-          mutate(survival_type = "migration survival")
+          dplyr::mutate(survival_type = "migration survival")
       }
       migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
       ## TODO check/refactor yearling dynamics
