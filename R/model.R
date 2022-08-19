@@ -6,7 +6,7 @@
 #' @param seeds The default value is NULL runs the model in seeding mode,
 #' returning a 31 by 25 matrix with the first four years of seeded adults. This
 #' returned value can be fed into the model again as the value for the seeds argument
-#' @param ..params Parameters for model and submodels. Defaults to \code{fallRunDSM::\code{\link{params}}}.
+#' @param ..params Parameters for model and submodels. Defaults to \code{springRunDSM::\code{\link{params}}}.
 #' @param stochastic \code{TRUE} \code{FALSE} value indicating if model should be run stochastically. Defaults to \code{FALSE}.
 #' @source IP-117068
 #' @examples
@@ -56,12 +56,25 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                    1980:2000)))
   }
   
+  # TODO: request to add the following as output in the simulation mode
+  # Adult en-route survival
+  # Adult prespawn survival
+  # Juvenile rearing survival (tribs., mainstem, delta)
+  # Juvenile outmigration survival
+  # Juvenile survival in the delta routing function (actively migrating fish.)
+  
   output <- list(
     
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
     juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
-    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20))
+    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
+    adult_enroute_survival = data.frame(),
+    adult_prespawn_survival = data.frame(),
+    ic_rearing_survival = data.frame(),
+    fp_rearing_survival = data.frame(),
+    outmigration_survival = data.frame(),
+    delta_survival = data.frame()
   )
   
   if (mode == 'calibrate') {
@@ -125,6 +138,16 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                     .adult_en_route_adult_harvest_rate = ..params$.adult_en_route_adult_harvest_rate,
                                     stochastic = stochastic)
     
+    if (mode == "simulate") {
+      output$adult_enroute_survival <- dplyr::bind_rows(
+        output$adult_enroute_survival,
+        tibble::tibble(
+          watershed = springRunDSM::watershed_labels,
+          survival = spawners$enroute_survival,
+          year = year
+        )
+      )
+    }
     init_adults <- spawners$init_adults
     
     output$spawners[ , year] <- init_adults
@@ -153,6 +176,17 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                              ..surv_adult_prespawn_int = ..params$..surv_adult_prespawn_int,
                                              .deg_day = ..params$.adult_prespawn_deg_day)
     
+    if (mode == "simulate") {
+      output$adult_prespawn_survival <- dplyr::bind_rows(
+        output$adult_prespawn_survival,
+        tibble(
+          watershed = springRunDSM::watershed_labels,
+          survival = prespawn_survival,
+          year = year
+        )
+      )
+    }
+    
     # Apply SR pools logic
     init_adults <- if (stochastic) {
       rbinom(31, round(init_adults), prespawn_survival)
@@ -179,6 +213,8 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     prespawn_survival <- surv_adult_prespawn(average_degree_days,
                                              ..surv_adult_prespawn_int = ..params$..surv_adult_prespawn_int,
                                              .deg_day = ..params$.adult_prespawn_deg_day)
+    
+    # TODO grab the other prespawn survival?
     
     juveniles <- spawn_success(escapement = init_adults,
                                adult_prespawn_survival = prespawn_survival,
@@ -248,7 +284,48 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                min_survival_rate = ..params$min_survival_rate,
                                                stochastic = stochastic)
       
-      migratory_survival <- get_migratory_survival(juv_dynamics_year, month,
+      if (mode == "simulate") {
+        # inchannel
+        inchannel_surv <- rearing_survival$inchannel
+        colnames(inchannel_surv) <- c("s", "m", "l", "vl")
+        inchannel_surv <- tibble::as_tibble(inchannel_surv) |>
+          dplyr::mutate(year = year, month = month,
+                        watershed = springRunDSM::watershed_labels,
+                        survival_type = "inchannel rearing") |>
+          tidyr::pivot_longer(s:vl, names_to = "size", values_to = "survival")
+        
+        output$ic_rearing_survival <- dplyr::bind_rows(
+          output$ic_rearing_survival, inchannel_surv
+        )
+        
+        # floodplain
+        floodplain_surv <- rearing_survival$floodplain
+        colnames(floodplain_surv) <- c("s", "m", "l", "vl")
+        floodplain_surv <- tibble::as_tibble(floodplain_surv) |>
+          dplyr::mutate(year = year, month = month,
+                        watershed = springRunDSM::watershed_labels,
+                        survival_type = "floodplain rearing") |>
+          tidyr::pivot_longer(s:vl, names_to = "size", values_to = "survival")
+        
+        output$fp_rearing_survival <- dplyr::bind_rows(
+          output$fp_rearing_survival, floodplain_surv
+        )
+        
+        # delta
+        delta_surv <- rearing_survival$delta
+        delta_surv <- tibble::as_tibble(delta_surv) |>
+          dplyr::mutate(year = year, month = month,
+                        watershed = c("North Delta", "South Delta"),
+                        survival_type = "delta rearing") |>
+          tidyr::pivot_longer(s:vl, names_to = "size", values_to = "survival")
+        
+        output$delta_surv <- dplyr::bind_rows(
+          output$delta_surv, delta_surv
+        )
+      }
+      
+      
+      migratory_survival <- get_migratory_survival(year, month,
                                                    cc_gates_prop_days_closed = ..params$cc_gates_prop_days_closed,
                                                    freeport_flows = ..params$freeport_flows,
                                                    vernalis_flows = ..params$vernalis_flows,
@@ -268,6 +345,54 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                    min_survival_rate = ..params$min_survival_rate,
                                                    stochastic = stochastic)
       
+      if (mode == "simulate") {
+        sac_migratory_survivals <- dplyr::bind_rows(
+          tibble::tibble(survival = migratory_survival$uppermid_sac,
+                         size = c("s", "m", "l", "vl"),
+                         watershed = "Upper-mid Sacramento River"),
+          
+          tibble::tibble(survival = migratory_survival$lowermid_sac,
+                         size = c("s", "m", "l", "vl"),
+                         watershed = "Lower-mid Sacramento River"),
+          
+          tibble::tibble(survival = migratory_survival$lower_sac,
+                         size = c("s", "m", "l", "vl"),
+                         watershed = "Lower Sacramento River")
+        )
+        
+        bypass_migratory_surv <- dplyr::bind_rows(
+          tibble::tibble(survival = migratory_survival$sutter,
+                         size = c("s", "m", "l", "vl"),
+                         watershed = "Sutter Bypass"),
+          
+          tibble::tibble(survival = migratory_survival$yolo,
+                         size = c("s", "m", "l", "vl"),
+                         watershed = "Yolo Bypass")
+        )
+        
+        san_joaquin_migratory_surv <- dplyr::bind_rows(
+          tibble::tibble(survival = migratory_survival$san_joaquin,
+                         size = c("s", "m", "l", "vl"),
+                         watershed = "San Joaquin")
+        )
+        
+        # TODO Note that the use of watershed as a column is not the same as
+        # it was used in other dataframes here watershed is just used so that
+        # I can in the end bind row these tibbles
+        delta_migratory_surv <- tibble::as_tibble(migratory_survival$delta) |>
+          dplyr::mutate(watershed = c("Northern Fish", "Consumnes and Mokelumne Fish",
+                                      "Calaveras Fish", "Southern Fish")) |>
+          tidyr::pivot_longer(s:vl, names_to = "size", values_to = "survival")
+        
+        output$outmigration_survival <- dplyr::bind_rows(
+          output$outmigration_survival,
+          sac_migratory_survivals,
+          bypass_migratory_surv,
+          delta_migratory_surv,
+          san_joaquin_migratory_surv
+        ) |>
+          mutate(survival_type = "migration survival")
+      }
       migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
       ## TODO check/refactor yearling dynamics
       if (month == 5) {
@@ -407,7 +532,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
             } else {
               round(yearlings[i, ] * ..params$proportion_flow_bypass[month, juv_dynamics_year, 1])
             }
-
+            
           }))
           
           yearlings_at_uppermid <- rbind(
@@ -449,8 +574,8 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                            stochastic = stochastic)
           
           prop_delta_fish_entrained <- route_to_south_delta(freeport_flow = ..params$freeport_flows[[month, juv_dynamics_year]] * 35.3147,
-                                                         dcc_closed = ..params$cc_gates_days_closed[month],
-                                                         month = month)
+                                                            dcc_closed = ..params$cc_gates_days_closed[month],
+                                                            month = month)
           
           sac_not_entrained <- t(sapply(1:nrow(yearlings_at_lowersac), function(i) {
             if (stochastic) {
@@ -488,7 +613,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
             } else {
               round(yearlings_at_south_delta[i, ] * migratory_survival$delta[1, ])
             }
-
+            
           }))
           
           yearling_holding_south_delta[26:27, ] <- t(sapply(26:27, function(i) {
@@ -535,7 +660,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
             } else {
               round(yearling_holding_south_delta[i, ] * migratory_survival$bay_delta)
             }
-
+            
           }))
           
           yearlings_at_golden_gate <- survived_yearlings_out + survived_yearling_holding_south_delta
