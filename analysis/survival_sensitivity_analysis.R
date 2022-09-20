@@ -1,0 +1,194 @@
+library(dplyr)
+
+set.seed(123119)
+sensi_seeds <- springRunDSM::spring_run_model(mode = "seed")
+
+
+sensitivity_spring_run_model <- function(scenario, scenarios, sensi_seeds) {
+  
+  which_surv = scenarios[scenario, ]$which_surv
+  location_surv = scenarios[scenario, ]$location_surv
+  month_surv = scenarios[scenario, ]$month_surv
+  
+  model_results <- springRunDSM::spring_run_model(mode = "simulate",
+                                              seeds = sensi_seeds,
+                                              which_surv = which_surv,
+                                              location_surv = location_surv,
+                                              month_surv = month_surv)
+  
+  output <- dplyr::as_tibble(model_results$spawners * model_results$proportion_natural) |>
+    dplyr::mutate(location = springRunDSM::watershed_labels,
+                  survival_target = which_surv,
+                  location_target = location_surv,
+                  month_target = month_surv,
+                  id = scenario) |>
+    dplyr::select(id, location, survival_target, location_target, month_target, `1`:`20`)
+  
+  return(output)
+  
+}
+
+# run scenarios in parallel -------
+library(tictoc) # measure time to run
+library(parallel)
+library(doParallel)
+
+# Spring Run :
+# Upper Sacramento River
+# Antelope Creek
+# Battle Creek
+# Big Chico Creek
+# Butte Creek
+# Clear Creek
+# Cottonwood Creek
+# Deer Creek
+# Mill Creek
+# Upper-mid Sacramento River
+# Sutter Bypass
+# Feather River
+# Yuba River
+# Lower-mid Sacramento River
+# Yolo Bypass
+# Lower Sacramento River
+# Mokelumne River
+# Stanislaus River
+# Tuolumne River
+# San Joaquin River
+# Delta
+# Bay Delta
+
+# scenarios to evaluate
+rearing_watersheds <- DSMhabitat::watershed_lengths %>%
+     filter(lifestage == "rearing") %>%
+     filter(species == "sr") %>%
+     pull(watershed)
+
+scenarios1 <- expand.grid(location_surv = rearing_watersheds,
+                          month_surv = c(11, 12, 1:5),
+                          which_surv = c("juv_rear"))
+
+scenarios2 <- expand.grid(location_surv = c("Yolo Bypass"), # TODO: do we want: "North Delta", "South Delta", 
+                          month_surv = c(11, 12, 1:5),
+                          which_surv = c("juv_rear"))
+
+scenarios3  <- expand.grid(location_surv = c("Upper Sacramento River", # TODO: do we need Upper Sac? 
+                                             "Lower-mid Sacramento River",
+                                             "Lower Sacramento River", "Sutter Bypass", "Yolo Bypass",
+                                             "Delta", "Bay Delta", "San Joaquin River",
+                                             "Upper-mid Sacramento River"),
+                           month_surv = c(11, 12, 1:5),
+                           which_surv = "juv_migratory")
+
+# pull spawning names from watersheds that have spawning for spring Run
+spawning_watersheds <- DSMhabitat::watershed_lengths %>%
+  filter(lifestage == "spawning") %>%
+  filter(species == "sr") %>%
+  pull(watershed)
+
+scenarios4 <- expand.grid(location_surv = spawning_watersheds,
+                          month_surv = NA,
+                          which_surv = "egg_to_fry")
+
+
+# set up for running function in parallel
+no_cores <- detectCores(logical = TRUE)
+cl <- makeCluster(no_cores - 1)
+registerDoParallel(cl)
+
+clusterExport(cl, list("sensitivity_spring_run_model", "sensi_seeds",
+                       "scenarios1", "scenarios2", "scenarios3", "scenarios4"))
+
+
+tic("parallel 1")
+scenario_results_list1 <- parLapply(cl, 1:nrow(scenarios1),
+                                    fun = function(scenario) {
+                                      sensitivity_spring_run_model(scenario, scenarios1, sensi_seeds)
+                                    })
+toc()
+
+tic("parallel 2")
+scenario_results_list2 <- parLapply(cl, 1:nrow(scenarios2),
+                                    fun = function(scenario) {
+                                      sensitivity_spring_run_model(scenario, scenarios2, sensi_seeds)
+                                    })
+toc()
+
+tic("parallel 3")
+scenario_results_list3 <- parLapply(cl, 1:nrow(scenarios3),
+                                    fun = function(scenario) {
+                                      sensitivity_spring_run_model(scenario, scenarios3, sensi_seeds)
+                                    })
+toc()
+
+tic("parallel 4")
+scenario_results_list4 <- parLapply(cl, 1:nrow(scenarios4),
+                                    fun = function(scenario) {
+                                      sensitivity_spring_run_model(scenario, scenarios4, sensi_seeds)
+                                    })
+toc()
+
+# combine into one
+r1 <- scenario_results_list1 |> dplyr::bind_rows()
+r2 <- scenario_results_list2 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r1$id))
+r3 <- scenario_results_list3 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r2$id))
+r4 <- scenario_results_list4 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r3$id))
+#r5 <- scenario_results_list5 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r4$id))
+
+# do nothing
+model_results <- springRunDSM::spring_run_model(mode = "simulate",
+                                            seeds = sensi_seeds,
+                                            which_surv = NA,
+                                            location_surv = NA,
+                                            month_surv = NA)
+
+do_nothing <- dplyr::as_tibble(model_results$spawners * model_results$proportion_natural) |>
+  dplyr::mutate(location = springRunDSM::watershed_labels,
+                survival_target = NA,
+                location_target = NA,
+                month_target = NA,
+                id = max(r4$id) + 1) |>
+  dplyr::select(id, location, survival_target, location_target, month_target, `1`:`20`)
+
+results <- dplyr::bind_rows(r1, r2, r3, r4, do_nothing)
+#write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
+
+results <- read_csv('analysis/spring_run_survival_sensi_model_ouput.csv')
+
+# exploratory plots
+# juv_rear:
+results %>%
+  filter(is.na(survival_target)) %>%
+  bind_rows(results %>%
+              filter(survival_target == "juv_rear",
+                     location_target == "Battle Creek",
+                     month_target == 1)) %>%
+  pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
+  mutate(year = as.numeric(year)) %>%
+  ggplot() +
+  geom_point(aes(x = as.factor(year), y = natural_spawners, color = as.factor(id), alpha = 0.5, shape = as.factor(id))) +
+  coord_flip()
+
+# juv migratory:
+results %>%
+  filter(is.na(survival_target)) %>%
+  bind_rows(results %>%
+              filter(survival_target == "juv_migratory",
+                     location_target == "San Joaquin River",
+                     month_target == 1)) %>%
+  pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
+  mutate(year = as.numeric(year)) %>%
+  ggplot() +
+  geom_point(aes(x = as.factor(year), y = natural_spawners, color = as.factor(id), alpha = 0.5, shape = as.factor(id))) +
+  coord_flip()
+
+# egg to fry:
+results %>%
+  filter(is.na(survival_target)) %>%
+  bind_rows(results %>%
+              filter(survival_target == "egg_to_fry",
+                     location_target == "Battle Creek")) %>%
+  pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
+  mutate(year = as.numeric(year)) %>%
+  ggplot() +
+  geom_point(aes(x = as.factor(year), y = natural_spawners, color = as.factor(id), alpha = 0.5, shape = as.factor(id))) +
+  coord_flip()

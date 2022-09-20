@@ -16,7 +16,10 @@
 #'                            seeds = spring_run_seeds)
 #' @export
 spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "calibrate"),
-                             seeds = NULL, ..params = springRunDSM::params, stochastic = FALSE){
+                             seeds = NULL, ..params = springRunDSM::params, stochastic = FALSE,
+                             which_surv = c("egg_to_fry", "juv_rear", "juv_migratory"),
+                             location_surv = "Upper Sacramento River",
+                             month_surv = 1){
   
   mode <- match.arg(mode)
   
@@ -139,6 +142,11 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
       ..surv_egg_to_fry_int = ..params$..surv_egg_to_fry_int
     )
     
+    # egg to fry sensitivity: 
+    if (mode == "simulate" & !is.na(which_surv) & which_surv == "egg_to_fry") {
+      egg_to_fry_surv[location_surv] <- min(egg_to_fry_surv[location_surv] * 1.2, 1) 
+    }
+    
     min_spawn_habitat <- apply(..params$spawning_habitat[ , 3:6, year], 1, min)
     
     #TODO double check this calculation compared to theirs
@@ -248,6 +256,33 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                min_survival_rate = ..params$min_survival_rate,
                                                stochastic = stochastic)
       
+      # rearing sensitvity:
+      if (mode == "simulate" & !is.na(which_surv) &  which_surv == "juv_rear"  & month == month_surv) {
+        if(location_surv %in% c('Upper Sacramento River', 'Antelope Creek', 'Battle Creek', 'Big Chico Creek', 
+                                'Butte Creek', 'Clear Creek', 'Cottonwood Creek', 'Deer Creek', 'Mill Creek', 
+                                'Thomes Creek', 
+                                'Upper-mid Sacramento River', 'Feather River', 'Yuba River', 
+                                'Lower-mid Sacramento River', 'Lower Sacramento River', 'Mokelumne River', 
+                                'Stanislaus River', 'Tuolumne River', 'San Joaquin River')) {
+          index_position <- which(winterRunDSM::watershed_labels == location_surv)
+          rearing_survival$inchannel[index_position, ] <- pmin(rearing_survival$inchannel[index_position, ] * 1.2, 1)
+          rearing_survival$floodplain[index_position, ] <- pmin(rearing_survival$floodplain[index_position, ] * 1.2, 1)
+        }
+        
+        # TODO: double check that we want these given they are not called out as rearing habs
+        if (location_surv == "Sutter Bypass") {
+          rearing_survival$sutter <- pmin(rearing_survival$sutter * 1.2, 1)
+        }
+
+        if (location_surv == "Yolo Bypass") {
+          rearing_survival$yolo <- pmin(rearing_survival$yolo * 1.2, 1)
+        }
+        
+        if (location_surv %in% c("North Delta", "South Delta")) {
+          rearing_survival$delta[location_surv, ] <- pmin(rearing_survival$delta[location_surv, ] * 1.2, 1)
+        }
+      }
+      
       migratory_survival <- get_migratory_survival(juv_dynamics_year, month,
                                                    cc_gates_prop_days_closed = ..params$cc_gates_prop_days_closed,
                                                    freeport_flows = ..params$freeport_flows,
@@ -267,6 +302,43 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                    .surv_juv_outmigration_san_joaquin_large = ..params$.surv_juv_outmigration_san_joaquin_large,
                                                    min_survival_rate = ..params$min_survival_rate,
                                                    stochastic = stochastic)
+      
+      # migration sensivity:
+      if (mode == "simulate" & !is.na(which_surv) & which_surv == "juv_migratory" & month == month_surv) {
+        
+        if (location_surv == "Upper-mid Sacramento River") {
+          migratory_survival$uppermid_sac = pmin(migratory_survival$uppermid_sac* 1.2, 1)
+        }
+        
+        if (location_surv == "Lower-mid Sacramento River") {
+          migratory_survival$lowermid_sac = pmin(migratory_survival$lowermid_sac* 1.2, 1)
+        }
+        
+        if (location_surv == "Lower Sacramento River") {
+          migratory_survival$lower_sac = pmin(migratory_survival$lower_sac* 1.2, 1)
+        }
+        
+        if (location_surv == "Sutter Bypass") {
+          migratory_survival$sutter = pmin(migratory_survival$sutter * 1.2, 1)
+        }
+        
+        if (location_surv == "Yolo Bypass") {
+          migratory_survival$yolo = pmin(migratory_survival$yolo * 1.2, 1)
+        }
+        
+        if (location_surv == "Delta") {
+          migratory_survival$delta = pmin(migratory_survival$delta * 1.2, 1)
+        }
+        
+        if (location_surv == "Bay Delta") {
+          migratory_survival$bay_delta = min(migratory_survival$bay_delta * 1.2, 1)
+        }
+        
+        if (location_surv == "San Joaquin River") {
+          migratory_survival$san_joaquin = pmin(migratory_survival$san_joaquin * 1.2, 1)
+        }
+      }
+      
       
       migrants <- matrix(0, nrow = 31, ncol = 4, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
       ## TODO check/refactor yearling dynamics
