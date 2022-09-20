@@ -269,7 +269,6 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
           rearing_survival$floodplain[index_position, ] <- pmin(rearing_survival$floodplain[index_position, ] * 1.2, 1)
         }
         
-        # TODO: double check that we want these given they are not called out as rearing habs
         if (location_surv == "Sutter Bypass") {
           rearing_survival$sutter <- pmin(rearing_survival$sutter * 1.2, 1)
         }
@@ -445,6 +444,32 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                              .surv_juv_delta_large = ..params$.surv_juv_delta_large,
                                                              min_survival_rate = ..params$min_survival_rate,
                                                              stochastic = stochastic)
+            
+            # yearling survival rates:
+            if (mode == "simulate" & !is.na(which_surv) &  which_surv == "juv_rear"  & month == month_surv) {
+              if(location_surv %in% c('Upper Sacramento River', 'Antelope Creek', 'Battle Creek', 'Big Chico Creek', 
+                                      'Butte Creek', 'Clear Creek', 'Cottonwood Creek', 'Deer Creek', 'Mill Creek', 
+                                      'Thomes Creek', 
+                                      'Upper-mid Sacramento River', 'Feather River', 'Yuba River', 
+                                      'Lower-mid Sacramento River', 'Lower Sacramento River', 'Mokelumne River', 
+                                      'Stanislaus River', 'Tuolumne River', 'San Joaquin River')) {
+                index_position <- which(winterRunDSM::watershed_labels == location_surv)
+                yearlings_survival_rates$inchannel[index_position, ] <- pmin(yearlings_survival_rates$inchannel[index_position, ] * 1.2, 1)
+                yearlings_survival_rates$floodplain[index_position, ] <- pmin(yearlings_survival_rates$floodplain[index_position, ] * 1.2, 1)
+              }
+              
+              if (location_surv == "Sutter Bypass") {
+                yearlings_survival_rates$sutter <- pmin(yearlings_survival_rates$sutter * 1.2, 1)
+              }
+              
+              if (location_surv == "Yolo Bypass") {
+                yearlings_survival_rates$yolo <- pmin(yearlings_survival_rates$yolo * 1.2, 1)
+              }
+              
+              if (location_surv %in% c("North Delta", "South Delta")) {
+                yearlings_survival_rates$delta[location_surv, ] <- pmin(yearlings_survival_rates$delta[location_surv, ] * 1.2, 1)
+              }
+            }
             
             yearlings <- fill_natal(juveniles = yearlings, inchannel_habitat = yearling_habitat$inchannel, 
                                     floodplain_habitat = yearling_habitat$floodplain,

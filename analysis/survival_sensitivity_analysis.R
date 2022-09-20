@@ -1,4 +1,4 @@
-library(dplyr)
+library(tidyverse)
 
 set.seed(123119)
 sensi_seeds <- springRunDSM::spring_run_model(mode = "seed")
@@ -67,13 +67,14 @@ scenarios1 <- expand.grid(location_surv = rearing_watersheds,
                           month_surv = c(11, 12, 1:5),
                           which_surv = c("juv_rear"))
 
-scenarios2 <- expand.grid(location_surv = c("Yolo Bypass"), # TODO: do we want: "North Delta", "South Delta", 
+scenarios2 <- expand.grid(location_surv = c("Yolo Bypass", "Sutter Bypass"
+                                            ), 
                           month_surv = c(11, 12, 1:5),
                           which_surv = c("juv_rear"))
 
-scenarios3  <- expand.grid(location_surv = c("Upper Sacramento River", # TODO: do we need Upper Sac? 
-                                             "Lower-mid Sacramento River",
-                                             "Lower Sacramento River", "Sutter Bypass", "Yolo Bypass",
+scenarios3  <- expand.grid(location_surv = c("Lower-mid Sacramento River", 
+                                             "Lower Sacramento River", "Sutter Bypass", 
+                                             "Yolo Bypass",
                                              "Delta", "Bay Delta", "San Joaquin River",
                                              "Upper-mid Sacramento River"),
                            month_surv = c(11, 12, 1:5),
@@ -89,6 +90,10 @@ scenarios4 <- expand.grid(location_surv = spawning_watersheds,
                           month_surv = NA,
                           which_surv = "egg_to_fry")
 
+scenarios5 <- expand.grid(location_surv = c("North Delta", "South Delta"), 
+                          month_surv = c(11, 12, 1:5),
+                          which_surv = c("juv_rear"))
+
 
 # set up for running function in parallel
 no_cores <- detectCores(logical = TRUE)
@@ -96,7 +101,7 @@ cl <- makeCluster(no_cores - 1)
 registerDoParallel(cl)
 
 clusterExport(cl, list("sensitivity_spring_run_model", "sensi_seeds",
-                       "scenarios1", "scenarios2", "scenarios3", "scenarios4"))
+                       "scenarios1", "scenarios2", "scenarios3", "scenarios4", 'scenarios5'))
 
 
 tic("parallel 1")
@@ -127,12 +132,19 @@ scenario_results_list4 <- parLapply(cl, 1:nrow(scenarios4),
                                     })
 toc()
 
+tic("parallel 5")
+scenario_results_list5 <- parLapply(cl, 1:nrow(scenarios5),
+                                    fun = function(scenario) {
+                                      sensitivity_spring_run_model(scenario, scenarios5, sensi_seeds)
+                                    })
+toc()
+
 # combine into one
 r1 <- scenario_results_list1 |> dplyr::bind_rows()
 r2 <- scenario_results_list2 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r1$id))
 r3 <- scenario_results_list3 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r2$id))
 r4 <- scenario_results_list4 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r3$id))
-#r5 <- scenario_results_list5 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r4$id))
+r5 <- scenario_results_list5 |> dplyr::bind_rows() |> dplyr::mutate(id = id + max(r4$id))
 
 # do nothing
 model_results <- springRunDSM::spring_run_model(mode = "simulate",
@@ -146,13 +158,18 @@ do_nothing <- dplyr::as_tibble(model_results$spawners * model_results$proportion
                 survival_target = NA,
                 location_target = NA,
                 month_target = NA,
-                id = max(r4$id) + 1) |>
+                id = max(r5$id) + 1) |>
   dplyr::select(id, location, survival_target, location_target, month_target, `1`:`20`)
 
-results <- dplyr::bind_rows(r1, r2, r3, r4, do_nothing)
+results <- dplyr::bind_rows(r1, r2, r3, r4, r5, do_nothing)
 #write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
 
-results <- read_csv('analysis/spring_run_survival_sensi_model_ouput.csv')
+# Filter to results that are not empty:
+tmp <- results %>% 
+  filter_if(is.numeric, all_vars((.) != 0))
+# write_csv(results, "analysis/spring_run_survival_sensi_model_ouput_withoutzeros.csv")
+
+# results <- read_csv('analysis/spring_run_survival_sensi_model_ouput.csv')
 
 # exploratory plots
 # juv_rear:
@@ -161,7 +178,7 @@ results %>%
   bind_rows(results %>%
               filter(survival_target == "juv_rear",
                      location_target == "Battle Creek",
-                     month_target == 1)) %>%
+                     month_target == 11)) %>%
   pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
   mutate(year = as.numeric(year)) %>%
   ggplot() +
@@ -174,7 +191,7 @@ results %>%
   bind_rows(results %>%
               filter(survival_target == "juv_migratory",
                      location_target == "San Joaquin River",
-                     month_target == 1)) %>%
+                     month_target == 11)) %>%
   pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
   mutate(year = as.numeric(year)) %>%
   ggplot() +
@@ -186,7 +203,7 @@ results %>%
   filter(is.na(survival_target)) %>%
   bind_rows(results %>%
               filter(survival_target == "egg_to_fry",
-                     location_target == "Battle Creek")) %>%
+                     location_target == "Clear Creek")) %>%
   pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
   mutate(year = as.numeric(year)) %>%
   ggplot() +
