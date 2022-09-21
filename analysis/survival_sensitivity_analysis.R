@@ -165,9 +165,10 @@ results <- dplyr::bind_rows(r1, r2, r3, r4, r5, do_nothing)
 #write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
 
 # Filter to results that are not empty:
-tmp <- results %>% 
-  filter_if(is.numeric, all_vars((.) != 0))
-# write_csv(results, "analysis/spring_run_survival_sensi_model_ouput_withoutzeros.csv")
+results <- results %>%
+  mutate(row_sum = rowSums(results[6:20])) %>%
+  filter(row_sum > 0) %>%
+  glimpse
 
 # results <- read_csv('analysis/spring_run_survival_sensi_model_ouput.csv')
 
