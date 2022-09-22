@@ -306,15 +306,15 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
       if (mode == "simulate" & !is.na(which_surv) & which_surv == "juv_migratory" & month == month_surv) {
         
         if (location_surv == "Upper-mid Sacramento River") {
-          migratory_survival$uppermid_sac = pmin(migratory_survival$uppermid_sac* 1.2, 1)
+          migratory_survival$uppermid_sac = pmin(migratory_survival$uppermid_sac * 1.2, 1)
         }
         
         if (location_surv == "Lower-mid Sacramento River") {
-          migratory_survival$lowermid_sac = pmin(migratory_survival$lowermid_sac* 1.2, 1)
+          migratory_survival$lowermid_sac = pmin(migratory_survival$lowermid_sac * 1.2, 1)
         }
         
         if (location_surv == "Lower Sacramento River") {
-          migratory_survival$lower_sac = pmin(migratory_survival$lower_sac* 1.2, 1)
+          migratory_survival$lower_sac = pmin(migratory_survival$lower_sac * 1.2, 1)
         }
         
         if (location_surv == "Sutter Bypass") {
