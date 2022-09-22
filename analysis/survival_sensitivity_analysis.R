@@ -1,7 +1,9 @@
 library(tidyverse)
 
 set.seed(123119)
-sensi_seeds <- springRunDSM::spring_run_model(mode = "seed")
+
+sensi_seeds <- springRunDSM::spring_run_model(mode = "seed", 
+                                              which_surv = NA)
 
 
 sensitivity_spring_run_model <- function(scenario, scenarios, sensi_seeds) {
@@ -161,23 +163,57 @@ do_nothing <- dplyr::as_tibble(model_results$spawners * model_results$proportion
   dplyr::select(id, location, survival_target, location_target, month_target, `1`:`20`)
 
 results <- dplyr::bind_rows(r1, r2, r3, r4, r5, do_nothing)
-#write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
+# write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
 
 
+# Exploratory plots
 results <- read_csv("analysis/spring_run_survival_sensi_model_ouput.csv") |> glimpse()
+  select(-row_sum) |> glimpse()
 
-results %>%
-  pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
-  group_by(id, year, across(contains("target"))) |>
-  summarise(total_spawners = sum(natural_spawners)) |> 
-  filter(id == 101 | id == 233) |> 
-  ggplot() + 
-  geom_point(aes(x = total_spawners, y = year, color = as.factor(id)), alpha = .3)
+no_action <- results |> 
+  filter(id == 233) |> 
+  pivot_longer(`1`:`20`, names_to = "year", values_to = "nat_spawn",
+               names_transform = list(year = as.numeric)) |> 
+  group_by(year) |> 
+  summarise(no_action_total_nat_spawn = sum(nat_spawn))
+
+results_with_diff <- results %>% 
+  pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', 
+               names_to = "year", names_transform = list(year = as.numeric)) |> 
+  mutate(scenario = paste(survival_target, month_target, 
+                          tolower(gsub(" ", "_", location_target)), sep = "_")) |> 
+  group_by(id, year, scenario) |>
+  summarise(total_nat_spawn = sum(natural_spawners)) |> 
+  ungroup() |> 
+  filter(id != 233) |> 
+  left_join(no_action) |> 
+  mutate(diff = total_nat_spawn - no_action_total_nat_spawn)
+
+ids_with_diff <- results_with_diff |> 
+  group_by(id, scenario) |>
+  summarise(total_diff = sum(diff)) |> 
+  filter(total_diff > 0) |> 
+  pull(id)
+
+results_with_diff |> 
+  filter(id %in% ids_with_diff) |> 
+  group_by(year) |> 
+  summarise(total_spawn_no_action = sum(no_action_total_nat_spawn),
+            total_spawn_action = sum(total_nat_spawn)) |> 
+  View()
+
+results_with_diff |> 
+  filter(id == 185) |> 
+  pivot_longer(total_nat_spawn:no_action_total_nat_spawn,
+               names_to = "type", values_to = "nat_spawn") |>
+  ggplot(aes(year, nat_spawn, color = type)) +
+  geom_line()
 
 
+# Older plots 
 # exploratory plots
 # juv_rear:
-results %>%
+results %>% 
   filter(is.na(survival_target)) %>% 
   bind_rows(results %>%
               filter(survival_target == "juv_rear",
