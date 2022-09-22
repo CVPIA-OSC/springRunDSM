@@ -67,8 +67,7 @@ scenarios1 <- expand.grid(location_surv = rearing_watersheds,
                           month_surv = c(11, 12, 1:5),
                           which_surv = c("juv_rear"))
 
-scenarios2 <- expand.grid(location_surv = c("Yolo Bypass", "Sutter Bypass"
-                                            ), 
+scenarios2 <- expand.grid(location_surv = c("Yolo Bypass", "Sutter Bypass"), 
                           month_surv = c(11, 12, 1:5),
                           which_surv = c("juv_rear"))
 
@@ -164,26 +163,31 @@ do_nothing <- dplyr::as_tibble(model_results$spawners * model_results$proportion
 results <- dplyr::bind_rows(r1, r2, r3, r4, r5, do_nothing)
 #write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
 
-# Filter to results that are not empty:
-results <- results %>%
-  mutate(row_sum = rowSums(results[6:20])) %>%
-  filter(row_sum > 0) %>%
-  glimpse
 
-# results <- read_csv('analysis/spring_run_survival_sensi_model_ouput.csv')
+results <- read_csv("analysis/spring_run_survival_sensi_model_ouput.csv") |> glimpse()
+
+results %>%
+  pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
+  group_by(id, year, across(contains("target"))) |>
+  summarise(total_spawners = sum(natural_spawners)) |> 
+  filter(id == 101 | id == 233) |> 
+  ggplot() + 
+  geom_point(aes(x = total_spawners, y = year, color = as.factor(id)), alpha = .3)
+
 
 # exploratory plots
 # juv_rear:
 results %>%
-  filter(is.na(survival_target)) %>%
+  filter(is.na(survival_target)) %>% 
   bind_rows(results %>%
               filter(survival_target == "juv_rear",
                      location_target == "Battle Creek",
+                     location == "Battle Creek", 
                      month_target == 11)) %>%
   pivot_longer(cols = c(`1`:`20`), values_to = 'natural_spawners', names_to = "year") %>%
   mutate(year = as.numeric(year)) %>%
   ggplot() +
-  geom_point(aes(x = as.factor(year), y = natural_spawners, color = as.factor(id), alpha = 0.5, shape = as.factor(id))) +
+  geom_point(aes(x = as.factor(year), y = row_sum, color = as.factor(id), alpha = 0.5, shape = as.factor(id))) +
   coord_flip()
 
 # juv migratory:
