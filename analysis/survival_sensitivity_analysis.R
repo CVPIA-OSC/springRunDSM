@@ -18,7 +18,7 @@ sensitivity_spring_run_model <- function(scenario, scenarios, sensi_seeds) {
                                               location_surv = location_surv,
                                               month_surv = month_surv)
   
-  output <- dplyr::as_tibble(model_results$spawners * model_results$proportion_natural) |>
+  output <- dplyr::as_tibble(round(model_results$spawners * model_results$proportion_natural, 1)) |>
     dplyr::mutate(location = springRunDSM::watershed_labels,
                   survival_target = which_surv,
                   location_target = location_surv,
@@ -154,7 +154,7 @@ model_results <- springRunDSM::spring_run_model(mode = "simulate",
                                             location_surv = NA,
                                             month_surv = NA)
 
-do_nothing <- dplyr::as_tibble(model_results$spawners * model_results$proportion_natural) |>
+do_nothing <- dplyr::as_tibble(round(model_results$spawners * model_results$proportion_natural, 1)) |>
   dplyr::mutate(location = springRunDSM::watershed_labels,
                 survival_target = NA,
                 location_target = NA,
@@ -169,7 +169,7 @@ no_spawning_locations <- results  |>
   mutate(row_sum = rowSums(results[6:20]))  |>
   filter(row_sum == 0) |>
   pull(location) |> unique()
-results_only_spawn_watersheds
+
 
 final_results <- results |>
   filter(!location %in% no_spawning_locations) |>
