@@ -163,12 +163,23 @@ do_nothing <- dplyr::as_tibble(model_results$spawners * model_results$proportion
   dplyr::select(id, location, survival_target, location_target, month_target, `1`:`20`)
 
 results <- dplyr::bind_rows(r1, r2, r3, r4, r5, do_nothing)
-# write_csv(results, "analysis/spring_run_survival_sensi_model_ouput.csv")
+
+# identify watersheds where no spawning occurs and remove from dataframe
+no_spawning_locations <- results  |>
+  mutate(row_sum = rowSums(results[6:20]))  |>
+  filter(row_sum == 0) |>
+  pull(location) |> unique()
+results_only_spawn_watersheds
+
+final_results <- results |>
+  filter(!location %in% no_spawning_locations) |>
+  glimpse()
+
+write_csv(final_results, "analysis/spring_run_survival_sensi_model_ouput.csv")
 
 
 # Exploratory plots
 results <- read_csv("analysis/spring_run_survival_sensi_model_ouput.csv") |> glimpse()
-  select(-row_sum) |> glimpse()
 
 no_action <- results |> 
   filter(id == 233) |> 
