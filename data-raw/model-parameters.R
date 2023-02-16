@@ -16,42 +16,42 @@ params <- list(
   yearling_territory_size = c(0.05423379, 0.14539419, 0.48471474, 0.48471474),
   ## Variable from load baseline data
   # DSMflow variables -----
-  freeport_flows = DSMflow::freeport_flow,
-  vernalis_flows = DSMflow::vernalis_flow,
-  stockton_flows = DSMflow::stockton_flow,
-  CVP_exports = DSMflow::cvp_exports,
-  SWP_exports = DSMflow::swp_exports,
-  proportion_diverted = DSMflow::proportion_diverted,
-  total_diverted = DSMflow::total_diverted,
-  delta_proportion_diverted = DSMflow::delta_proportion_diverted,
-  delta_total_diverted = DSMflow::delta_total_diverted,
-  prop_pulse_flows = DSMflow::proportion_pulse_flows,
-  prop_flow_natal = DSMflow::proportion_flow_natal,
-  upper_sacramento_flows = DSMflow::upper_sacramento_flows,
-  delta_inflow = DSMflow::delta_inflow,
-  cc_gates_days_closed = DSMflow::delta_cross_channel_closed["count", ],
-  cc_gates_prop_days_closed = DSMflow::delta_cross_channel_closed["proportion", ],
-  proportion_flow_bypass = DSMflow::proportion_flow_bypasses,
-  gates_overtopped = DSMflow::gates_overtopped,
+  freeport_flows = DSMflow::freeport_flow$biop_itp_2018_2019,
+  vernalis_flows = DSMflow::vernalis_flow$biop_itp_2018_2019,
+  stockton_flows = DSMflow::stockton_flow$biop_itp_2018_2019,
+  CVP_exports = DSMflow::cvp_exports$biop_itp_2018_2019,
+  SWP_exports = DSMflow::swp_exports$biop_itp_2018_2019,
+  proportion_diverted = DSMflow::proportion_diverted$biop_itp_2018_2019,
+  total_diverted = DSMflow::total_diverted$biop_itp_2018_2019,
+  delta_proportion_diverted = DSMflow::delta_proportion_diverted$biop_itp_2018_2019,
+  delta_total_diverted = DSMflow::delta_total_diverted$biop_itp_2018_2019,
+  prop_pulse_flows = DSMflow::proportion_pulse_flows$biop_itp_2018_2019,
+  prop_flow_natal = DSMflow::proportion_flow_natal$biop_itp_2018_2019,
+  upper_sacramento_flows = DSMflow::upper_sacramento_flows$biop_itp_2018_2019,
+  delta_inflow = DSMflow::delta_inflow$biop_itp_2018_2019,
+  cc_gates_days_closed = DSMflow::delta_cross_channel_closed$biop_itp_2018_2019["count", ],
+  cc_gates_prop_days_closed = DSMflow::delta_cross_channel_closed$biop_itp_2018_2019["proportion", ],
+  proportion_flow_bypass = DSMflow::proportion_flow_bypasses$biop_itp_2018_2019,
+  gates_overtopped = DSMflow::gates_overtopped$biop_itp_2018_2019,
   
   # DSMtemperature variables -----
   vernalis_temps = DSMtemperature::vernalis_temperature,
   prisoners_point_temps = DSMtemperature::prisoners_point_temperature,
-  degree_days = DSMtemperature::degree_days,
+  degree_days = DSMtemperature::degree_days$biop_itp_2018_2019,
   mean_egg_temp_effect = DSMtemperature::egg_temperature_effect$spring_run,
-  avg_temp = DSMtemperature::stream_temperature,
+  avg_temp = DSMtemperature::stream_temperature$biop_itp_2018_2019,
   avg_temp_delta = DSMtemperature::delta_temperature,
   migratory_temperature_proportion_over_20 = DSMtemperature::migratory_temperature_proportion_over_20,
   
   # DSMhabitat variables -----
-  spawning_habitat = DSMhabitat::sr_spawn,
-  inchannel_habitat_fry = DSMhabitat::sr_fry, # vary by run
-  inchannel_habitat_juvenile = DSMhabitat::sr_juv, # vary by run
-  floodplain_habitat = DSMhabitat::sr_fp, # vary by run
-  weeks_flooded = DSMhabitat::weeks_flooded,
+  spawning_habitat = DSMhabitat::sr_spawn$biop_itp_2018_2019,
+  inchannel_habitat_fry = DSMhabitat::sr_fry$biop_itp_2018_2019, # vary by run
+  inchannel_habitat_juvenile = DSMhabitat::sr_juv$biop_itp_2018_2019, # vary by run
+  floodplain_habitat = DSMhabitat::sr_fp$biop_itp_2018_2019, # vary by run
+  weeks_flooded = DSMhabitat::weeks_flooded$biop_itp_2018_2019,
   delta_habitat = DSMhabitat::delta_habitat,
-  sutter_habitat = DSMhabitat::sutter_habitat,
-  yolo_habitat = DSMhabitat::yolo_habitat,
+  sutter_habitat = DSMhabitat::sutter_habitat$biop_itp_2018_2019,
+  yolo_habitat = DSMhabitat::yolo_habitat$biop_itp_2018_2019,
   tisdale_bypass_watershed = DSMhabitat::tisdale_bypass_watershed,
   yolo_bypass_watershed = DSMhabitat::yolo_bypass_watershed,
   south_delta_routed_watersheds = DSMhabitat::south_delta_routed_watersheds,
@@ -76,6 +76,10 @@ params <- list(
   stray_rate = springRunDSM::stray_rate,
   adult_harvest_rate = springRunDSM::adult_harvest_rate,
   diversity_group = springRunDSM::diversity_group,
+  
+  
+  prey_density = springRunDSM::prey_density,
+  prey_density_delta = springRunDSM::prey_density_delta,
   
   # Coefficients for adult submodules
   # stray

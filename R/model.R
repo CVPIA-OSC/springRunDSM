@@ -190,8 +190,28 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                fecundity = ..params$spawn_success_fecundity,
                                stochastic = stochastic)
     
+    
+    # TODO Some temperatures are over the 28C limit, for now I am going to
+    # just make these be 28. Both of these cases in the 20 years of data
+    # are barely over 28 so I think for now this is justified. With that
+    # said we need to make this change in the cached data itself and make
+    # a note of it.
+    growth_temps <- ..params$avg_temp
+    growth_temps[which(growth_temps > 28)] <- 28
+    
     for (month in c(11, 12, 1:5)) {
       if (month %in% 1:5) juv_dynamics_year <- year + 1 else juv_dynamics_year <- year
+      
+      growth_rates_ic <- get_growth_rates(growth_temps[,month, year],
+                                          prey_density = ..params$prey_density)
+      
+      growth_rates_fp <- get_growth_rates(growth_temps[,month, year],
+                                          prey_density = ..params$prey_density,
+                                          floodplain = TRUE)
+      
+      growth_rates_delta <- get_growth_rates(..params$avg_temp_delta[month, year,],
+                                             prey_density = ..params$prey_density_delta)
+      
       habitat <- get_habitat(juv_dynamics_year, month,
                              inchannel_habitat_fry = ..params$inchannel_habitat_fry,
                              inchannel_habitat_juvenile = ..params$inchannel_habitat_juvenile,
