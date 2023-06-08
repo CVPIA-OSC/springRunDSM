@@ -2,12 +2,12 @@ library(tidyverse)
 remotes::install_github("Reorienting-to-Recovery/DSMhabitat")
 library(DSMhabitat)
 
-calib_results <- read_rds("calibration/calibration-results-2022.rds")
+calibration_solution <- read_rds("calibration/calibration-results-2022.rds")
 
 x <- calibration_solution@solution[1,]
 names(x) <- NULL
 
-baseline_params <- list(
+r_to_r_baseline_params <- list(
   #TODO add updated spawn decay multiplier for 2019 biop
   # spawn_decay_multiplier = DSMhabitat::spawning_decay_multiplier$2019_biop,
   
