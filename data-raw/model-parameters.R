@@ -7,7 +7,7 @@ params_2022_raw <- springRunDSM::params
 params_2022_raw$spawn_decay_multiplier <- DSMhabitat::spawning_decay_multiplier
 # updates based on latest calibration
 source("calibration/update-params.R")
-calib_results_2022 <- readr::read_rds("calibration/calibration-results-2022.rds")@solution[1,]
+calib_results_2022 <- readr::read_rds("calibration/calibration-results-2023.rds")@solution[1,]
 params_2022 <- update_params(x = calib_results_2022, params = params_2022_raw)
 
 usethis::use_data(params_2022, overwrite = TRUE)

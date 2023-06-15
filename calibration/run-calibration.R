@@ -10,6 +10,8 @@ source("calibration/update-params.R")
 
 params <- DSMCalibrationData::set_synth_years(springRunDSM::params)
 
+best_previous_solution <- readr::read_rds("calibration/calibration-results-2023.rds")@solution
+
 # Perform calibration --------------------
 res <- ga(type = "real-valued",
           fitness =
@@ -27,9 +29,13 @@ res <- ga(type = "real-valued",
           maxiter = 10000,
           run = 50,
           parallel = TRUE,
-          pmutation = .3)
+          pmutation = .3, 
+          suggestions = best_previous_solution) # <- remove this argument if wanting to start from zero
+                                                # its a good idea to start from scractch when doing "annual" calibrations
 
-readr::write_rds(res, paste0("calibration/fits/result-", Sys.Date(), ".rds"))
+readr::write_rds(res, paste0("calibration/res-", Sys.time(), ".rds"))
+
+res <- readr::read_rds("calibration/res-2023-06-09.rds")
 
 # Evaluate Results ------------------------------------
 
@@ -79,8 +85,6 @@ x <- r1_eval_df %>%
     r = cor(observed, simulated, use = "pairwise.complete.obs")
   )
 
-current_cor_watersheds %>% arrange(watershed)
-
 
 r1_eval_df %>%
   spread(type, spawners) %>%
@@ -88,3 +92,4 @@ r1_eval_df %>%
   summarise(
     r = cor(observed, simulated, use = "pairwise.complete.obs")
   )
+
