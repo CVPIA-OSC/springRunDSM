@@ -400,8 +400,8 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                     up_to_size_class = 4, yearlings = TRUE)
             
             if (summer_months %in% 9:10) {
-              growth_ic <- ..params$growth_rates
-              growth_fp <- ..params$growth_rates_floodplain
+              growth_ic <- growth_rates_ic
+              growth_fp <- growth_rates_fp
             } else {
               growth_ic <- diag(1, 4, 4)
               growth_fp <- replicate(4, diag(1, 4, 4))
