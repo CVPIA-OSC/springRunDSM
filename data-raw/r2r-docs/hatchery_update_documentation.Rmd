@@ -1,0 +1,124 @@
+---
+title: "Reorienting to Recovery Hatchery Modifications to the DSMs"
+author: "Erin Cain"
+date: "9/29/2021"
+output: html_document    
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.width=15, fig.height=10)
+library(tidyverse)
+library(lubridate)
+library(fallRunDSM)
+```
+
+# Hatchery Dynamics
+
+## Existing Approach
+
+The existing SIT DSMs follow the following model logic for hatchery fish:
+  
+1)  Each year, if model is run deterministicly, there are 307650 hatchery adults initiated into the model based on (CWT data?). Hatchery adults are split between tribs based on values from `fallRunDSM::hatchery_allocation`
+2)  Percent natural is output from model in the `get_spawning_adults()` submodel
+3)  Both natural adults and hatchery adults spawn, all surviving juveniles outmigrate and are carried over to the next year but origin is not tracked.
+
+## Updated Approach
+
+The updated Recovery life cycle model adds additional hatchery dynamic logic into the model. 
+
+1) The first two years there are 307650 hatchery adults initiated into the model based on CWT data. In subsequent years hatchery adults are carried over from prior generations and not initated annually. 
+2) Percent natural is output from model in the `get_spawning_adults()` submodel\
+3) PHOS initiated as `1 - percent_natural` and adjusted to describe hatchery fish renaturing every 2 generations. Renaturing adjustment assumes that if PHOS is decreasing in two prior years than the population of hatchery for current year should be adjusted by the percent difference of PHOS in current year vs current year minus two. PHOS is recalculated using adjusted number of hatchery fish divided by total population. 
+4) Both natural adults and hatchery adults spawn. Distinct fecundity is applied to natural vs hatchery fish based on fish size. The model does not track fish size, only age, so ages are mapped to size using logic from Roni and Quinn 1995. 
+5) Hatchery releases are added into the model logic in tributaries and when applicable as juveniles at chipps island. Hatchery fish are added in within the large juvenile size class. 
+6) All surviving juveniles outmigrate and are carried over to the next year. Hatchery and natural adult returns are tracked separately and have different adult return ratios.
+
+Detailed overviews of each update including the literature or data source are provided below.
+
+### Initiating Hatchery Returns
+
+The first 3 years of the model hatchery returns are initiated using CWT data and the same logic in as in the CVPIA SIT DSMs. There are a total of 307,650 hatchery adults initiated each of the first 3 years.
+
+### Calculating Perecnt Natural
+Percent natural is calculated by taking the total number of natural adults returning and dividing by total number of adults in system (natural and hatchery). This is calculated each year for each tributary in the model. 
+
+### Calculating PHOS
+
+Each year PHOS is initiated as 1 - percent_natural. PHOS is updated to account for renaturing every 2 generations if PHOS decreases in last two consecutive years. 
+
+#### Renaturing
+
+Renaturing only occurs in the model after year 3 if PHOS decreases for two consecutive years on a watershed.
+Each watershed experiences renaturing separately so one year renaturing could happen at one watershed and not another. 
+The renaturing adjustment assumes that if PHOS is decreasing in two prior years than the population of hatchery for current year should be adjusted by the percent difference of PHOS in current year vs current year minus two. 
+
+We use this renaturing adjustment to recalculate PHOS as `updated PHOS = 1 - ((hatchery spawners * percent renaturing) + wild spawners)/ total spawnwers)`
+
+### Spawning & Fecundity 
+Both natural adults and hatchery adults spawn. Distinct fecundity is applied to natural vs hatchery fish based on fish size. The model does not track fish size, only age, so ages are mapped to size using logic from [Roni and Quinn 1995](https://reorienting-to-recovery.s3.us-west-1.amazonaws.com/RoniandQuinn1995.pdf). 
+
+We assume the current fecundity used in the DSMs (5222) is fecundity for age 3 wild fish. We scaled up or down using logic from 1 - mm reduction in length results in 7.8 fewer eggs (95% CI = 6.6–8.9). Logic from Malick, M.J., Losee, J.P., Marston, G., Agha, M., Berejikian, B.A., Beckman, B.R. and Cooper, M., 2023. Fecundity trends of Chinook salmon in the Pacific Northwest. Fish and Fisheries.
+
+```{r, echo = FALSE}
+fecundity_table <- tibble(`Age in Model` = c(2, 2, 3, 3, 4, 4, 5),
+                          Origin = c("Wild", "Hatchery",  "Wild",  "Hatchery",  "Wild", "Hatchery", "Wild"), 
+                          `Size (cm)` = c(50.9, 48.9, 69.1, 67.1, 83.0, 81.0, 85),
+                          Fecundity = c((fallRunDSM::params$spawn_success_fecundity - ((69.1 - 50.9) * 10 * 7.8)), 
+                                        (fallRunDSM::params$spawn_success_fecundity - ((69.1 - 48.9) * 10 * 7.8)), 
+                                        fallRunDSM::params$spawn_success_fecundity, 
+                                        (fallRunDSM::params$spawn_success_fecundity - ((69.1 -  67.1) * 10 * 7.8)), 
+                                        (fallRunDSM::params$spawn_success_fecundity - ((69.1 - 83.0) * 10 * 7.8)),
+                                        (fallRunDSM::params$spawn_success_fecundity - ((69.1 - 81.0) * 10 * 7.8)),
+                                        (fallRunDSM::params$spawn_success_fecundity - ((69.1 - 85) * 10 * 7.8)))) |> 
+  mutate(Fecundity = round(Fecundity, 0))
+fecundity_by_age <- fecundity_table |> 
+  select(age = `Age in Model`, origin = Origin, fecundity = Fecundity) 
+usethis::use_data(fecundity_by_age, overwrite = TRUE)
+knitr::kable(fecundity_table)
+```
+
+
+
+### Juvenile Hatchery Releases
+
+Hatchery return data comes from the production tragets defined in the California [HSRG](California HSRG: https://swfsc-publications.fisheries.noaa.gov/publications/CR/2012/2012California.pdf)(Pages 65 - 95).
+
+Baseline hatchery releases by Tributary are: 
+  
+```{r, echo = FALSE}
+hatchery_releases <- tibble(
+  Hatchery = c("Feather River Hatchery"),
+  Tributary = c("Feather River"),
+  Run = c("Spring"),
+  `Number Released` = c(2000000) # 2 mil spring run between april and may
+)
+# prep for model 
+summarized_release <- hatchery_releases |>
+  filter(Run == "Spring") |> 
+  select(watershed = Tributary, release_number = `Number Released`) |> 
+  right_join(watershed_attributes |> select(watershed, order)) |>
+  arrange(order) |>
+  mutate(release_number = ifelse(is.na(release_number), 0, release_number)) 
+spring_hatchery_release = matrix(0, nrow = 31, ncol = 4, dimnames = list(fallRunDSM::watershed_labels, c("s", "m", "l", "xl")))
+# populate hatchery release as larger fish based on avg hatchery release data
+spring_hatchery_release[, 3] <- summarized_release$release_number
+usethis::use_data(spring_hatchery_release, overwrite = TRUE)
+knitr::kable(hatchery_releases)
+```
+
+### Adult return logic
+
+Wild fish return based on the following distribution 
+
+- 22% year 2
+- 47 % year 3
+- 26% year 4
+- 5% year 5
+based on [Roni and Quinn](https://reorienting-to-recovery.s3.us-west-1.amazonaws.com/RoniandQuinn1995.pdf) 1995 (Table 1). 
+
+Hatchery fish return based on the following distribution 
+
+- 30% year 2
+- 60% year 3
+- 10% year 4
+based on expert opinion that hatchery fish return younger than wild fish. 

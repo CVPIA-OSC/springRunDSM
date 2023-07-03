@@ -152,6 +152,9 @@ r_to_r_baseline_params <- list(
   .ocean_entry_success_length = c(-0.0897309864, -0.0709704348, -0.0208590732, 0.0732620916),
   .ocean_entry_success_months = 0.35,
   
+  prey_density = springRunDSM::prey_density,
+  prey_density_delta = springRunDSM::prey_density_delta,
+  
   # Calibrated values
   ..surv_adult_enroute_int = x[1],
   ..surv_adult_prespawn_int = x[2], 
@@ -230,8 +233,9 @@ r_to_r_baseline_params <- list(
     `San Joaquin River` = x[21]),
   
   # R2R specific metrics
-  hatchery_release = fallRunDSM::baseline_fall_hatchery_release, #TODO update with renes hatchery numbers and document
-  hatchery_releases_at_chipps = fallRunDSM::baseline_hatchery_releases_at_chipps #TODO documenat
+  hatchery_release = springRunDSM::spring_hatchery_release, #TODO update with renes hatchery numbers and document
+  hatchery_releases_at_chipps = matrix(0, nrow = 31, ncol = 4, dimnames = list(fallRunDSM::watershed_labels, fallRunDSM::size_class_labels)),
+  fecundity_lookup = springRunDSM::fecundity_by_age
 )
 
 usethis::use_data(r_to_r_baseline_params, overwrite = TRUE)

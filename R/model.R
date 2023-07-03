@@ -55,13 +55,26 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                    dimnames = list(DSMscenario::watershed_labels,
                                                    1980:2000)))
   }
+  simulation_length <- switch(mode,
+                              "seed" = 5,
+                              "simulate" = 20,
+                              "calibrate" = 20)
   
   output <- list(
     
     # SIT METRICS
     spawners = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
     juvenile_biomass = matrix(0, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20)),
-    proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20))
+    # proportion_natural = matrix(NA_real_, nrow = 31, ncol = 20, dimnames = list(springRunDSM::watershed_labels, 1:20))
+    
+    # R2R METRICS
+    returning_adults = tibble::tibble(),
+    adults_in_ocean = matrix(0, nrow = 31, ncol = 20, dimnames = list(fallRunDSM::watershed_labels, 1:20)),
+    juveniles = data.frame(),
+    juveniles_at_chipps = data.frame(),
+    proportion_natural_at_spawning = matrix(0, nrow = 31, ncol = 20, dimnames = list(fallRunDSM::watershed_labels, 1:20)),
+    proportion_natural_juves_in_tribs = matrix(0, nrow = 31, ncol = 20, dimnames = list(fallRunDSM::watershed_labels, 1:20)),
+    phos = matrix(0, nrow = 31, ncol = 20, dimnames = list(fallRunDSM::watershed_labels, 1:20))
   )
   
   if (mode == 'calibrate') {
@@ -73,11 +86,6 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                     "simulate" = seeds,
                     "calibrate" = seeds,
   )
-  
-  simulation_length <- switch(mode,
-                              "seed" = 5,
-                              "simulate" = 20,
-                              "calibrate" = 19)
   
   yearlings <- matrix(0, ncol = 4, nrow = 31, dimnames = list(springRunDSM::watershed_labels, springRunDSM::size_class_labels))
   
@@ -95,11 +103,18 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     
     avg_ocean_transition_month <- ocean_transition_month(stochastic = stochastic) # 2
     
-    hatch_adults <- if (stochastic) {
-      rmultinom(1, size = round(runif(1, 4588.097,8689.747)), prob = ..params$hatchery_allocation)[ , 1]
+    # R2R hatchery logic update ------------------------------------------------
+    hatch_adults <- if (year %in% c(1, 2)) {
+      round(mean(c(4829.885, 4588.097, 8689.747)) * ..params$hatchery_allocation)
     } else {
-      round(mean(c(4829.885,4588.097,8689.747)) * ..params$hatchery_allocation)
+      hatch_adults <- output$returning_adults |>
+        dplyr::filter(return_sim_year == year, origin == "hatchery") |>
+        dplyr::group_by(watershed) |>
+        dplyr::summarise(hatchery_total = sum(return_total, na.rm = TRUE)) |>
+        tibble::deframe()
+      unname(hatch_adults[order(match(names(hatch_adults), watershed_labels))])
     }
+    # end updated logic --------------------------------------------------------
     
     spawners <- get_spawning_adults(year, round(adults), hatch_adults, mode = mode,
                                     month_return_proportions = ..params$month_return_proportions,
@@ -128,10 +143,35 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     init_adults <- spawners$init_adults
     
     output$spawners[ , year] <- init_adults
-    output$proportion_natural[ , year] <- spawners$proportion_natural
+    # # For use in the r2r metrics ---------------------------------------------
+    phos <- 1 - spawners$proportion_natural
+    if (year > 3){
+      phos_diff_two_years <- phos - output$phos[, (year - 2)]
+      phos_diff_last_year <- phos - output$phos[, (year - 1)]
+      if (any(phos_diff_two_years < 0 & phos_diff_last_year < 0)) {
+        perc_diff <- (phos - output$phos[, (year - 2)]) /  output$phos[, (year - 2)]
+        renaturing_tribs <- which(phos_diff_two_years < 0 & phos_diff_last_year < 0)
+        proportion_renaturing <- ifelse(names(phos_diff_two_years) %in% names(renaturing_tribs), abs(phos_diff_two_years), 0)
+        
+        total_renaturing_in_year <- spawners$init_adults * (1 - spawners$proportion_natural) * proportion_renaturing
+        total_natural_with_renaturing <- total_renaturing_in_year + spawners$init_adults * spawners$proportion_natural
+        natural_proportion_with_renat <-  total_natural_with_renaturing / spawners$init_adults
+        natural_proportion_with_renat <- ifelse(is.nan(natural_proportion_with_renat), 0, natural_proportion_with_renat)
+        
+      } else {
+        natural_proportion_with_renat <-  spawners$proportion_natural
+      }
+    } else {
+      natural_proportion_with_renat <-  spawners$proportion_natural
+      
+    }
+    
+    output$proportion_natural_at_spawning[ , year] <- natural_proportion_with_renat
+    output$phos[ , year] <- 1 - natural_proportion_with_renat
+    # end R2R metric logic -----------------------------------------------------
     
     egg_to_fry_surv <- surv_egg_to_fry(
-      proportion_natural = spawners$proportion_natural,
+      proportion_natural = natural_proportion_with_renat, # update to new prop nat (renaturing logic applied),
       scour = ..params$prob_nest_scoured,
       temperature_effect = ..params$mean_egg_temp_effect,
       .proportion_natural = ..params$.surv_egg_to_fry_proportion_natural,
@@ -179,8 +219,54 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     prespawn_survival <- surv_adult_prespawn(average_degree_days,
                                              ..surv_adult_prespawn_int = ..params$..surv_adult_prespawn_int,
                                              .deg_day = ..params$.adult_prespawn_deg_day)
-    
+    # R2R logic to add fish size as an input -----------------------------------
+    hatch_adults <- if (year %in% c(1:6)) {
+      hatch_age_dist <- dplyr::tibble(watershed = fallRunDSM::watershed_labels,
+                               prop_2 = rep(.3, 31),
+                               prop_3 = rep(.6, 31),
+                               prop_4 = rep(.1, 31))
+      natural_age_dist <- dplyr::tibble(watershed = fallRunDSM::watershed_labels,
+                                 prop_2 = rep(.22, 31),
+                                 prop_3 = rep(.47, 31),
+                                 prop_4 = rep(.26, 31),
+                                 prop_5 = rep(.05, 31))
+    } else {
+      # TODO would be good to functionalize this age_dist - takes in origin, output$returning_adults, year
+      # TODO move to base r logic / remove dependencides on tidyverse
+      hatch_age_dist <- output$returning_adults |>
+        dplyr::filter(return_sim_year == year, origin == "hatchery") |>
+        dplyr::mutate(age = return_sim_year - sim_year,
+                      return_total = ifelse(is.nan(return_total), 0, return_total)) |>
+        dplyr::group_by(watershed, age) |>
+        dplyr::summarise(total = sum(return_total, na.rm = TRUE)) |>
+        tidyr::pivot_wider(names_from = age, values_from = total) |>
+        dplyr::mutate(total = `2` + `3` + `4`,
+                      prop_2 = ifelse(total == 0, .3, `2`/total), #need to allow for straying fish even if total pop was initially 0
+                      prop_3 = ifelse(total == 0, .6, `3`/total),
+                      prop_4 = ifelse(total == 0, .1, `4`/total)) |>
+        dplyr::select(-c(`2`, `3`, `4`, total))
+      
+      # find natural age distribution
+      natural_age_dist <- output$returning_adults |>
+        dplyr::filter(return_sim_year == year, origin == "natural") |>
+        dplyr::mutate(age = return_sim_year - sim_year,
+                      return_total = ifelse(is.nan(return_total), 0, return_total)) |>
+        dplyr::group_by(watershed, age) |>
+        dplyr::summarise(total = sum(return_total, na.rm = TRUE)) |>
+        tidyr::pivot_wider(names_from = age, values_from = total) |>
+        dplyr::mutate(total = `2` + `3` + `4` + `5`,
+                      prop_2 = ifelse(total == 0, .22, `2`/total), #need to allow for straying fish even if total pop was initially 0
+                      prop_3 = ifelse(total == 0, .47, `3`/total),
+                      prop_4 = ifelse(total == 0, .26, `4`/total),
+                      prop_5 = ifelse(total == 0, .05, `5`/total)) |>
+        dplyr::select(-c(`2`, `3`, `4`, `5`, total))
+    }
+    # end R2R logic ------------------------------------------------------------
     juveniles <- spawn_success(escapement = init_adults,
+                               proportion_natural = natural_proportion_with_renat, # R2R ADDS NEW PARAM
+                               hatchery_age_distribution = hatch_age_dist, # R2R ADDS NEW PARAM
+                               natural_age_distribution = natural_age_dist, # R2R ADDS NEW PARAM
+                               fecundity_lookup = ..params$fecundity_lookup, # R2R ADDS NEW PARAM
                                adult_prespawn_survival = prespawn_survival,
                                egg_to_fry_survival = egg_to_fry_surv,
                                prob_scour = ..params$prob_nest_scoured,
@@ -189,6 +275,27 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                redd_size = ..params$spawn_success_redd_size,
                                fecundity = ..params$spawn_success_fecundity,
                                stochastic = stochastic)
+    # R2R hatchery logic -------------------------------------------------------
+    # Currently adds only on major hatchery rivers (American, Battle, Feather, Merced, Moke)
+    # Add all as large fish
+    total_juves_pre_hatchery <- rowSums(juveniles)
+    natural_juveniles <- total_juves_pre_hatchery  * natural_proportion_with_renat
+    total_juves_pre_hatchery <- rowSums(juveniles)
+    # TODO add ability to vary release per year
+    juveniles <- juveniles + ..params$hatchery_release
+    
+    # Create new prop natural including hatch releases that we can use to apply to adult returns
+    proportion_natural_juves_in_tribs <- natural_juveniles / rowSums(juveniles)
+    output$proportion_natural_juves_in_tribs[ , year] <- proportion_natural_juves_in_tribs
+    
+    # # For use in the r2r metrics ---------------------------------------------
+    d <- data.frame(juveniles)
+    colnames(d) <- c("s", "m", "l", "vl")
+    d$watershed <- fallRunDSM::watershed_labels
+    d <- d |> tidyr::pivot_longer(names_to = "size", values_to = "juveniles", -watershed)
+    d$year <- year
+    output$juveniles <- dplyr::bind_rows(output$juveniles, d)
+    # end R2R metric -----------------------------------------------------------
     
     
     # TODO Some temperatures are over the 28C limit, for now I am going to
@@ -885,26 +992,82 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
                                                                ..ocean_entry_success_int = ..params$..ocean_entry_success_int,
                                                                .ocean_entry_success_months = ..params$.ocean_entry_success_months,
                                                                stochastic = stochastic)
+      # # For use in the r2r metrics ---------------------------------------------
+      d <- data.frame(juveniles_at_chipps)
+      colnames(d) <- c("s", "m", "l", "vl")
+      d$watershed <- fallRunDSM::watershed_labels
+      d <- d |> tidyr::pivot_longer(names_to = "size",
+                                    values_to = "juveniles_at_chipps", -watershed)
+      d$year <- year
+      d$month <- month
+      output$juveniles_at_chipps <- dplyr::bind_rows(output$juveniles_at_chipps, d)
+      # end R2R metric -----------------------------------------------------------
       
     } # end month loop
     
     output$juvenile_biomass[ , year] <- juveniles_at_chipps %*% springRunDSM::params$mass_by_size_class
     
-    adults_returning <- t(sapply(1:31, function(i) {
+    # Updated logic here for R2R so that natural adults and hatchery adults return separately
+    natural_adults_returning <- t(sapply(1:31, function(i) {
       if (stochastic) {
-        rmultinom(1, adults_in_ocean[i], prob = c(.25, .5, .25))
+        rmultinom(1, (adults_in_ocean[i]), prob = c(.22, .47, .26, .05))
       } else {
-        round(adults_in_ocean[i] * c(.25, .5, .25))
+        round((adults_in_ocean[i])* c(.22, .47, .26, .05))
       }
+    })) * output$proportion_natural_juves_in_tribs[ , year]
+    
+    natural_adults_returning[is.na(natural_adults_returning)] = 0
+    
+    # R2R release at chipps logic
+    hatchery_releases_at_chipps <- ocean_entry_success(migrants = ..params$hatchery_releases_at_chipps,
+                                                       month = 8, # set to final month
+                                                       avg_ocean_transition_month = avg_ocean_transition_month,
+                                                       .ocean_entry_success_length = ..params$.ocean_entry_success_length,
+                                                       ..ocean_entry_success_int = ..params$..ocean_entry_success_int,
+                                                       .ocean_entry_success_months = ..params$.ocean_entry_success_months,
+                                                       stochastic = stochastic)
+    
+    hatchery_adults_returning <- t(sapply(1:31, function(i) {
+      if (stochastic) {
+        rmultinom(1, (adults_in_ocean[i]), prob = c(.30, .60, .10)) * (1 - output$proportion_natural_juves_in_tribs[ , year][i]) +
+          rmultinom(1, (hatchery_releases_at_chipps[i]), prob = c(.30, .60, .10))
+      } else {
+        round((adults_in_ocean[i]) * c(.30, .60, .10)) * (1 - output$proportion_natural_juves_in_tribs[, year][i]) +
+          round((hatchery_releases_at_chipps[i]) * c(.30, .60, .10))}
     }))
     
+    hatchery_adults_returning[is.na(hatchery_adults_returning)] = 0
     
+    # # For use in the r2r metrics ---------------------------------------------
+    colnames(natural_adults_returning) <- c("V1", "V2", "V3", "V4")
+    colnames(hatchery_adults_returning) <- c("V1", "V2", "V3")
+    
+    output$returning_adults <- dplyr::bind_rows(
+      output$returning_adults,
+      natural_adults_returning |>
+        dplyr::as_tibble(.name_repair = "universal") |>
+        dplyr::mutate(watershed = watershed_labels,
+                      sim_year = year,
+                      origin = "natural") |>
+        tidyr::pivot_longer(V1:V4, names_to = "return_year", values_to = "return_total") |>
+        dplyr::mutate(return_sim_year = readr::parse_number(return_year) + 1 + as.numeric(sim_year)),
+      hatchery_adults_returning |>
+        dplyr::as_tibble(.name_repair = "universal") |>
+        dplyr::mutate(watershed = watershed_labels,
+                      sim_year = year,
+                      origin = "hatchery") |>
+        tidyr::pivot_longer(V1:V3, names_to = "return_year", values_to = "return_total") |>
+        dplyr::mutate(return_sim_year = readr::parse_number(return_year) + 1 + as.numeric(sim_year))
+    )
+    # End R2R metric logic -----------------------------------------------------
+    
+    output$adults_in_ocean[,year] <- adults_in_ocean
     
     # distribute returning adults for future spawning
     if (mode == "calibrate") {
-      calculated_adults[1:31, (year + 2):(year + 4)] <- calculated_adults[1:31, (year + 2):(year + 4)] + adults_returning
+      calculated_adults[1:31, (year + 1):(year + 4)] <- calculated_adults[1:31, (year + 1):(year + 4)] + natural_adults_returning
     } else {
-      adults[1:31, (year + 2):(year + 4)] <- adults[1:31, (year + 2):(year + 4)] + adults_returning
+      adults[1:31, (year + 1):(year + 4)] <- adults[1:31, (year + 1):(year + 4)] + natural_adults_returning
     }
     
     
@@ -920,7 +1083,7 @@ spring_run_model <- function(scenario = NULL, mode = c("seed", "simulate", "cali
     output$spawners[ , year] / (output$spawners[ , year + 1] + 1)
   })
   
-  viable <- spawn_change >= 1 & output$proportion_natural[ , -1] >= 0.9 & output$spawners[ , -1] >= 833
+  viable <- spawn_change >= 1 & output$proportion_natural_juves_in_tribs[ , -1] >= 0.9 & output$spawners[ , -1] >= 833
   
   output$viability_metrics <- sapply(1:4, function(group) {
     colSums(viable[which(springRunDSM::params$diversity_group == group), ])
